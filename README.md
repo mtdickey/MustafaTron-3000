@@ -2,8 +2,6 @@
 
 The preeminent fantasy football report generator.
 
-![MustafaTron-3000](img/mustafa-tron.png "Beep Boop... MustafaTron")
-
 ### Example Usage
 
 To run MustafaTron, first make sure you have installed and activated the `groupme-bot` environment (see [env.yml](env.yml)).
