@@ -1,6 +1,6 @@
 # MustafaTron-3000
 
-The preeminent fantasy football report generator.
+The preeminent fantasy football report generator (other than [Gameday bot](https://github.com/dtcarls/fantasy_football_chat_bot)).
 
 ### Example Usage
 
