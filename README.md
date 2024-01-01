@@ -1,8 +1,6 @@
 # MustafaTron-3000
 
-The preeminent fantasy football report generator.
-
-![MustafaTron-3000](img/mustafa-tron.png "Beep Boop... MustafaTron")
+The preeminent fantasy football report generator (other than [Gameday bot](https://github.com/dtcarls/fantasy_football_chat_bot)).
 
 ### Example Usage
 
