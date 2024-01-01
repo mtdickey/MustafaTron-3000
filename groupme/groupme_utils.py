@@ -1,8 +1,10 @@
 from groupy.client import Client
-from groupy.client import Bot
+from groupy.api.bots import Bot
 
 
-def post_image(client: Client, bot: Bot, path: str, caption: str):
+def post_image(client: Client,
+               bot: Bot,
+               path: str, caption: str):
     """
     Post an image with text to a GroupMe
 
