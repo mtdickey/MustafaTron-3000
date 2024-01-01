@@ -1,6 +1,236 @@
 import numpy as np
 import pandas as pd
-from espn_api.football import League, Player
+from espn_api.football import League, Player, Team
+from typing import List
+
+import datetime
+import requests
+import re
+from data.configs import keys
+
+# https://github.com/cwendt94/espn-api/pull/487#issuecomment-1782273387
+def set_league_endpoint(league: League) -> None:
+    """Set the league's endpoint."""
+
+    # Current season
+    if league.year >= (datetime.datetime.today() - datetime.timedelta(weeks=12)).year:
+        league.endpoint = (
+            "https://fantasy.espn.com/apis/v3/games/ffl/seasons/"
+            + str(league.year)
+            + "/segments/0/leagues/"
+            + str(league.league_id)
+            + "?"
+        )
+
+    # Old season
+    else:
+        league.endpoint = (
+            "https://fantasy.espn.com/apis/v3/games/ffl/leagueHistory/"
+            + str(league.league_id)
+            + "?seasonId="
+            + str(league.year)
+            + "&"
+        )
+
+
+# https://github.com/dtcarls/fantasy_football_chat_bot/blob/master/gamedaybot/espn/functionality.py
+def best_flex(flexes, player_pool, num):
+    """
+    Given a list of flex positions, a dictionary of player pool, and a number of players to return,
+    this function returns the best flex players from the player pool.
+
+    Parameters
+    ----------
+    flexes : list
+        a list of strings representing the flex positions
+    player_pool : dict
+        a dictionary with keys as position and values as a dictionary with player name as key and value as score
+    num : int
+        number of players to return from the player pool
+
+    Returns
+    ----------
+    best : dict
+        a dictionary containing the best flex players from the player pool
+    player_pool : dict
+        the updated player pool after removing the best flex players
+    """
+
+    pool = {}
+    # iterate through each flex position
+    for flex_position in flexes:
+        # add players from flex position to the pool
+        try:
+            pool = pool | player_pool[flex_position]
+        except KeyError:
+            pass
+    # sort the pool by score in descending order
+    pool = {k: v for k, v in sorted(pool.items(), key=lambda item: item[1], reverse=True)}
+    # get the top num players from the pool
+    best = dict(list(pool.items())[:num])
+    # remove the best flex players from the player pool
+    for pos in player_pool:
+        for p in best:
+            if p in player_pool[pos]:
+                player_pool[pos].pop(p)
+    return best, player_pool
+
+
+# https://github.com/dtcarls/fantasy_football_chat_bot/blob/master/gamedaybot/espn/functionality.py
+def get_starter_counts(league):
+    """
+    Get the number of starters for each position
+
+    Parameters
+    ----------
+    league : object
+        The league object for which the starter counts are being generated
+
+    Returns
+    -------
+    dict
+        A dictionary containing the number of players at each position within the starting lineup.
+    """
+
+    # Get the box scores for last week
+    box_scores = league.box_scores(week=league.current_week - 1)
+    # Initialize a dictionary to store the home team's starters and their positions
+    h_starters = {}
+    # Initialize a variable to keep track of the number of home team starters
+    h_starter_count = 0
+    # Initialize a dictionary to store the away team's starters and their positions
+    a_starters = {}
+    # Initialize a variable to keep track of the number of away team starters
+    a_starter_count = 0
+    # Iterate through each game in the box scores
+    for i in box_scores:
+        # Iterate through each player in the home team's lineup
+        for player in i.home_lineup:
+            # Check if the player is a starter (not on the bench or injured)
+            if (player.slot_position != 'BE' and player.slot_position != 'IR'):
+                # Increment the number of home team starters
+                h_starter_count += 1
+                try:
+                    # Try to increment the count for this position in the h_starters dictionary
+                    h_starters[player.slot_position] = h_starters[player.slot_position] + 1
+                except KeyError:
+                    # If the position is not in the dictionary yet, add it and set the count to 1
+                    h_starters[player.slot_position] = 1
+        # in the rare case when someone has an empty slot we need to check the other team as well
+        for player in i.away_lineup:
+            if (player.slot_position != 'BE' and player.slot_position != 'IR'):
+                a_starter_count += 1
+                try:
+                    a_starters[player.slot_position] = a_starters[player.slot_position] + 1
+                except KeyError:
+                    a_starters[player.slot_position] = 1
+
+        # if statement for the ultra rare case of a matchup with both entire teams (or one with a bye) on the bench
+        if a_starter_count!=0 and h_starter_count != 0:
+            if a_starter_count > h_starter_count:
+                return a_starters
+            else:
+                return h_starters
+
+# https://github.com/dtcarls/fantasy_football_chat_bot/blob/master/gamedaybot/espn/functionality.py
+def optimal_lineup_score(lineup, starter_counts):
+    """
+    This function returns the optimal lineup score based on the provided lineup and starter counts.
+
+    Parameters
+    ----------
+    lineup : list
+        A list of player objects for which the optimal lineup score is being generated
+    starter_counts : dict
+        A dictionary containing the number of starters for each position
+
+    Returns
+    -------
+    tuple
+        A tuple containing the optimal lineup score, the provided lineup score, the difference between the two scores,
+        and the percentage of the provided lineup's score compared to the optimal lineup's score.
+    """
+
+    best_lineup = {}
+    position_players = {}
+
+    # get all players and points
+    score = 0
+    score_pct = 0
+    best_score = 0
+
+    for player in lineup:
+        try:
+            position_players[player.position][player.name] = player.points
+        except KeyError:
+            position_players[player.position] = {}
+            position_players[player.position][player.name] = player.points
+        if player.slot_position not in ['BE', 'IR']:
+            score += player.points
+
+    # sort players by position for points
+    for position in starter_counts:
+        try:
+            position_players[position] = {k: v for k, v in sorted(
+                position_players[position].items(), key=lambda item: item[1], reverse=True)}
+            best_lineup[position] = dict(list(position_players[position].items())[:starter_counts[position]])
+            position_players[position] = dict(list(position_players[position].items())[starter_counts[position]:])
+        except KeyError:
+            best_lineup[position] = {}
+
+    # flexes. need to figure out best in other single positions first
+    for position in starter_counts:
+        # flex
+        if 'D/ST' not in position and '/' in position:
+            flex = position.split('/')
+            result = best_flex(flex, position_players, starter_counts[position])
+            best_lineup[position] = result[0]
+            position_players = result[1]
+
+    # Offensive Player. need to figure out best in other positions first
+    if 'OP' in starter_counts:
+        flex = ['RB', 'WR', 'TE', 'QB']
+        result = best_flex(flex, position_players, starter_counts['OP'])
+        best_lineup['OP'] = result[0]
+        position_players = result[1]
+
+    # Defensive Player. need to figure out best in other positions first
+    if 'DP' in starter_counts:
+        flex = ['DT', 'DE', 'LB', 'CB', 'S']
+        result = best_flex(flex, position_players, starter_counts['DP'])
+        best_lineup['DP'] = result[0]
+        position_players = result[1]
+
+    for position in best_lineup:
+        best_score += sum(best_lineup[position].values())
+
+    if best_score != 0:
+        score_pct = (score / best_score) * 100
+
+    return (best_score, score, best_score - score, score_pct)
+
+def set_owner_names(league: League):
+    """This function sets the owner names for each team in the league.
+    The team.owners attribute only contains the SWIDs of each owner, not their real name.
+
+    Args:
+        league (League): ESPN League object
+    """
+    endpoint = "{}view=mTeam".format(league.endpoint)
+    r = requests.get(endpoint, cookies=league.cookies).json()
+    if type(r) == list:
+        r = r[0]
+
+    # For each member in the data, create a map from SWID to their full name
+    swid_to_name = {}
+    for member in r["members"]:
+        swid_to_name[member["id"]] = re.sub(
+            " +", " ", member["firstName"] + " " + member["lastName"]
+        ).title()
+
+    # Set the owner name for each team
+    for team in league.teams:
+        team.owner = swid_to_name[team.owners[0]]
 
 def get_player_obj(league: League, player_id: int, player_name: str) -> Player:
     """
@@ -55,7 +285,7 @@ def get_draft_df(league: League) -> pd.DataFrame:
     draft_df['team_owner'] = draft_df['team'].apply(lambda x: x.owner)
     draft_df['team_name'] = draft_df['team'].apply(lambda x: x.team_name)
 
-    draft_df['Player_obj'] = draft_df.apply(lambda x: get_player_obj(x['player_id'], x['player_name']), axis = 1)
+    draft_df['Player_obj'] = draft_df.apply(lambda x: get_player_obj(league, x['player_id'], x['player_name']), axis = 1)
     draft_df['points'] = draft_df['Player_obj'].apply(lambda x: x.stats[0]['points'])
     draft_df['position'] = draft_df['Player_obj'].apply(lambda x: x.position)
     #draft_df['espn_proj_pts_thru_week'] =  draft_df['Player_obj'].apply(lambda x: x.projected_total_points*(WEEK_NUMBER/17)) 
@@ -67,14 +297,12 @@ def get_draft_df(league: League) -> pd.DataFrame:
     draft_df['overall_pick'] = (draft_df['round_num']-1)*len(set(teams))+draft_df['round_pick']
     return draft_df
 
-
-
 def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
     """
     Super messy mega-function to find substitutions that should've been made.
     
     Note: still some edge cases to work out.  Logic could be improved and made simpler.
-    ### TODO: Simplify and/or break-up the function into parts
+    ### TODO: Simplify and/or break-up the function into parts --- Look into how optimal_lineup_score works
     
     Args:
     lineup_df (pd.DataFrame):  All players on a roster and with their points for the week.
@@ -91,7 +319,7 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
                                                                 (x['slot_position'] == 'TE'))
                                               else x['position'], axis = 1)
     starters_set = set(starter_df['player_id'])
-    sub_df = pd.DataFrame()
+    sub_dfs = []
     
     ## Get the top QB
     top_qb = lineup_df[lineup_df['position'] == 'QB'].sort_values('points', ascending = False).head(1).reset_index().drop(columns = 'index')
@@ -101,7 +329,7 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
         top_qb['sub_for_player_id'] = current_starting_qb['player_id'][0]
         top_qb['sub_for_player_points'] = current_starting_qb['points'][0]
         top_qb['new_slot_position'] = 'QB'
-        sub_df = sub_df.append(top_qb)
+        sub_dfs.append(top_qb)
     
     ## Get the top 2 RBs:
     top_rbs = lineup_df[lineup_df['position'] == 'RB'].sort_values('points', ascending = False).head(2).reset_index().drop(columns = 'index')   
@@ -141,7 +369,8 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
     old_flex_player = starter_df[starter_df['slot_position'] == 'RB/WR/TE'].reset_index()
     
     ## For RBs
-    if len(sub_df) > 0:
+    if len(sub_dfs) > 0:
+        sub_df = pd.concat(sub_dfs)
         already_subbed_player_ids = list(sub_df['player_id'])
     else:
         already_subbed_player_ids = []
@@ -163,10 +392,11 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
         top_rb1['sub_for_player_id'] = sub_player.playerId
         top_rb1['sub_for_player_points'] = sub_player.points
         top_rb1['new_slot_position'] = 'RB'
-        sub_df = sub_df.append(top_rb1)
+        sub_dfs.append(top_rb1)
     
     ### 2nd highest scorer at RB
-    if len(sub_df) > 0:
+    if len(sub_dfs) > 0:
+        sub_df = pd.concat(sub_dfs)
         already_subbed_player_ids = list(sub_df['player_id'])
     else:
         already_subbed_player_ids = []
@@ -186,9 +416,9 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
         #        (subbed_player_candidate_df['slot_position'] == old_flex_position) & 
         #        (~subbed_player_candidate_df['player_id'].isin(already_subbed_player_ids))].reset_index()['player'][0])
         else:
-            rb_not_yet_subbed = rb_removed_lineup_df[~rb_removed_lineup_df['player_id'].isin(sub_df)]
-            wr_not_yet_subbed = wr_removed_lineup_df[~wr_removed_lineup_df['player_id'].isin(sub_df)]
-            te_not_yet_subbed = te_removed_lineup_df[~te_removed_lineup_df['player_id'].isin(sub_df)]
+            rb_not_yet_subbed = rb_removed_lineup_df[~rb_removed_lineup_df['player_id'].isin(already_subbed_player_ids)]
+            wr_not_yet_subbed = wr_removed_lineup_df[~wr_removed_lineup_df['player_id'].isin(already_subbed_player_ids)]
+            te_not_yet_subbed = te_removed_lineup_df[~te_removed_lineup_df['player_id'].isin(already_subbed_player_ids)]
             if len(rb_not_yet_subbed) > 0: 
                 sub_player = (rb_not_yet_subbed['player'][0])
             elif len(wr_not_yet_subbed) > 0: 
@@ -200,11 +430,12 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
         top_rb2['sub_for_player_id'] = sub_player.playerId
         top_rb2['sub_for_player_points'] = sub_player.points
         top_rb2['new_slot_position'] = 'RB'
-        sub_df = sub_df.append(top_rb2)
+        sub_dfs.append(top_rb2)
 
     ## For WRs
     ### Top scorer
-    if len(sub_df) > 0:
+    if len(sub_dfs) > 0:
+        sub_df = pd.concat(sub_dfs)
         already_subbed_player_ids = list(sub_df['player_id'])
     else:
         already_subbed_player_ids = []
@@ -227,9 +458,10 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
         top_wr1['sub_for_player_id'] = sub_player.playerId
         top_wr1['sub_for_player_points'] = sub_player.points
         top_wr1['new_slot_position'] = 'WR'
-        sub_df = sub_df.append(top_wr1)
+        sub_dfs.append(top_wr1)
     ### 2nd highest scorer at WR
-    if len(sub_df) > 0:
+    if len(sub_dfs) > 0:
+        sub_df = pd.concat(sub_dfs)
         already_subbed_player_ids = list(sub_df['player_id'])
     else:
         already_subbed_player_ids = []
@@ -252,10 +484,11 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
         top_wr2['sub_for_player_id'] = sub_player.playerId
         top_wr2['sub_for_player_points'] = sub_player.points
         top_wr2['new_slot_position'] = 'WR'
-        sub_df = sub_df.append(top_wr2)
+        sub_dfs.append(top_wr2)
     
     ## For TE
-    if len(sub_df) > 0:
+    if len(sub_dfs) > 0:
+        sub_df = pd.concat(sub_dfs)
         already_subbed_player_ids = list(sub_df['player_id'])
     else:
         already_subbed_player_ids = []
@@ -283,7 +516,7 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
         top_te['sub_for_player_id'] = sub_player.playerId
         top_te['sub_for_player_points'] = sub_player.points
         top_te['new_slot_position'] = 'TE'
-        sub_df = sub_df.append(top_te)
+        sub_dfs.append(top_te)
     
     ## For Flex (RB/WR/TE)
     if top_flx['player_id'][0] not in starters_set:
@@ -327,7 +560,7 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
         top_flx['sub_for_player_id'] = sub_player.playerId
         top_flx['sub_for_player_points'] = sub_player.points
         top_flx['new_slot_position'] = 'RB/WR/TE'
-        sub_df = sub_df.append(top_flx)
+        sub_dfs.append(top_flx)
     
     
     ## Get the top D/ST:
@@ -343,7 +576,7 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
                 top_d['sub_for_player_name'] = 'No Defense'
                 top_d['sub_for_player_id'] = None
                 top_d['sub_for_player_points'] = 0          
-            sub_df = sub_df.append(top_d)
+            sub_dfs.append(top_d)
     
     ## Get the top K:
     top_k = lineup_df[lineup_df['position'] == 'K'].sort_values('points', ascending = False).head(1).reset_index().drop(columns = 'index')
@@ -352,10 +585,14 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
         top_k['sub_for_player_name'] = current_starting_k['player_name'][0]
         top_k['sub_for_player_id'] = current_starting_k['player_id'][0]
         top_k['sub_for_player_points'] = current_starting_k['points'][0]
-        sub_df = sub_df.append(top_k)
+        sub_dfs.append(top_k)
     
-    return sub_df
+    if len(sub_dfs) > 0:
+        sub_df = pd.concat(sub_dfs).reset_index(drop=True)
+    else:
+        sub_df = pd.DataFrame()
 
+    return sub_df
 
 def get_scoring_df(week: int, league: League) -> pd.DataFrame:
     """Get a DataFrame of all box scores in the league through the given week
@@ -397,7 +634,6 @@ def get_scoring_df(week: int, league: League) -> pd.DataFrame:
     scoring_df['team_name_owner'] = scoring_df['team_name'] + ' (' + scoring_df['team_owner'] + ')'
 
     return scoring_df
-
 
 def get_lineup_df(week: int, league: League) -> pd.DataFrame:
     """Get a DataFrame of all box scores in the league through the given week
@@ -446,7 +682,6 @@ def get_lineup_df(week: int, league: League) -> pd.DataFrame:
     lineup_df['team_name_owner'] = lineup_df['team_name'] + ' (' + lineup_df['team_owner'] + ')'
 
     return lineup_df
-
 
 def get_weekly_scores_df(week: int, league: League) -> pd.DataFrame:
     """Go through box scores and compute the "record vs. entire league" metrics needed for the report.
@@ -509,3 +744,116 @@ def get_weekly_scores_df(week: int, league: League) -> pd.DataFrame:
     weekly_scores_df['win_pct_week'] = weekly_scores_df['wins_in_week']/(weekly_scores_df['wins_in_week'] + weekly_scores_df['losses_in_week']*1.00)
 
     return weekly_scores_df
+
+### Utilities for retrospective evaluation of trades at the end of the season
+class ReplacementBoxPlayer():
+    ## This is needed because the BoxPlayer class is not easily accessible from the Player class included in the trade
+    ### But we can get all we really need (points scored by week) from the .stats attribute of the Player class
+    def __init__(self, player, week):
+        self.position = player.position
+        self.name = player.name
+        #print(player.name)
+        self.points = self.get_points(player, week)
+        self.slot_position = 'BE'
+
+    def get_points(self, player, week):
+        try:
+            points = player.stats[week]['points']
+            return points
+        except:
+            return 0
+
+
+def get_start_week_after_trade(trade_date: float, season_start_date: datetime.datetime, final_week_number: int) -> int:
+    """Find the first week of the season after the trade
+
+    Args:
+        trade_date (float): ESPN's date of the trade, epoch milliseconds
+        season_start_date (datetime.datetime): date that the season started
+        final_week_number (int): last week number of the season
+
+    Returns:
+        int: first week number after the trade
+    """
+    weeks = []
+    dates = []
+    week = 1
+    date = season_start_date
+    for i in range(1, final_week_number+1):
+        weeks.append(week)
+        dates.append(date)
+        date = date + datetime.timedelta(days=7)
+        week+=1
+    dates_df = pd.DataFrame({'week': weeks, 'date':dates})
+    sub_dates_df = dates_df[dates_df['date'] > datetime.fromtimestamp(trade_date/1000)]
+    min_week_after_trade = list(sub_dates_df[sub_dates_df['date'] == sub_dates_df['date'].min()]['week'])[0]
+    return min_week_after_trade
+
+
+def get_point_diff_for_trade(league: League, team: Team, start_week: int, players_added: List[Player], players_lost: List[Player]) -> float:
+    """Finds the 
+
+    Args:
+        league (League): ESPN fantasy league obj/connection
+        team (Team): ESPN fantasy team object
+        start_week (int): first week after the trade
+        players_added (List): list of player objects that were received by the team in the trade
+        players_lost (List): list of player objects that were traded away by the team in the trade
+
+    Returns:
+        float: number of points added/lost based on optimal lineups with new players vs optimal lineups with old players for ROS.
+    """
+    starter_counts = get_starter_counts(league)
+    names_in_trade = [p.name for p in players_added] + [p.name for p in players_lost]
+    total_point_diff = 0
+    for week in range(start_week, 18): ## Hard coded last week of season
+        boxes = league.box_scores(week)
+        week_lineup = [box.home_lineup if team.team_name == box.home_team.team_name else box.away_lineup for box in boxes 
+                       if team.team_name in [box.home_team.team_name, box.away_team.team_name]]
+        week_lineup = week_lineup[0]
+        new_players = [ReplacementBoxPlayer(p, week) for p in players_added]
+        old_players = [ReplacementBoxPlayer(p, week) for p in players_lost]
+        lineup_with_new_players = [p for p in week_lineup if p.name not in names_in_trade] + new_players
+        lineup_with_old_players = [p for p in week_lineup if p.name not in names_in_trade] + old_players
+        new_optimal_score, score, new_actual_diff, new_score_pct = optimal_lineup_score(lineup_with_new_players, starter_counts)
+        old_optimal_score, score, old_actual_diff, old_score_pct = optimal_lineup_score(lineup_with_old_players, starter_counts)
+        point_diff = new_optimal_score - old_optimal_score
+        total_point_diff += point_diff
+    return total_point_diff
+
+
+def get_trade_evalutions_df(league: League, season_start_date, final_week_number=17) -> pd.DataFrame:
+    """Compiles a DataFrame of all retroactively evaluated trades for the fantasy season based on ROS value for a team's roster.
+
+    Args:
+        league (League): ESPN fantasy league obj/connection
+
+    Returns:
+        pd.DataFrame: DataFrame of all retroactively evaluated trades for the fantasy season
+    """
+
+    team_list = []
+    players_added_list = []
+    players_lost_list = []
+    week_after_trade_list = []
+    point_diff_list = []
+    league_trades = league.recent_activity(size=100, msg_type='TRADED')
+    for trade in league_trades:
+        teams = list(set([action[0] for action in trade.actions]))
+        for team in teams:
+            players_added = [action[2] for action in trade.actions if action[0] != team]
+            players_lost  = [action[2] for action in trade.actions if action[0] == team]
+            start_week = get_start_week_after_trade(trade.date, season_start_date=season_start_date, final_week_number=final_week_number)
+            point_diff = get_point_diff_for_trade(team, start_week, players_added, players_lost)
+            team_list.append(team)
+            players_added_list.append(players_added)
+            players_lost_list.append(players_lost)
+            week_after_trade_list.append(start_week)
+            point_diff_list.append(point_diff)
+            
+
+    trade_evaluations_df = pd.DataFrame({'team': team_list, 'players_added': players_added_list,
+                                        'players_lost': players_lost_list, 'week_after_trade': week_after_trade_list
+                                        ,'point_diff': point_diff_list
+                                        })
+    return trade_evaluations_df
