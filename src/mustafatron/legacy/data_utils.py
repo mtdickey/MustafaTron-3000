@@ -3,17 +3,17 @@ import pandas as pd
 from espn_api.football import League, Player, Team
 from typing import List
 
-import datetime
+from datetime import datetime, timedelta
 import requests
 import re
-from data.configs import keys
+#from data.configs import keys
 
 # https://github.com/cwendt94/espn-api/pull/487#issuecomment-1782273387
 def set_league_endpoint(league: League) -> None:
     """Set the league's endpoint."""
 
     # Current season
-    if league.year >= (datetime.datetime.today() - datetime.timedelta(weeks=12)).year:
+    if league.year >= (datetime.today() - timedelta(weeks=12)).year:
         league.endpoint = (
             "https://fantasy.espn.com/apis/v3/games/ffl/seasons/"
             + str(league.year)
@@ -216,21 +216,21 @@ def set_owner_names(league: League):
     Args:
         league (League): ESPN League object
     """
-    endpoint = "{}view=mTeam".format(league.endpoint)
-    r = requests.get(endpoint, cookies=league.cookies).json()
-    if type(r) == list:
-        r = r[0]
-
-    # For each member in the data, create a map from SWID to their full name
-    swid_to_name = {}
-    for member in r["members"]:
-        swid_to_name[member["id"]] = re.sub(
-            " +", " ", member["firstName"] + " " + member["lastName"]
-        ).title()
-
-    # Set the owner name for each team
+    #endpoint = "{}view=mTeam".format(league.endpoint)
+    #r = requests.get(endpoint, cookies=league.cookies).json()
+    #if type(r) == list:
+    #    r = r[0]
+#
+    ## For each member in the data, create a map from SWID to their full name
+    #swid_to_name = {}
+    #for member in r["members"]:
+    #    swid_to_name[member["id"]] = re.sub(
+    #        " +", " ", member["firstName"] + " " + member["lastName"]
+    #    ).title()
+#
+    ## Set the owner name for each team
     for team in league.teams:
-        team.owner = swid_to_name[team.owners[0]]
+        team.owner = team.owners[0]["firstName"] + " " + team.owners[0]["lastName"]
 
 def get_player_obj(league: League, player_id: int, player_name: str) -> Player:
     """
@@ -282,7 +282,7 @@ def get_draft_df(league: League) -> pd.DataFrame:
                             'round_num': round_nums,
                             'round_pick': round_picks,
                             'team': teams})
-    draft_df['team_owner'] = draft_df['team'].apply(lambda x: x.owner)
+    draft_df['team_owner'] = draft_df['team'].apply(lambda x: ', '.join([owner['firstName'] + ' ' + owner['lastName'] for owner in x.owners]))
     draft_df['team_name'] = draft_df['team'].apply(lambda x: x.team_name)
 
     draft_df['Player_obj'] = draft_df.apply(lambda x: get_player_obj(league, x['player_id'], x['player_name']), axis = 1)
@@ -580,12 +580,20 @@ def get_optimal_subs(lineup_df: pd.DataFrame) -> pd.DataFrame:
     
     ## Get the top K:
     top_k = lineup_df[lineup_df['position'] == 'K'].sort_values('points', ascending = False).head(1).reset_index().drop(columns = 'index')
-    if top_k['player_id'][0] not in starters_set:
-        current_starting_k = starter_df[starter_df['position'] == 'K'].reset_index()
-        top_k['sub_for_player_name'] = current_starting_k['player_name'][0]
-        top_k['sub_for_player_id'] = current_starting_k['player_id'][0]
-        top_k['sub_for_player_points'] = current_starting_k['points'][0]
-        sub_dfs.append(top_k)
+    if len(top_k):
+        if top_k['player_id'][0] not in starters_set:
+            current_starting_k = starter_df[starter_df['position'] == 'K'].reset_index()
+            if len(current_starting_k):
+                top_k['sub_for_player_name'] = current_starting_k['player_name'][0]
+                top_k['sub_for_player_id'] = current_starting_k['player_id'][0]
+                top_k['sub_for_player_points'] = current_starting_k['points'][0]
+            else:
+                print(f"No starting Kicker found")
+                print(lineup_df)
+                top_k['sub_for_player_name'] = 'No Kicker'
+                top_k['sub_for_player_id'] = None
+                top_k['sub_for_player_points'] = 0
+            sub_dfs.append(top_k)
     
     if len(sub_dfs) > 0:
         sub_df = pd.concat(sub_dfs).reset_index(drop=True)
@@ -696,7 +704,12 @@ def get_weekly_scores_df(week: int, league: League) -> pd.DataFrame:
     weeks = range(1,week+1)
     week_list = []
     teams = []
+    team_owners = []
+    opponents = []
+    opponent_owners = []
     scores = []
+    opp_scores = []
+    score_diffs = []
     results = []
     win_flgs = []
     for week in weeks:
@@ -704,11 +717,13 @@ def get_weekly_scores_df(week: int, league: League) -> pd.DataFrame:
             
             ## Get team names/scores/results (W/L)
             away_team = score.away_team.team_name
+            away_owner = score.away_team.owner
             away_score = score.away_score
             away_result = ('W' if away_score > score.home_score else 'L' if 
                         away_score < score.home_score else 'T')
             away_win_flg = 1 if away_result == 'W' else 0
             home_team = score.home_team.team_name
+            home_owner = score.home_team.owner
             home_score = score.home_score
             home_result = ('W' if home_score > away_score else 'L' if 
                         home_score < away_score else 'T')
@@ -716,21 +731,36 @@ def get_weekly_scores_df(week: int, league: League) -> pd.DataFrame:
             
             ## Add everything to lists for away team
             teams.append(away_team)
+            team_owners.append(away_owner)
+            opponents.append(home_team)
+            opponent_owners.append(home_owner)
             scores.append(away_score)
+            opp_scores.append(home_score)
+            score_diffs.append(away_score-home_score)
             results.append(away_result)
             win_flgs.append(away_win_flg)
             week_list.append(week)        
             
             ## Add everything to lists for home team
             teams.append(home_team)
+            team_owners.append(home_owner)
+            opponents.append(away_team)
+            opponent_owners.append(away_owner)
             scores.append(home_score)
+            opp_scores.append(away_score)
+            score_diffs.append(home_score-away_score)
             results.append(home_result)
             win_flgs.append(home_win_flg)
             week_list.append(week)
 
     weekly_scores_df = pd.DataFrame({'week': week_list,
                                     'team': teams,
+                                    'team_owner': team_owners,
+                                    'opponent': opponents,
+                                    'opponent_owners': opponent_owners,
                                     'score': scores,
+                                    'opponent_score': opp_scores,
+                                    'score_diff': score_diffs,
                                     'result': results,
                                     'win_flg': win_flgs})
 
@@ -764,12 +794,12 @@ class ReplacementBoxPlayer():
             return 0
 
 
-def get_start_week_after_trade(trade_date: float, season_start_date: datetime.datetime, final_week_number: int) -> int:
+def get_start_week_after_trade(trade_date: float, season_start_date: datetime, final_week_number: int) -> int:
     """Find the first week of the season after the trade
 
     Args:
         trade_date (float): ESPN's date of the trade, epoch milliseconds
-        season_start_date (datetime.datetime): date that the season started
+        season_start_date (datetime): date that the season started
         final_week_number (int): last week number of the season
 
     Returns:
@@ -782,12 +812,15 @@ def get_start_week_after_trade(trade_date: float, season_start_date: datetime.da
     for i in range(1, final_week_number+1):
         weeks.append(week)
         dates.append(date)
-        date = date + datetime.timedelta(days=7)
+        date = date + timedelta(days=7)
         week+=1
     dates_df = pd.DataFrame({'week': weeks, 'date':dates})
     sub_dates_df = dates_df[dates_df['date'] > datetime.fromtimestamp(trade_date/1000)]
-    min_week_after_trade = list(sub_dates_df[sub_dates_df['date'] == sub_dates_df['date'].min()]['week'])[0]
-    return min_week_after_trade
+    min_week_after_trade = list(sub_dates_df[sub_dates_df['date'] == sub_dates_df['date'].min()]['week'])
+    if len(min_week_after_trade) == 0:
+        return None
+    else:
+        return min_week_after_trade[0]
 
 
 def get_point_diff_for_trade(league: League, team: Team, start_week: int, players_added: List[Player], players_lost: List[Player]) -> float:
@@ -822,7 +855,7 @@ def get_point_diff_for_trade(league: League, team: Team, start_week: int, player
     return total_point_diff
 
 
-def get_trade_evalutions_df(league: League, season_start_date, final_week_number=17) -> pd.DataFrame:
+def get_trade_evaluations_df(league: League, season_start_date, final_week_number=17) -> pd.DataFrame:
     """Compiles a DataFrame of all retroactively evaluated trades for the fantasy season based on ROS value for a team's roster.
 
     Args:
@@ -844,7 +877,7 @@ def get_trade_evalutions_df(league: League, season_start_date, final_week_number
             players_added = [action[2] for action in trade.actions if action[0] != team]
             players_lost  = [action[2] for action in trade.actions if action[0] == team]
             start_week = get_start_week_after_trade(trade.date, season_start_date=season_start_date, final_week_number=final_week_number)
-            point_diff = get_point_diff_for_trade(team, start_week, players_added, players_lost)
+            point_diff = get_point_diff_for_trade(league, team, start_week, players_added, players_lost)
             team_list.append(team)
             players_added_list.append(players_added)
             players_lost_list.append(players_lost)

@@ -1,0 +1,4430 @@
+{
+ "members": [
+  {
+   "displayName": "Hamid 28",
+   "firstName": "Hamid",
+   "id": "m_b1fe61717c673d2c",
+   "lastName": "Sedaghat"
+  },
+  {
+   "displayName": "quasihobo",
+   "firstName": "Andrew",
+   "id": "m_e4b01c947100692d",
+   "lastName": "Joyce"
+  },
+  {
+   "displayName": "ncsupr17",
+   "firstName": "Michael",
+   "id": "m_a196270bf1721a5c",
+   "lastName": "Dickey"
+  },
+  {
+   "displayName": "Panthersfan1689",
+   "firstName": "Ryan",
+   "id": "m_63ab5f2297451f37",
+   "lastName": "Richardson"
+  },
+  {
+   "displayName": "mattcarp34",
+   "firstName": "Matthew",
+   "id": "m_f90f2363985047cb",
+   "lastName": "Carpenter"
+  },
+  {
+   "displayName": "jgrudee",
+   "firstName": "jon",
+   "id": "m_385722442272a1ef",
+   "lastName": "grudee"
+  },
+  {
+   "displayName": "malbert555",
+   "firstName": "Matthew",
+   "id": "m_a4f0d563b98b1fb1",
+   "lastName": "Albert"
+  },
+  {
+   "displayName": "cwolfe93",
+   "firstName": "Chris",
+   "id": "m_d1839f51a0dae615",
+   "lastName": "Wolfe"
+  },
+  {
+   "displayName": "kariukirichard",
+   "firstName": "richard",
+   "id": "m_f6f4dd963d3c5b89",
+   "lastName": "kariuki"
+  },
+  {
+   "displayName": "Dyelon22",
+   "firstName": "Dylan",
+   "id": "m_41bf267dc2a08507",
+   "lastName": "Edwards"
+  }
+ ],
+ "schedule": [
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "1": 136.3
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 136.3
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "1": 128.74
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 128.74
+   },
+   "id": 0,
+   "matchupPeriodId": 1,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "1": 69.68
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 69.68
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "1": 87.7
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 87.7
+   },
+   "id": 1,
+   "matchupPeriodId": 1,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "1": 80.06
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 80.06
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "1": 71.84
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 71.84
+   },
+   "id": 2,
+   "matchupPeriodId": 1,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "1": 108.52
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 108.52
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "1": 107.6
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 107.6
+   },
+   "id": 3,
+   "matchupPeriodId": 1,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "1": 82.46
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 82.46
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "1": 109.1
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 109.1
+   },
+   "id": 4,
+   "matchupPeriodId": 1,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "2": 138.14
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 138.14
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "2": 83.52
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 83.52
+   },
+   "id": 5,
+   "matchupPeriodId": 2,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "2": 90.28
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 90.28
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "2": 107.4
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 107.4
+   },
+   "id": 6,
+   "matchupPeriodId": 2,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "2": 99.78
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 99.78
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "2": 112.18
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 112.18
+   },
+   "id": 7,
+   "matchupPeriodId": 2,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "2": 85.72
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 85.72
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "2": 95.94
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 95.94
+   },
+   "id": 8,
+   "matchupPeriodId": 2,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "2": 107.6
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 107.6
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "2": 99.96
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 99.96
+   },
+   "id": 9,
+   "matchupPeriodId": 2,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "3": 90.68
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 90.68
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "3": 121.04
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 121.04
+   },
+   "id": 10,
+   "matchupPeriodId": 3,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "3": 118.7
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 118.7
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "3": 107.0
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 107.0
+   },
+   "id": 11,
+   "matchupPeriodId": 3,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "3": 108.08
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 108.08
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "3": 90.0
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 90.0
+   },
+   "id": 12,
+   "matchupPeriodId": 3,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "3": 67.42
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 67.42
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "3": 147.6
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 147.6
+   },
+   "id": 13,
+   "matchupPeriodId": 3,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "3": 131.08
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 131.08
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "3": 100.0
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 100.0
+   },
+   "id": 14,
+   "matchupPeriodId": 3,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "4": 73.42
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 73.42
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "4": 104.32
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 104.32
+   },
+   "id": 15,
+   "matchupPeriodId": 4,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "4": 107.72
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 107.72
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "4": 63.7
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 63.7
+   },
+   "id": 16,
+   "matchupPeriodId": 4,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "4": 149.58
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 149.58
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "4": 98.38
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 98.38
+   },
+   "id": 17,
+   "matchupPeriodId": 4,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "4": 73.9
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 73.9
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "4": 88.9
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 88.9
+   },
+   "id": 18,
+   "matchupPeriodId": 4,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "4": 92.54
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 92.54
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "4": 75.6
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 75.6
+   },
+   "id": 19,
+   "matchupPeriodId": 4,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "5": 98.74
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 98.74
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "5": 111.74
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 111.74
+   },
+   "id": 20,
+   "matchupPeriodId": 5,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "5": 103.7
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 103.7
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "5": 89.42
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 89.42
+   },
+   "id": 21,
+   "matchupPeriodId": 5,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "5": 120.86
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 120.86
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "5": 75.9
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 75.9
+   },
+   "id": 22,
+   "matchupPeriodId": 5,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "5": 75.98
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 75.98
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "5": 116.82
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 116.82
+   },
+   "id": 23,
+   "matchupPeriodId": 5,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "5": 118.44
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 118.44
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "5": 84.62
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 84.62
+   },
+   "id": 24,
+   "matchupPeriodId": 5,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "6": 102.78
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 102.78
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "6": 95.4
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 95.4
+   },
+   "id": 25,
+   "matchupPeriodId": 6,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "6": 115.68
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 115.68
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "6": 80.84
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 80.84
+   },
+   "id": 26,
+   "matchupPeriodId": 6,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "6": 112.12
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 112.12
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "6": 75.1
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 75.1
+   },
+   "id": 27,
+   "matchupPeriodId": 6,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "6": 78.08
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 78.08
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "6": 86.84
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 86.84
+   },
+   "id": 28,
+   "matchupPeriodId": 6,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "6": 99.0
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 99.0
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "6": 82.84
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 82.84
+   },
+   "id": 29,
+   "matchupPeriodId": 6,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "7": 101.46
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 101.46
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "7": 99.32
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 99.32
+   },
+   "id": 30,
+   "matchupPeriodId": 7,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "7": 81.12
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 81.12
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "7": 130.3
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 130.3
+   },
+   "id": 31,
+   "matchupPeriodId": 7,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "7": 109.82
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 109.82
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "7": 99.82
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 99.82
+   },
+   "id": 32,
+   "matchupPeriodId": 7,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "7": 102.8
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 102.8
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "7": 84.3
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 84.3
+   },
+   "id": 33,
+   "matchupPeriodId": 7,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "7": 94.3
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 94.3
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "7": 84.62
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 84.62
+   },
+   "id": 34,
+   "matchupPeriodId": 7,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "8": 75.12
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 75.12
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "8": 108.22
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 108.22
+   },
+   "id": 35,
+   "matchupPeriodId": 8,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "8": 84.96
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 84.96
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "8": 79.7
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 79.7
+   },
+   "id": 36,
+   "matchupPeriodId": 8,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "8": 128.84
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 128.84
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "8": 78.44
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 78.44
+   },
+   "id": 37,
+   "matchupPeriodId": 8,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "8": 97.54
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 97.54
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "8": 73.32
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 73.32
+   },
+   "id": 38,
+   "matchupPeriodId": 8,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "8": 90.16
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 90.16
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "8": 122.72
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 122.72
+   },
+   "id": 39,
+   "matchupPeriodId": 8,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "9": 106.14
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 106.14
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "9": 95.86
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 95.86
+   },
+   "id": 40,
+   "matchupPeriodId": 9,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "9": 108.12
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 108.12
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "9": 137.68
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 137.68
+   },
+   "id": 41,
+   "matchupPeriodId": 9,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "9": 77.62
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 77.62
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "9": 69.14
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 69.14
+   },
+   "id": 42,
+   "matchupPeriodId": 9,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "9": 84.5
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 84.5
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "9": 71.8
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 71.8
+   },
+   "id": 43,
+   "matchupPeriodId": 9,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "9": 78.0
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 78.0
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "9": 77.2
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 77.2
+   },
+   "id": 44,
+   "matchupPeriodId": 9,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "10": 93.98
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 93.98
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "10": 85.68
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 85.68
+   },
+   "id": 45,
+   "matchupPeriodId": 10,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "10": 84.14
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 84.14
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "10": 61.42
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 61.42
+   },
+   "id": 46,
+   "matchupPeriodId": 10,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "10": 97.4
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 97.4
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "10": 81.32
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 81.32
+   },
+   "id": 47,
+   "matchupPeriodId": 10,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "10": 92.7
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 92.7
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "10": 94.06
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 94.06
+   },
+   "id": 48,
+   "matchupPeriodId": 10,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "10": 90.16
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 90.16
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "10": 101.78
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 101.78
+   },
+   "id": 49,
+   "matchupPeriodId": 10,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "11": 96.84
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 96.84
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "11": 95.38
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 95.38
+   },
+   "id": 50,
+   "matchupPeriodId": 11,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "11": 116.52
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 116.52
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "11": 99.42
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 99.42
+   },
+   "id": 51,
+   "matchupPeriodId": 11,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "11": 68.98
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 68.98
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "11": 78.64
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 78.64
+   },
+   "id": 52,
+   "matchupPeriodId": 11,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "11": 97.66
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 97.66
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "11": 93.5
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 93.5
+   },
+   "id": 53,
+   "matchupPeriodId": 11,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "11": 119.32
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 119.32
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "11": 91.26
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 91.26
+   },
+   "id": 54,
+   "matchupPeriodId": 11,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "12": 84.0
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 84.0
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "12": 100.48
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 100.48
+   },
+   "id": 55,
+   "matchupPeriodId": 12,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "12": 99.3
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 99.3
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "12": 78.7
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 78.7
+   },
+   "id": 56,
+   "matchupPeriodId": 12,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "12": 136.74
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 136.74
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "12": 95.1
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 95.1
+   },
+   "id": 57,
+   "matchupPeriodId": 12,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "12": 134.28
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 134.28
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "12": 94.72
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 94.72
+   },
+   "id": 58,
+   "matchupPeriodId": 12,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "12": 108.42
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 108.42
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "12": 96.64
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 96.64
+   },
+   "id": 59,
+   "matchupPeriodId": 12,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "13": 89.0
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 89.0
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "13": 78.32
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 78.32
+   },
+   "id": 60,
+   "matchupPeriodId": 13,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "13": 64.48
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 64.48
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "13": 81.3
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 81.3
+   },
+   "id": 61,
+   "matchupPeriodId": 13,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "13": 105.24
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 105.24
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "13": 107.74
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 107.74
+   },
+   "id": 62,
+   "matchupPeriodId": 13,
+   "playoffTierType": "NONE",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "13": 96.82
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 96.82
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "13": 54.32
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 54.32
+   },
+   "id": 63,
+   "matchupPeriodId": 13,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "13": 150.6
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 150.6
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "13": 64.5
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 64.5
+   },
+   "id": 64,
+   "matchupPeriodId": 13,
+   "playoffTierType": "NONE",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "14": 117.98,
+     "15": 114.82
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 232.8
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "14": 126.92,
+     "15": 111.16
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 238.08
+   },
+   "id": 65,
+   "matchupPeriodId": 14,
+   "playoffTierType": "WINNERS_BRACKET",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "14": 94.82,
+     "15": 108.26
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 203.08
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "14": 98.16,
+     "15": 91.32
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 189.48
+   },
+   "id": 66,
+   "matchupPeriodId": 14,
+   "playoffTierType": "WINNERS_BRACKET",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "14": 92.36,
+     "15": 88.94
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 181.3
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "14": 103.0,
+     "15": 117.62
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 220.62
+   },
+   "id": 67,
+   "matchupPeriodId": 14,
+   "playoffTierType": "LOSERS_CONSOLATION_LADDER",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "14": 90.88,
+     "15": 103.2
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 194.08
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "14": 99.22,
+     "15": 125.02
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 224.24
+   },
+   "id": 68,
+   "matchupPeriodId": 14,
+   "playoffTierType": "LOSERS_CONSOLATION_LADDER",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "14": 74.34,
+     "15": 67.34
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 141.68
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "14": 103.14,
+     "15": 111.12
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 214.26
+   },
+   "id": 69,
+   "matchupPeriodId": 14,
+   "playoffTierType": "LOSERS_CONSOLATION_LADDER",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "cumulativeScoreLive": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "16": 88.32,
+     "17": 92.38
+    },
+    "teamId": 4,
+    "tiebreak": 0.0,
+    "totalPoints": 180.7,
+    "totalPointsLive": 180.7
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "cumulativeScoreLive": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "16": 131.4,
+     "17": 153.6
+    },
+    "teamId": 2,
+    "tiebreak": 0.0,
+    "totalPoints": 285.0,
+    "totalPointsLive": 285.0
+   },
+   "id": 70,
+   "matchupPeriodId": 15,
+   "playoffTierType": "WINNERS_BRACKET",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "cumulativeScoreLive": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "16": 121.54,
+     "17": 119.54
+    },
+    "teamId": 1,
+    "tiebreak": 0.0,
+    "totalPoints": 241.08,
+    "totalPointsLive": 241.08
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "cumulativeScoreLive": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "16": 124.46,
+     "17": 89.3
+    },
+    "teamId": 7,
+    "tiebreak": 0.0,
+    "totalPoints": 213.76,
+    "totalPointsLive": 213.76
+   },
+   "id": 71,
+   "matchupPeriodId": 15,
+   "playoffTierType": "WINNERS_CONSOLATION_LADDER",
+   "winner": "AWAY"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "cumulativeScoreLive": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "16": 92.72,
+     "17": 104.22
+    },
+    "teamId": 5,
+    "tiebreak": 0.0,
+    "totalPoints": 196.94,
+    "totalPointsLive": 196.94
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "cumulativeScoreLive": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "16": 90.94,
+     "17": 133.1
+    },
+    "teamId": 3,
+    "tiebreak": 0.0,
+    "totalPoints": 224.04,
+    "totalPointsLive": 224.04
+   },
+   "id": 72,
+   "matchupPeriodId": 15,
+   "playoffTierType": "LOSERS_CONSOLATION_LADDER",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "cumulativeScoreLive": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "16": 87.18,
+     "17": 89.08
+    },
+    "teamId": 6,
+    "tiebreak": 0.0,
+    "totalPoints": 176.26,
+    "totalPointsLive": 176.26
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "cumulativeScoreLive": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "16": 74.38,
+     "17": 108.04
+    },
+    "teamId": 8,
+    "tiebreak": 0.0,
+    "totalPoints": 182.42,
+    "totalPointsLive": 182.42
+   },
+   "id": 73,
+   "matchupPeriodId": 15,
+   "playoffTierType": "LOSERS_CONSOLATION_LADDER",
+   "winner": "HOME"
+  },
+  {
+   "away": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "cumulativeScoreLive": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "16": 94.1,
+     "17": 87.24
+    },
+    "teamId": 9,
+    "tiebreak": 0.0,
+    "totalPoints": 181.34,
+    "totalPointsLive": 181.34
+   },
+   "home": {
+    "adjustment": 0.0,
+    "cumulativeScore": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "cumulativeScoreLive": {
+     "losses": 0,
+     "statBySlot": null,
+     "ties": 0,
+     "wins": 0
+    },
+    "eliminationMatchupPeriod": 0,
+    "pointsByScoringPeriod": {
+     "16": 135.14,
+     "17": 66.3
+    },
+    "teamId": 10,
+    "tiebreak": 0.0,
+    "totalPoints": 201.44,
+    "totalPointsLive": 201.44
+   },
+   "id": 74,
+   "matchupPeriodId": 15,
+   "playoffTierType": "LOSERS_CONSOLATION_LADDER",
+   "winner": "HOME"
+  }
+ ],
+ "teams": [
+  {
+   "abbrev": "ALBE",
+   "currentProjectedRank": 0,
+   "divisionId": 1,
+   "draftDayProjectedRank": 0,
+   "eliminated": false,
+   "eliminationMatchupPeriod": 0,
+   "id": 1,
+   "isActive": false,
+   "isTransactionLocked": false,
+   "logo": "https://nbcprofootballtalk.files.wordpress.com/2012/01/bart-scott.jpg?w=250",
+   "logoType": "CUSTOM_VALID",
+   "name": "Hey Darnold Ring my Bell",
+   "owners": [
+    "m_a4f0d563b98b1fb1"
+   ],
+   "playoffSeed": 4,
+   "points": 1303.9,
+   "pointsAdjusted": 0.0,
+   "pointsDelta": 0.0,
+   "primaryOwner": "m_a4f0d563b98b1fb1",
+   "rankCalculatedFinal": 3,
+   "rankFinal": 0,
+   "record": {
+    "away": {
+     "gamesBack": 0.0,
+     "losses": 1,
+     "percentage": 0.8571428571428571,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 4,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 6
+    },
+    "division": {
+     "gamesBack": 3.0,
+     "losses": 3,
+     "percentage": 0.625,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 1,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 5
+    },
+    "home": {
+     "gamesBack": 0.0,
+     "losses": 4,
+     "percentage": 0.3333333333333333,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 1,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 2
+    },
+    "overall": {
+     "gamesBack": 3.0,
+     "losses": 5,
+     "percentage": 0.6153846153846154,
+     "pointsAgainst": 1267.1599999999999,
+     "pointsFor": 1303.9,
+     "streakLength": 2,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 8
+    }
+   },
+   "transactionCounter": {
+    "acquisitionBudgetSpent": 0,
+    "acquisitions": 29,
+    "drops": 29,
+    "matchupAcquisitionTotals": {
+     "10": 1,
+     "11": 1,
+     "12": 2,
+     "13": 3,
+     "14": 4,
+     "15": 3,
+     "2": 1,
+     "3": 4,
+     "4": 2,
+     "5": 1,
+     "6": 4,
+     "7": 1,
+     "8": 1,
+     "9": 1
+    },
+    "misc": 0,
+    "moveToActive": 64,
+    "moveToIR": 0,
+    "paid": 0.0,
+    "teamCharges": 0.0,
+    "trades": 0
+   },
+   "valuesByStat": {
+    "101": 0.0,
+    "102": 0.0,
+    "103": 0.0,
+    "104": 2.0,
+    "123": 0.0,
+    "124": 2.0,
+    "125": 0.0,
+    "128": 0.0,
+    "129": 1.0,
+    "130": 4.0,
+    "132": 2.0,
+    "133": 3.0,
+    "134": 1.0,
+    "135": 2.0,
+    "136": 0.0,
+    "19": 2.0,
+    "198": 2.0,
+    "20": 10.0,
+    "201": 0.0,
+    "206": 0.0,
+    "209": 0.0,
+    "24": 2358.0,
+    "25": 36.0,
+    "26": 3.0,
+    "3": 4677.0,
+    "4": 33.0,
+    "42": 5389.0,
+    "43": 45.0,
+    "44": 0.0,
+    "63": 0.0,
+    "72": 7.0,
+    "77": 10.0,
+    "80": 13.0,
+    "85": 6.0,
+    "86": 40.0,
+    "89": 0.0,
+    "90": 0.0,
+    "91": 2.0,
+    "92": 4.0,
+    "93": 0.0,
+    "95": 8.0,
+    "96": 15.0,
+    "97": 1.0,
+    "98": 1.0,
+    "99": 50.0
+   },
+   "waiverRank": 7
+  },
+  {
+   "abbrev": "GRUD",
+   "currentProjectedRank": 0,
+   "divisionId": 0,
+   "draftDayProjectedRank": 0,
+   "eliminated": false,
+   "eliminationMatchupPeriod": 0,
+   "id": 2,
+   "isActive": false,
+   "isTransactionLocked": false,
+   "logo": "https://g.espncdn.com/s/ffllm/logos/CoachGruden-ChipWass/gruden-01.svg",
+   "logoType": "VECTOR",
+   "name": "Grudee's Grinder",
+   "owners": [
+    "m_385722442272a1ef"
+   ],
+   "playoffSeed": 1,
+   "points": 1343.52,
+   "pointsAdjusted": 0.0,
+   "pointsDelta": 0.0,
+   "primaryOwner": "m_385722442272a1ef",
+   "rankCalculatedFinal": 1,
+   "rankFinal": 0,
+   "record": {
+    "away": {
+     "gamesBack": 0.0,
+     "losses": 1,
+     "percentage": 0.8333333333333334,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 2,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 5
+    },
+    "division": {
+     "gamesBack": 0.0,
+     "losses": 0,
+     "percentage": 1.0,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 8,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 8
+    },
+    "home": {
+     "gamesBack": 0.0,
+     "losses": 1,
+     "percentage": 0.8571428571428571,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 3,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 6
+    },
+    "overall": {
+     "gamesBack": 0.0,
+     "losses": 2,
+     "percentage": 0.8461538461538461,
+     "pointsAgainst": 1145.66,
+     "pointsFor": 1343.52,
+     "streakLength": 5,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 11
+    }
+   },
+   "transactionCounter": {
+    "acquisitionBudgetSpent": 0,
+    "acquisitions": 52,
+    "drops": 52,
+    "matchupAcquisitionTotals": {
+     "10": 2,
+     "11": 4,
+     "12": 2,
+     "13": 2,
+     "14": 7,
+     "15": 7,
+     "2": 2,
+     "3": 2,
+     "4": 6,
+     "5": 2,
+     "6": 3,
+     "7": 6,
+     "8": 4,
+     "9": 3
+    },
+    "misc": 0,
+    "moveToActive": 79,
+    "moveToIR": 0,
+    "paid": 0.0,
+    "teamCharges": 0.0,
+    "trades": 2
+   },
+   "valuesByStat": {
+    "101": 1.0,
+    "102": 0.0,
+    "103": 3.0,
+    "104": 1.0,
+    "123": 3.0,
+    "124": 1.0,
+    "125": 0.0,
+    "128": 0.0,
+    "129": 0.0,
+    "130": 3.0,
+    "132": 4.0,
+    "133": 1.0,
+    "134": 2.0,
+    "135": 0.0,
+    "136": 0.0,
+    "19": 0.0,
+    "198": 3.0,
+    "20": 8.0,
+    "201": 0.0,
+    "206": 0.0,
+    "209": 0.0,
+    "24": 4514.0,
+    "25": 41.0,
+    "26": 3.0,
+    "3": 4815.0,
+    "4": 37.0,
+    "42": 3806.0,
+    "43": 34.0,
+    "44": 4.0,
+    "63": 0.0,
+    "72": 11.0,
+    "77": 10.0,
+    "80": 18.0,
+    "85": 3.0,
+    "86": 56.0,
+    "89": 0.0,
+    "90": 0.0,
+    "91": 2.0,
+    "92": 2.0,
+    "93": 0.0,
+    "95": 14.0,
+    "96": 7.0,
+    "97": 1.0,
+    "98": 1.0,
+    "99": 39.0
+   },
+   "waiverRank": 10
+  },
+  {
+   "abbrev": "RIP",
+   "currentProjectedRank": 0,
+   "divisionId": 1,
+   "draftDayProjectedRank": 0,
+   "eliminated": false,
+   "eliminationMatchupPeriod": 0,
+   "id": 3,
+   "isActive": false,
+   "isTransactionLocked": false,
+   "logo": "https://g.espncdn.com/lm-static/ffl/images/default_logos/6.svg",
+   "logoType": "VECTOR",
+   "name": "RIP  August Ames",
+   "owners": [
+    "m_63ab5f2297451f37"
+   ],
+   "playoffSeed": 5,
+   "points": 1300.02,
+   "pointsAdjusted": 0.0,
+   "pointsDelta": 0.0,
+   "primaryOwner": "m_63ab5f2297451f37",
+   "rankCalculatedFinal": 5,
+   "rankFinal": 0,
+   "record": {
+    "away": {
+     "gamesBack": 0.0,
+     "losses": 2,
+     "percentage": 0.7142857142857143,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 5,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 5
+    },
+    "division": {
+     "gamesBack": 4.0,
+     "losses": 4,
+     "percentage": 0.5,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 1,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 4
+    },
+    "home": {
+     "gamesBack": 0.0,
+     "losses": 5,
+     "percentage": 0.16666666666666666,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 5,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 1
+    },
+    "overall": {
+     "gamesBack": 5.0,
+     "losses": 7,
+     "percentage": 0.46153846153846156,
+     "pointsAgainst": 1343.4600000000003,
+     "pointsFor": 1300.02,
+     "streakLength": 1,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 6
+    }
+   },
+   "transactionCounter": {
+    "acquisitionBudgetSpent": 0,
+    "acquisitions": 26,
+    "drops": 26,
+    "matchupAcquisitionTotals": {
+     "10": 2,
+     "11": 3,
+     "12": 2,
+     "2": 2,
+     "3": 3,
+     "4": 2,
+     "5": 1,
+     "6": 2,
+     "7": 2,
+     "8": 3,
+     "9": 4
+    },
+    "misc": 0,
+    "moveToActive": 64,
+    "moveToIR": 0,
+    "paid": 0.0,
+    "teamCharges": 0.0,
+    "trades": 1
+   },
+   "valuesByStat": {
+    "101": 0.0,
+    "102": 0.0,
+    "103": 3.0,
+    "104": 1.0,
+    "123": 3.0,
+    "124": 0.0,
+    "125": 0.0,
+    "128": 0.0,
+    "129": 3.0,
+    "130": 8.0,
+    "132": 2.0,
+    "133": 2.0,
+    "134": 0.0,
+    "135": 0.0,
+    "136": 0.0,
+    "19": 0.0,
+    "198": 7.0,
+    "20": 10.0,
+    "201": 0.0,
+    "206": 0.0,
+    "209": 0.0,
+    "24": 2180.0,
+    "25": 20.0,
+    "26": 1.0,
+    "3": 4552.0,
+    "4": 45.0,
+    "42": 5656.0,
+    "43": 31.0,
+    "44": 1.0,
+    "63": 0.0,
+    "72": 7.0,
+    "77": 7.0,
+    "80": 19.0,
+    "85": 6.0,
+    "86": 44.0,
+    "89": 0.0,
+    "90": 2.0,
+    "91": 4.0,
+    "92": 2.0,
+    "93": 0.0,
+    "95": 14.0,
+    "96": 9.0,
+    "97": 2.0,
+    "98": 1.0,
+    "99": 53.0
+   },
+   "waiverRank": 6
+  },
+  {
+   "abbrev": "SEDA",
+   "currentProjectedRank": 0,
+   "divisionId": 0,
+   "draftDayProjectedRank": 0,
+   "eliminated": false,
+   "eliminationMatchupPeriod": 0,
+   "id": 4,
+   "isActive": false,
+   "isTransactionLocked": false,
+   "logo": "https://s-media-cache-ak0.pinimg.com/originals/a3/d0/a7/a3d0a779cb7d48a0fb17636b750c6a98.jpg",
+   "logoType": "CUSTOM_VALID",
+   "name": "Gronk's  Kerryon Johnson",
+   "owners": [
+    "m_b1fe61717c673d2c"
+   ],
+   "playoffSeed": 3,
+   "points": 1425.24,
+   "pointsAdjusted": 0.0,
+   "pointsDelta": 0.0,
+   "primaryOwner": "m_b1fe61717c673d2c",
+   "rankCalculatedFinal": 2,
+   "rankFinal": 0,
+   "record": {
+    "away": {
+     "gamesBack": 0.0,
+     "losses": 1,
+     "percentage": 0.8333333333333334,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 5,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 5
+    },
+    "division": {
+     "gamesBack": 2.0,
+     "losses": 2,
+     "percentage": 0.75,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 2,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 6
+    },
+    "home": {
+     "gamesBack": 0.0,
+     "losses": 4,
+     "percentage": 0.42857142857142855,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 2,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 3
+    },
+    "overall": {
+     "gamesBack": 3.0,
+     "losses": 5,
+     "percentage": 0.6153846153846154,
+     "pointsAgainst": 1206.18,
+     "pointsFor": 1425.24,
+     "streakLength": 2,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 8
+    }
+   },
+   "transactionCounter": {
+    "acquisitionBudgetSpent": 0,
+    "acquisitions": 46,
+    "drops": 45,
+    "matchupAcquisitionTotals": {
+     "1": 2,
+     "10": 2,
+     "11": 2,
+     "12": 2,
+     "13": 3,
+     "14": 4,
+     "15": 8,
+     "2": 2,
+     "3": 3,
+     "4": 3,
+     "5": 5,
+     "6": 5,
+     "7": 3,
+     "9": 2
+    },
+    "misc": 0,
+    "moveToActive": 63,
+    "moveToIR": 0,
+    "paid": 0.0,
+    "teamCharges": 0.0,
+    "trades": 2
+   },
+   "valuesByStat": {
+    "101": 0.0,
+    "102": 0.0,
+    "103": 0.0,
+    "104": 1.0,
+    "123": 1.0,
+    "124": 0.0,
+    "125": 0.0,
+    "128": 0.0,
+    "129": 2.0,
+    "130": 3.0,
+    "132": 3.0,
+    "133": 1.0,
+    "134": 1.0,
+    "135": 0.0,
+    "136": 0.0,
+    "19": 3.0,
+    "198": 3.0,
+    "20": 8.0,
+    "201": 0.0,
+    "206": 0.0,
+    "209": 0.0,
+    "24": 4240.0,
+    "25": 40.0,
+    "26": 4.0,
+    "3": 5358.0,
+    "4": 37.0,
+    "42": 3877.0,
+    "43": 25.0,
+    "44": 2.0,
+    "63": 0.0,
+    "72": 12.0,
+    "77": 7.0,
+    "80": 13.0,
+    "85": 2.0,
+    "86": 54.0,
+    "89": 0.0,
+    "90": 2.0,
+    "91": 3.0,
+    "92": 4.0,
+    "93": 0.0,
+    "95": 16.0,
+    "96": 12.0,
+    "97": 2.0,
+    "98": 0.0,
+    "99": 46.0
+   },
+   "waiverRank": 8
+  },
+  {
+   "abbrev": "JOYC",
+   "currentProjectedRank": 0,
+   "divisionId": 1,
+   "draftDayProjectedRank": 0,
+   "eliminated": false,
+   "eliminationMatchupPeriod": 0,
+   "id": 5,
+   "isActive": false,
+   "isTransactionLocked": false,
+   "logo": "https://g.espncdn.com/lm-static/logo-packs/ffl/CrazyHelmets-ToddDetwiler/Helmets_11.svg",
+   "logoType": "VECTOR",
+   "name": "Gangs of Green Bay",
+   "owners": [
+    "m_e4b01c947100692d"
+   ],
+   "playoffSeed": 7,
+   "points": 1165.46,
+   "pointsAdjusted": 0.0,
+   "pointsDelta": 0.0,
+   "primaryOwner": "m_e4b01c947100692d",
+   "rankCalculatedFinal": 6,
+   "rankFinal": 0,
+   "record": {
+    "away": {
+     "gamesBack": 0.0,
+     "losses": 4,
+     "percentage": 0.42857142857142855,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 3,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 3
+    },
+    "division": {
+     "gamesBack": 4.0,
+     "losses": 4,
+     "percentage": 0.5,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 1,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 4
+    },
+    "home": {
+     "gamesBack": 0.0,
+     "losses": 3,
+     "percentage": 0.5,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 1,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 3
+    },
+    "overall": {
+     "gamesBack": 5.0,
+     "losses": 7,
+     "percentage": 0.46153846153846156,
+     "pointsAgainst": 1221.34,
+     "pointsFor": 1165.46,
+     "streakLength": 2,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 6
+    }
+   },
+   "transactionCounter": {
+    "acquisitionBudgetSpent": 0,
+    "acquisitions": 37,
+    "drops": 37,
+    "matchupAcquisitionTotals": {
+     "10": 5,
+     "11": 3,
+     "12": 3,
+     "13": 1,
+     "14": 3,
+     "2": 1,
+     "3": 2,
+     "4": 1,
+     "5": 2,
+     "6": 2,
+     "7": 5,
+     "8": 3,
+     "9": 5
+    },
+    "misc": 0,
+    "moveToActive": 66,
+    "moveToIR": 0,
+    "paid": 0.0,
+    "teamCharges": 0.0,
+    "trades": 0
+   },
+   "valuesByStat": {
+    "101": 2.0,
+    "102": 0.0,
+    "103": 4.0,
+    "104": 0.0,
+    "123": 4.0,
+    "124": 1.0,
+    "125": 0.0,
+    "128": 0.0,
+    "129": 1.0,
+    "130": 6.0,
+    "132": 3.0,
+    "133": 4.0,
+    "134": 1.0,
+    "135": 0.0,
+    "136": 0.0,
+    "19": 1.0,
+    "198": 2.0,
+    "20": 10.0,
+    "201": 0.0,
+    "206": 0.0,
+    "209": 0.0,
+    "24": 2982.0,
+    "25": 23.0,
+    "26": 2.0,
+    "3": 3586.0,
+    "4": 28.0,
+    "42": 5150.0,
+    "43": 27.0,
+    "44": 2.0,
+    "63": 0.0,
+    "72": 9.0,
+    "77": 8.0,
+    "80": 11.0,
+    "85": 7.0,
+    "86": 47.0,
+    "89": 0.0,
+    "90": 1.0,
+    "91": 3.0,
+    "92": 3.0,
+    "93": 0.0,
+    "95": 18.0,
+    "96": 8.0,
+    "97": 1.0,
+    "98": 1.0,
+    "99": 35.0
+   },
+   "waiverRank": 4
+  },
+  {
+   "abbrev": ":(",
+   "currentProjectedRank": 0,
+   "divisionId": 0,
+   "draftDayProjectedRank": 0,
+   "eliminated": false,
+   "eliminationMatchupPeriod": 0,
+   "id": 6,
+   "isActive": false,
+   "isTransactionLocked": false,
+   "logo": "http://bloximages.newyork1.vip.townnews.com/omaha.com/content/tncms/assets/v3/editorial/6/38/63805c24-2daf-11e5-bc91-ffccc1072c1a/55aaf30da0770.image.jpg",
+   "logoType": "CUSTOM_VALID",
+   "name": "Go Easy On Me",
+   "owners": [
+    "m_a196270bf1721a5c"
+   ],
+   "playoffSeed": 9,
+   "points": 1111.8400000000001,
+   "pointsAdjusted": 0.0,
+   "pointsDelta": 0.0,
+   "primaryOwner": "m_a196270bf1721a5c",
+   "rankCalculatedFinal": 8,
+   "rankFinal": 0,
+   "record": {
+    "away": {
+     "gamesBack": 0.0,
+     "losses": 4,
+     "percentage": 0.3333333333333333,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 1,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 2
+    },
+    "division": {
+     "gamesBack": 6.0,
+     "losses": 6,
+     "percentage": 0.25,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 3,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 2
+    },
+    "home": {
+     "gamesBack": 0.0,
+     "losses": 5,
+     "percentage": 0.2857142857142857,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 4,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 2
+    },
+    "overall": {
+     "gamesBack": 7.0,
+     "losses": 9,
+     "percentage": 0.3076923076923077,
+     "pointsAgainst": 1276.8400000000001,
+     "pointsFor": 1111.8400000000001,
+     "streakLength": 3,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 4
+    }
+   },
+   "transactionCounter": {
+    "acquisitionBudgetSpent": 0,
+    "acquisitions": 48,
+    "drops": 48,
+    "matchupAcquisitionTotals": {
+     "10": 3,
+     "11": 1,
+     "12": 4,
+     "13": 2,
+     "14": 5,
+     "15": 7,
+     "2": 5,
+     "3": 4,
+     "4": 3,
+     "5": 4,
+     "6": 3,
+     "7": 4,
+     "8": 2,
+     "9": 1
+    },
+    "misc": 0,
+    "moveToActive": 79,
+    "moveToIR": 0,
+    "paid": 0.0,
+    "teamCharges": 0.0,
+    "trades": 1
+   },
+   "valuesByStat": {
+    "101": 1.0,
+    "102": 0.0,
+    "103": 3.0,
+    "104": 0.0,
+    "123": 1.0,
+    "124": 1.0,
+    "125": 0.0,
+    "128": 0.0,
+    "129": 2.0,
+    "130": 6.0,
+    "132": 2.0,
+    "133": 0.0,
+    "134": 2.0,
+    "135": 0.0,
+    "136": 0.0,
+    "19": 1.0,
+    "198": 3.0,
+    "20": 11.0,
+    "201": 0.0,
+    "206": 0.0,
+    "209": 0.0,
+    "24": 2145.0,
+    "25": 22.0,
+    "26": 0.0,
+    "3": 4399.0,
+    "4": 23.0,
+    "42": 4509.0,
+    "43": 27.0,
+    "44": 0.0,
+    "63": 0.0,
+    "72": 10.0,
+    "77": 7.0,
+    "80": 16.0,
+    "85": 3.0,
+    "86": 52.0,
+    "89": 1.0,
+    "90": 1.0,
+    "91": 4.0,
+    "92": 2.0,
+    "93": 0.0,
+    "95": 19.0,
+    "96": 12.0,
+    "97": 0.0,
+    "98": 1.0,
+    "99": 62.0
+   },
+   "waiverRank": 2
+  },
+  {
+   "abbrev": "CARP",
+   "currentProjectedRank": 0,
+   "divisionId": 1,
+   "draftDayProjectedRank": 0,
+   "eliminated": false,
+   "eliminationMatchupPeriod": 0,
+   "id": 7,
+   "isActive": false,
+   "isTransactionLocked": false,
+   "name": "Larry Fedora  has CTE",
+   "owners": [
+    "m_f90f2363985047cb"
+   ],
+   "playoffSeed": 2,
+   "points": 1360.5600000000002,
+   "pointsAdjusted": 0.0,
+   "pointsDelta": 0.0,
+   "primaryOwner": "m_f90f2363985047cb",
+   "rankCalculatedFinal": 4,
+   "rankFinal": 0,
+   "record": {
+    "away": {
+     "gamesBack": 0.0,
+     "losses": 1,
+     "percentage": 0.8571428571428571,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 5,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 6
+    },
+    "division": {
+     "gamesBack": 4.0,
+     "losses": 4,
+     "percentage": 0.5,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 3,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 4
+    },
+    "home": {
+     "gamesBack": 0.0,
+     "losses": 4,
+     "percentage": 0.3333333333333333,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 1,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 2
+    },
+    "overall": {
+     "gamesBack": 3.0,
+     "losses": 5,
+     "percentage": 0.6153846153846154,
+     "pointsAgainst": 1304.0600000000002,
+     "pointsFor": 1360.5600000000002,
+     "streakLength": 3,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 8
+    }
+   },
+   "transactionCounter": {
+    "acquisitionBudgetSpent": 0,
+    "acquisitions": 13,
+    "drops": 13,
+    "matchupAcquisitionTotals": {
+     "10": 2,
+     "13": 1,
+     "15": 1,
+     "4": 4,
+     "5": 2,
+     "6": 1,
+     "8": 1,
+     "9": 1
+    },
+    "misc": 0,
+    "moveToActive": 38,
+    "moveToIR": 0,
+    "paid": 0.0,
+    "teamCharges": 0.0,
+    "trades": 1
+   },
+   "valuesByStat": {
+    "101": 0.0,
+    "102": 0.0,
+    "103": 1.0,
+    "104": 2.0,
+    "123": 2.0,
+    "124": 2.0,
+    "125": 0.0,
+    "128": 0.0,
+    "129": 0.0,
+    "130": 7.0,
+    "132": 4.0,
+    "133": 2.0,
+    "134": 2.0,
+    "135": 0.0,
+    "136": 0.0,
+    "19": 2.0,
+    "198": 1.0,
+    "20": 12.0,
+    "201": 0.0,
+    "206": 0.0,
+    "209": 0.0,
+    "24": 2890.0,
+    "25": 19.0,
+    "26": 0.0,
+    "3": 4795.0,
+    "4": 33.0,
+    "42": 5730.0,
+    "43": 45.0,
+    "44": 2.0,
+    "63": 0.0,
+    "72": 17.0,
+    "77": 3.0,
+    "80": 27.0,
+    "85": 3.0,
+    "86": 46.0,
+    "89": 0.0,
+    "90": 0.0,
+    "91": 1.0,
+    "92": 4.0,
+    "93": 0.0,
+    "95": 20.0,
+    "96": 6.0,
+    "97": 1.0,
+    "98": 0.0,
+    "99": 38.0
+   },
+   "waiverRank": 9
+  },
+  {
+   "abbrev": "WOLF",
+   "currentProjectedRank": 0,
+   "divisionId": 0,
+   "draftDayProjectedRank": 0,
+   "eliminated": false,
+   "eliminationMatchupPeriod": 0,
+   "id": 8,
+   "isActive": false,
+   "isTransactionLocked": false,
+   "logo": "https://i.ytimg.com/vi/W0HFHON3M1k/maxresdefault.jpg",
+   "logoType": "CUSTOM_VALID",
+   "name": "Ryan's Hinge Date",
+   "owners": [
+    "m_d1839f51a0dae615"
+   ],
+   "playoffSeed": 6,
+   "points": 1289.0200000000002,
+   "pointsAdjusted": 0.0,
+   "pointsDelta": 0.0,
+   "primaryOwner": "m_d1839f51a0dae615",
+   "rankCalculatedFinal": 7,
+   "rankFinal": 0,
+   "record": {
+    "away": {
+     "gamesBack": 0.0,
+     "losses": 3,
+     "percentage": 0.5,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 1,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 3
+    },
+    "division": {
+     "gamesBack": 5.0,
+     "losses": 5,
+     "percentage": 0.375,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 1,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 3
+    },
+    "home": {
+     "gamesBack": 0.0,
+     "losses": 4,
+     "percentage": 0.42857142857142855,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 2,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 3
+    },
+    "overall": {
+     "gamesBack": 5.0,
+     "losses": 7,
+     "percentage": 0.46153846153846156,
+     "pointsAgainst": 1256.34,
+     "pointsFor": 1289.0200000000002,
+     "streakLength": 2,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 6
+    }
+   },
+   "transactionCounter": {
+    "acquisitionBudgetSpent": 0,
+    "acquisitions": 24,
+    "drops": 24,
+    "matchupAcquisitionTotals": {
+     "10": 1,
+     "11": 2,
+     "12": 1,
+     "13": 3,
+     "14": 1,
+     "15": 4,
+     "3": 2,
+     "4": 1,
+     "5": 2,
+     "6": 2,
+     "7": 2,
+     "8": 3
+    },
+    "misc": 0,
+    "moveToActive": 66,
+    "moveToIR": 0,
+    "paid": 0.0,
+    "teamCharges": 0.0,
+    "trades": 0
+   },
+   "valuesByStat": {
+    "101": 0.0,
+    "102": 0.0,
+    "103": 0.0,
+    "104": 0.0,
+    "123": 1.0,
+    "124": 1.0,
+    "125": 0.0,
+    "128": 0.0,
+    "129": 2.0,
+    "130": 4.0,
+    "132": 4.0,
+    "133": 3.0,
+    "134": 0.0,
+    "135": 1.0,
+    "136": 0.0,
+    "19": 0.0,
+    "198": 7.0,
+    "20": 14.0,
+    "201": 0.0,
+    "206": 0.0,
+    "209": 0.0,
+    "24": 3513.0,
+    "25": 34.0,
+    "26": 1.0,
+    "3": 4286.0,
+    "4": 30.0,
+    "42": 4130.0,
+    "43": 26.0,
+    "44": 2.0,
+    "63": 0.0,
+    "72": 8.0,
+    "77": 7.0,
+    "80": 24.0,
+    "85": 2.0,
+    "86": 40.0,
+    "89": 0.0,
+    "90": 0.0,
+    "91": 3.0,
+    "92": 1.0,
+    "93": 0.0,
+    "95": 15.0,
+    "96": 11.0,
+    "97": 1.0,
+    "98": 1.0,
+    "99": 45.0
+   },
+   "waiverRank": 5
+  },
+  {
+   "abbrev": "Meow",
+   "currentProjectedRank": 0,
+   "divisionId": 0,
+   "draftDayProjectedRank": 0,
+   "eliminated": false,
+   "eliminationMatchupPeriod": 0,
+   "id": 9,
+   "isActive": false,
+   "isTransactionLocked": false,
+   "logo": "https://g.espncdn.com/s/ffllm/logos/BoneHeads-ToddDetwiler/BoneHeads-16.svg",
+   "logoType": "VECTOR",
+   "name": "Hamids  Protege",
+   "owners": [
+    "m_f6f4dd963d3c5b89"
+   ],
+   "playoffSeed": 10,
+   "points": 1077.2399999999998,
+   "pointsAdjusted": 0.0,
+   "pointsDelta": 0.0,
+   "primaryOwner": "m_f6f4dd963d3c5b89",
+   "rankCalculatedFinal": 10,
+   "rankFinal": 0,
+   "record": {
+    "away": {
+     "gamesBack": 0.0,
+     "losses": 3,
+     "percentage": 0.5,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 3,
+     "streakType": "WIN",
+     "ties": 0,
+     "wins": 3
+    },
+    "division": {
+     "gamesBack": 7.0,
+     "losses": 7,
+     "percentage": 0.125,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 1,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 1
+    },
+    "home": {
+     "gamesBack": 0.0,
+     "losses": 7,
+     "percentage": 0.0,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 7,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 0
+    },
+    "overall": {
+     "gamesBack": 8.0,
+     "losses": 10,
+     "percentage": 0.23076923076923078,
+     "pointsAgainst": 1254.28,
+     "pointsFor": 1077.2399999999998,
+     "streakLength": 1,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 3
+    }
+   },
+   "transactionCounter": {
+    "acquisitionBudgetSpent": 0,
+    "acquisitions": 6,
+    "drops": 6,
+    "matchupAcquisitionTotals": {
+     "11": 1,
+     "5": 1,
+     "6": 1,
+     "7": 1,
+     "8": 1,
+     "9": 1
+    },
+    "misc": 0,
+    "moveToActive": 30,
+    "moveToIR": 0,
+    "paid": 0.0,
+    "teamCharges": 0.0,
+    "trades": 2
+   },
+   "valuesByStat": {
+    "101": 0.0,
+    "102": 0.0,
+    "103": 1.0,
+    "104": 0.0,
+    "123": 2.0,
+    "124": 3.0,
+    "125": 0.0,
+    "128": 0.0,
+    "129": 1.0,
+    "130": 9.0,
+    "132": 2.0,
+    "133": 4.0,
+    "134": 0.0,
+    "135": 0.0,
+    "136": 0.0,
+    "19": 1.0,
+    "198": 1.0,
+    "20": 15.0,
+    "201": 0.0,
+    "206": 0.0,
+    "209": 0.0,
+    "24": 2342.0,
+    "25": 16.0,
+    "26": 1.0,
+    "3": 4369.0,
+    "4": 40.0,
+    "42": 4043.0,
+    "43": 22.0,
+    "44": 0.0,
+    "63": 0.0,
+    "72": 6.0,
+    "77": 7.0,
+    "80": 16.0,
+    "85": 5.0,
+    "86": 60.0,
+    "89": 0.0,
+    "90": 1.0,
+    "91": 5.0,
+    "92": 2.0,
+    "93": 0.0,
+    "95": 12.0,
+    "96": 8.0,
+    "97": 1.0,
+    "98": 0.0,
+    "99": 36.0
+   },
+   "waiverRank": 1
+  },
+  {
+   "abbrev": "RRRP",
+   "currentProjectedRank": 0,
+   "divisionId": 1,
+   "draftDayProjectedRank": 0,
+   "eliminated": false,
+   "eliminationMatchupPeriod": 0,
+   "id": 10,
+   "isActive": false,
+   "isTransactionLocked": false,
+   "name": "Ryan Penetrations",
+   "owners": [
+    "m_41bf267dc2a08507"
+   ],
+   "playoffSeed": 8,
+   "points": 1154.0800000000002,
+   "pointsAdjusted": 0.0,
+   "pointsDelta": 0.0,
+   "primaryOwner": "m_41bf267dc2a08507",
+   "rankCalculatedFinal": 9,
+   "rankFinal": 0,
+   "record": {
+    "away": {
+     "gamesBack": 0.0,
+     "losses": 2,
+     "percentage": 0.7142857142857143,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 1,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 5
+    },
+    "division": {
+     "gamesBack": 5.0,
+     "losses": 5,
+     "percentage": 0.375,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 4,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 3
+    },
+    "home": {
+     "gamesBack": 0.0,
+     "losses": 6,
+     "percentage": 0.0,
+     "pointsAgainst": 0.0,
+     "pointsFor": 0.0,
+     "streakLength": 6,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 0
+    },
+    "overall": {
+     "gamesBack": 6.0,
+     "losses": 8,
+     "percentage": 0.38461538461538464,
+     "pointsAgainst": 1255.5599999999997,
+     "pointsFor": 1154.0800000000002,
+     "streakLength": 3,
+     "streakType": "LOSS",
+     "ties": 0,
+     "wins": 5
+    }
+   },
+   "transactionCounter": {
+    "acquisitionBudgetSpent": 0,
+    "acquisitions": 21,
+    "drops": 21,
+    "matchupAcquisitionTotals": {
+     "10": 1,
+     "11": 1,
+     "12": 3,
+     "3": 1,
+     "4": 2,
+     "5": 4,
+     "6": 1,
+     "7": 3,
+     "8": 2,
+     "9": 2
+    },
+    "misc": 0,
+    "moveToActive": 40,
+    "moveToIR": 0,
+    "paid": 0.0,
+    "teamCharges": 0.0,
+    "trades": 1
+   },
+   "valuesByStat": {
+    "101": 0.0,
+    "102": 0.0,
+    "103": 0.0,
+    "104": 2.0,
+    "123": 3.0,
+    "124": 2.0,
+    "125": 0.0,
+    "128": 0.0,
+    "129": 1.0,
+    "130": 4.0,
+    "132": 4.0,
+    "133": 1.0,
+    "134": 1.0,
+    "135": 0.0,
+    "136": 0.0,
+    "19": 2.0,
+    "198": 1.0,
+    "20": 12.0,
+    "201": 0.0,
+    "206": 0.0,
+    "209": 0.0,
+    "24": 2481.0,
+    "25": 21.0,
+    "26": 0.0,
+    "3": 4010.0,
+    "4": 28.0,
+    "42": 4921.0,
+    "43": 33.0,
+    "44": 1.0,
+    "63": 0.0,
+    "72": 9.0,
+    "77": 8.0,
+    "80": 19.0,
+    "85": 2.0,
+    "86": 47.0,
+    "89": 0.0,
+    "90": 3.0,
+    "91": 3.0,
+    "92": 3.0,
+    "93": 0.0,
+    "95": 9.0,
+    "96": 11.0,
+    "97": 0.0,
+    "98": 2.0,
+    "99": 40.0
+   },
+   "waiverRank": 3
+  }
+ ]
+}
