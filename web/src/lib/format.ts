@@ -31,14 +31,24 @@ export function seasonRange(seasons: number[]): string {
   return lo === hi ? `${lo}` : `${lo}–${hi}`;
 }
 
+// Full color at .250 / .750: real records rarely stray further, and a gentler ramp washes out.
+function shadeParts(winPct: number): [hue: string, strength: string] {
+  const t = Math.min(1, Math.abs(winPct - 0.5) / 0.25);
+  return [winPct >= 0.5 ? "var(--win)" : "var(--loss)", `${Math.round(8 + t * 72)}%`];
+}
+
 /**
  * Inline style for a cell shaded by win percentage: orange above .500, lavender below, the
  * colors of the v0 report. The mixing happens in CSS (see .shade in global.css), so the same
  * value reads correctly in light and dark mode.
  */
 export function shade(winPct: number): string {
-  // Full color at .250 / .750: real records rarely stray further, and a gentler ramp washes out.
-  const strength = Math.min(1, Math.abs(winPct - 0.5) / 0.25);
-  const hue = winPct >= 0.5 ? "var(--win)" : "var(--loss)";
-  return `--shade: ${hue}; --strength: ${Math.round(8 + strength * 72)}%`;
+  const [hue, strength] = shadeParts(winPct);
+  return `--shade: ${hue}; --strength: ${strength}`;
+}
+
+/** The color shade() mixes, as a plain CSS value, for cells that switch between two shadings. */
+export function shadeColor(winPct: number): string {
+  const [hue, strength] = shadeParts(winPct);
+  return `color-mix(in oklab, ${hue} ${strength}, var(--surface))`;
 }
