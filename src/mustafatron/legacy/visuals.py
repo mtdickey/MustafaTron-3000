@@ -6,6 +6,7 @@ from sklearn.linear_model import LinearRegression
 from espn_api.football import League
 
 from mustafatron.identity import load_managers
+from mustafatron.rules import load_rules
 from mustafatron.legacy import data_utils as du
 
 
@@ -15,7 +16,7 @@ def short_name(team_owner: str) -> str:
 
 def biggest_steals_chart(draft_df: pd.DataFrame, week_number: int,
                          n_steals_to_plot: int = 10,
-                         steals_after_rd: int = 1,
+                         steals_after_rd: int = load_rules().draft_review.steals_after_round,
                          bar_color = '#31a354'): # '#998ec3' - purple
     """Create a chart of the biggest steals from the draft, as defined by points above/below expected from
      a linear regression modeling fantasy points compared to position avg. as a factor of draft pick.
@@ -56,7 +57,7 @@ def biggest_steals_chart(draft_df: pd.DataFrame, week_number: int,
 
 def biggest_busts_chart(draft_df: pd.DataFrame, week_number: int,
                         n_busts_to_plot: int = 10,                        
-                        busts_lte_rd: int = 4,
+                        busts_lte_rd: int = load_rules().draft_review.busts_through_round,
                         bar_color = '#de2d26'): # '#f1a340' - orange
     """Create a chart of the biggest busts from the draft, as defined by points above/below expected from
      a linear regression modeling fantasy points compared to position avg. as a factor of draft pick.
@@ -90,7 +91,7 @@ def biggest_busts_chart(draft_df: pd.DataFrame, week_number: int,
     ax.set_xlabel('', fontsize=10) # 'Points Above Expected'
     plt.yticks(fontsize=7)
     plt.xticks(fontsize=10)
-    plt.title(f"Biggest Busts of Rds. 1 - 4\nThrough Week {week_number}", fontsize=10)
+    plt.title(f"Biggest Busts of Rds. 1 - {busts_lte_rd}\nThrough Week {week_number}", fontsize=10)
     plt.savefig(f'output/plots/biggest-busts-week-{week_number}.png', dpi=300, bbox_inches='tight')
 
 

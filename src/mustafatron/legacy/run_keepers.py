@@ -7,6 +7,7 @@ import pandas as pd
 from espn_api.football import League
 from mustafatron.config import get_settings
 from mustafatron.legacy import data_utils as du
+from mustafatron.rules import load_rules
 
 #%%
 
@@ -33,8 +34,9 @@ draft_df = du.get_draft_df(league)
 
 
 # %%
+eligible_after_round = load_rules().keeper_eligible_after_round(league.year)
 keepers = rosters_df[['player_id', 'player_name', 'team_owner']].merge(draft_df[
-    draft_df['round_num'] > 3][['player_id', 'round_num', 'round_pick', 'team_name']], on = 'player_id')
+    draft_df['round_num'] > eligible_after_round][['player_id', 'round_num', 'round_pick', 'team_name']], on = 'player_id')
 
 # %%
 os.makedirs('output/keepers', exist_ok=True)
