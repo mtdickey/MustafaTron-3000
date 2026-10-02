@@ -1,6 +1,6 @@
 # MustafaTron-3000
 
-The league hub for **Mustafa Greene's Fan Club** (ESPN league 763471, 10 teams, 2015–present):
+The league hub for **Mustafa Greene's Fan Club** (10 teams, 2015–present):
 all-time head-to-head records, rivalries, standings and records book first, weekly in-season
 reports second, and eventually per-manager logins for keeper selection.
 
