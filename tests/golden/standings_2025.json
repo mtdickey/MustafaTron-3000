@@ -1,0 +1,96 @@
+{
+ "_source": "ESPN final standings for 2025, from data/raw/2025/matchups.json (rankCalculatedFinal, record.overall, playoffSeed). To verify by hand: ESPN league page -> League -> History. Team names have runs of whitespace collapsed, as the transform does.",
+ "season": 2025,
+ "standings": [
+  {
+   "rank": 1,
+   "manager": "wolfe",
+   "team": "Will Trade Puka for a 401k",
+   "record": "9-4-0",
+   "points_for": 1460.68,
+   "points_against": 1405.84,
+   "seed": 2
+  },
+  {
+   "rank": 2,
+   "manager": "richardson",
+   "team": "Sects Addicts",
+   "record": "8-5-0",
+   "points_for": 1506.54,
+   "points_against": 1397.52,
+   "seed": 4
+  },
+  {
+   "rank": 3,
+   "manager": "edwards",
+   "team": "Sir Purr's Book Club",
+   "record": "9-4-0",
+   "points_for": 1441.94,
+   "points_against": 1385.46,
+   "seed": 3
+  },
+  {
+   "rank": 4,
+   "manager": "carpenter",
+   "team": "The Good Guys",
+   "record": "9-4-0",
+   "points_for": 1534.9,
+   "points_against": 1228.24,
+   "seed": 1
+  },
+  {
+   "rank": 5,
+   "manager": "dickey",
+   "team": "MidTron 3000",
+   "record": "7-6-0",
+   "points_for": 1516.6,
+   "points_against": 1381.9,
+   "seed": 5
+  },
+  {
+   "rank": 6,
+   "manager": "albert",
+   "team": "A-Aron GlennGang",
+   "record": "4-9-0",
+   "points_for": 1350.32,
+   "points_against": 1514.78,
+   "seed": 8
+  },
+  {
+   "rank": 7,
+   "manager": "hunter",
+   "team": "Wade Avenue Pickles",
+   "record": "4-9-0",
+   "points_for": 1300.34,
+   "points_against": 1438.3,
+   "seed": 10
+  },
+  {
+   "rank": 8,
+   "manager": "joyce",
+   "team": "The Orphanage",
+   "record": "6-7-0",
+   "points_for": 1348.08,
+   "points_against": 1467.62,
+   "seed": 6
+  },
+  {
+   "rank": 9,
+   "manager": "grudee",
+   "team": "Grudee's Grinder",
+   "record": "4-9-0",
+   "points_for": 1307.1,
+   "points_against": 1410.32,
+   "seed": 9
+  },
+  {
+   "rank": 10,
+   "manager": "wilkins",
+   "team": "This Team Sucks",
+   "record": "5-8-0",
+   "points_for": 1231.3,
+   "points_against": 1367.82,
+   "seed": 7
+  }
+ ]
+}

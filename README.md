@@ -79,9 +79,13 @@ uv run mustafatron publish                            # site JSON -> web/public/
 uv run mustafatron publish --offline --check          # what CI runs: build, validate, schema/ up to date
 uv run mustafatron schema                             # after changing contract.py: regenerate schema/
 uv run python scratch_h2h.py --season 2026 --week 5   # H2H matrix, last week in context, upcoming previews
-uv run pytest                                         # tests
+uv run pytest                                         # tests: offline, no ESPN cookies needed
 uv run ruff check . && uv run ruff format --check .   # lint
 ```
+
+The test suite runs entirely on the committed `data/raw/` (the network is blocked in
+`tests/conftest.py`), including golden files in [`tests/golden/`](tests/golden/): final standings
+for 2015, 2021 and 2025, and every head-to-head series as the original `scratch_h2h.py` computed it.
 
 The local site (`npm run dev` in `web/`) arrives in M2.
 

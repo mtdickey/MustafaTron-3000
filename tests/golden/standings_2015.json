@@ -1,0 +1,96 @@
+{
+ "_source": "ESPN final standings for 2015, from data/raw/2015/matchups.json (rankCalculatedFinal, record.overall, playoffSeed). To verify by hand: ESPN league page -> League -> History. Team names have runs of whitespace collapsed, as the transform does.",
+ "season": 2015,
+ "standings": [
+  {
+   "rank": 1,
+   "manager": "dickey",
+   "team": "My Danny Woodhead",
+   "record": "7-5-1",
+   "points_for": 1136.0,
+   "points_against": 1167.0,
+   "seed": 3
+  },
+  {
+   "rank": 2,
+   "manager": "richardson",
+   "team": "August Ames is a Dilfer Dime",
+   "record": "9-4-0",
+   "points_for": 1364.0,
+   "points_against": 1222.0,
+   "seed": 1
+  },
+  {
+   "rank": 3,
+   "manager": "grudee",
+   "team": "Grudee's Grinder",
+   "record": "8-5-0",
+   "points_for": 1239.0,
+   "points_against": 1215.0,
+   "seed": 2
+  },
+  {
+   "rank": 4,
+   "manager": "wolfe",
+   "team": "Tom Brady's Heavy Hand",
+   "record": "6-7-0",
+   "points_for": 1244.0,
+   "points_against": 1173.0,
+   "seed": 4
+  },
+  {
+   "rank": 5,
+   "manager": "moundous",
+   "team": "Hamids Protege",
+   "record": "5-7-1",
+   "points_for": 1188.0,
+   "points_against": 1266.0,
+   "seed": 8
+  },
+  {
+   "rank": 6,
+   "manager": "albert",
+   "team": "RIP Geno's Jaw",
+   "record": "6-7-0",
+   "points_for": 1097.0,
+   "points_against": 1158.0,
+   "seed": 6
+  },
+  {
+   "rank": 7,
+   "manager": "edwards",
+   "team": "Andy Dalton's BBC",
+   "record": "5-7-1",
+   "points_for": 1175.0,
+   "points_against": 1222.0,
+   "seed": 9
+  },
+  {
+   "rank": 8,
+   "manager": "joyce",
+   "team": "Lambeaughini Rodgers",
+   "record": "6-7-0",
+   "points_for": 1235.0,
+   "points_against": 1191.0,
+   "seed": 5
+  },
+  {
+   "rank": 9,
+   "manager": "sedaghat",
+   "team": "Jay \"The Kid\" Fiedler",
+   "record": "5-7-1",
+   "points_for": 1152.0,
+   "points_against": 1148.0,
+   "seed": 10
+  },
+  {
+   "rank": 10,
+   "manager": "ray",
+   "team": "Team Ray",
+   "record": "6-7-0",
+   "points_for": 1064.0,
+   "points_against": 1132.0,
+   "seed": 7
+  }
+ ]
+}

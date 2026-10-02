@@ -1,0 +1,1507 @@
+{
+ "_source": "scratch_h2h.py at main@cc6a2c8 (before the M1 refactor): `python scratch_h2h.py --season 2025 --week 16 --export`, pair stats from its own pair_games/result/streaks. Pairs keyed 'a|b' with a < b, from a's side.",
+ "games": 830,
+ "pairs": {
+  "albert|carpenter": {
+   "games": 22,
+   "last_meeting": [
+    2025,
+    12,
+    77.52,
+    162.68
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 4,
+   "losses": 12,
+   "playoff_losses": 1,
+   "playoff_wins": 3,
+   "points_against": 2659.76,
+   "points_for": 2500.06,
+   "results": "LLWWLWLWWLWLLWWWLWLLLL",
+   "ties": 0,
+   "wins": 10
+  },
+  "albert|dickey": {
+   "games": 13,
+   "last_meeting": [
+    2025,
+    15,
+    158.54,
+    217.14
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 4,
+   "losses": 9,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 1358.7,
+   "points_for": 1251.88,
+   "results": "WLLWWLLLLWLLL",
+   "ties": 0,
+   "wins": 4
+  },
+  "albert|edwards": {
+   "games": 22,
+   "last_meeting": [
+    2025,
+    13,
+    95.64,
+    129.34
+   ],
+   "longest_streak_a": 6,
+   "longest_streak_b": 5,
+   "losses": 10,
+   "playoff_losses": 2,
+   "playoff_wins": 1,
+   "points_against": 2422.9,
+   "points_for": 2464.62,
+   "results": "WWWLWLWLLWWWWWWLWLLLLL",
+   "ties": 0,
+   "wins": 12
+  },
+  "albert|grudee": {
+   "games": 17,
+   "last_meeting": [
+    2025,
+    6,
+    105.66,
+    104.82
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 4,
+   "losses": 11,
+   "playoff_losses": 2,
+   "playoff_wins": 1,
+   "points_against": 2069.54,
+   "points_for": 1815.14,
+   "results": "LLWLLLWLWLLLLWWLW",
+   "ties": 0,
+   "wins": 6
+  },
+  "albert|hunter": {
+   "games": 4,
+   "last_meeting": [
+    2025,
+    7,
+    87.7,
+    122.72
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 1,
+   "losses": 2,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 447.72,
+   "points_for": 413.58,
+   "results": "LWWL",
+   "ties": 0,
+   "wins": 2
+  },
+  "albert|joyce": {
+   "games": 25,
+   "last_meeting": [
+    2025,
+    10,
+    97.24,
+    103.42
+   ],
+   "longest_streak_a": 4,
+   "longest_streak_b": 9,
+   "losses": 14,
+   "playoff_losses": 1,
+   "playoff_wins": 2,
+   "points_against": 2740.04,
+   "points_for": 2709.26,
+   "results": "WLWLLLLLLLLLWWWWLWWWWLLWL",
+   "ties": 0,
+   "wins": 11
+  },
+  "albert|kariuki": {
+   "games": 10,
+   "last_meeting": [
+    2021,
+    16,
+    206.56,
+    161.58
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 2,
+   "losses": 4,
+   "playoff_losses": 1,
+   "playoff_wins": 3,
+   "points_against": 1158.0,
+   "points_for": 1197.32,
+   "results": "LWWLLWWWLW",
+   "ties": 0,
+   "wins": 6
+  },
+  "albert|moundous": {
+   "games": 2,
+   "last_meeting": [
+    2015,
+    15,
+    188.0,
+    192.0
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 242.0,
+   "points_for": 282.0,
+   "results": "WL",
+   "ties": 0,
+   "wins": 1
+  },
+  "albert|ray": {
+   "games": 1,
+   "last_meeting": [
+    2015,
+    7,
+    73.0,
+    61.0
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 0,
+   "losses": 0,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 61.0,
+   "points_for": 73.0,
+   "results": "W",
+   "ties": 0,
+   "wins": 1
+  },
+  "albert|richardson": {
+   "games": 22,
+   "last_meeting": [
+    2025,
+    9,
+    83.66,
+    105.26
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 2,
+   "losses": 12,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 2183.24,
+   "points_for": 2065.44,
+   "results": "LWLWLLWLWWLWLLWWLWLLWL",
+   "ties": 0,
+   "wins": 10
+  },
+  "albert|sedaghat": {
+   "games": 11,
+   "last_meeting": [
+    2021,
+    11,
+    86.4,
+    123.24
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 3,
+   "losses": 7,
+   "playoff_losses": 0,
+   "playoff_wins": 1,
+   "points_against": 1108.84,
+   "points_for": 983.44,
+   "results": "LLWLLWWWLLL",
+   "ties": 0,
+   "wins": 4
+  },
+  "albert|wilkins": {
+   "games": 6,
+   "last_meeting": [
+    2025,
+    14,
+    234.86,
+    178.86
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 3,
+   "losses": 4,
+   "playoff_losses": 0,
+   "playoff_wins": 2,
+   "points_against": 856.38,
+   "points_for": 809.36,
+   "results": "LLLWLW",
+   "ties": 0,
+   "wins": 2
+  },
+  "albert|wolfe": {
+   "games": 11,
+   "last_meeting": [
+    2025,
+    8,
+    155.68,
+    124.3
+   ],
+   "longest_streak_a": 4,
+   "longest_streak_b": 2,
+   "losses": 4,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 1102.78,
+   "points_for": 1125.0,
+   "results": "LLWWWWLWLWW",
+   "ties": 0,
+   "wins": 7
+  },
+  "carpenter|dickey": {
+   "games": 13,
+   "last_meeting": [
+    2025,
+    8,
+    88.22,
+    105.88
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 3,
+   "losses": 7,
+   "playoff_losses": 0,
+   "playoff_wins": 1,
+   "points_against": 1293.86,
+   "points_for": 1287.9,
+   "results": "LLLWWWLWWLLWL",
+   "ties": 0,
+   "wins": 6
+  },
+  "carpenter|edwards": {
+   "games": 24,
+   "last_meeting": [
+    2025,
+    15,
+    226.6,
+    261.6
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 3,
+   "losses": 15,
+   "playoff_losses": 3,
+   "playoff_wins": 1,
+   "points_against": 2696.98,
+   "points_for": 2617.54,
+   "results": "WLWLLWWLLLWLLWLLWLLLWLWL",
+   "ties": 0,
+   "wins": 9
+  },
+  "carpenter|grudee": {
+   "games": 12,
+   "last_meeting": [
+    2025,
+    13,
+    102.74,
+    75.8
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 2,
+   "losses": 5,
+   "playoff_losses": 1,
+   "playoff_wins": 1,
+   "points_against": 1446.14,
+   "points_for": 1500.6,
+   "results": "WWLWLWLLWWLW",
+   "ties": 0,
+   "wins": 7
+  },
+  "carpenter|hunter": {
+   "games": 4,
+   "last_meeting": [
+    2025,
+    5,
+    139.12,
+    106.86
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 399.88,
+   "points_for": 444.58,
+   "results": "LWWW",
+   "ties": 0,
+   "wins": 3
+  },
+  "carpenter|joyce": {
+   "games": 19,
+   "last_meeting": [
+    2025,
+    11,
+    106.44,
+    77.66
+   ],
+   "longest_streak_a": 6,
+   "longest_streak_b": 5,
+   "losses": 9,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 2003.66,
+   "points_for": 2024.52,
+   "results": "LLLWWLWWLLLLLWWWWWW",
+   "ties": 0,
+   "wins": 10
+  },
+  "carpenter|kariuki": {
+   "games": 12,
+   "last_meeting": [
+    2021,
+    15,
+    209.5,
+    142.64
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 3,
+   "losses": 5,
+   "playoff_losses": 1,
+   "playoff_wins": 1,
+   "points_against": 1284.86,
+   "points_for": 1378.46,
+   "results": "LWLWTWLLLWWW",
+   "ties": 1,
+   "wins": 6
+  },
+  "carpenter|richardson": {
+   "games": 19,
+   "last_meeting": [
+    2025,
+    14,
+    205.76,
+    232.46
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 4,
+   "losses": 12,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 2077.86,
+   "points_for": 2023.38,
+   "results": "LWWWLWLLWLLLLWLWLLL",
+   "ties": 0,
+   "wins": 7
+  },
+  "carpenter|sedaghat": {
+   "games": 7,
+   "last_meeting": [
+    2021,
+    7,
+    109.26,
+    85.74
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 1,
+   "losses": 3,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 774.46,
+   "points_for": 781.58,
+   "results": "LWWLWLW",
+   "ties": 0,
+   "wins": 4
+  },
+  "carpenter|wilkins": {
+   "games": 4,
+   "last_meeting": [
+    2025,
+    7,
+    136.74,
+    76.62
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 3,
+   "losses": 3,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 378.98,
+   "points_for": 374.1,
+   "results": "LLLW",
+   "ties": 0,
+   "wins": 1
+  },
+  "carpenter|wolfe": {
+   "games": 15,
+   "last_meeting": [
+    2025,
+    6,
+    140.28,
+    79.9
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 3,
+   "losses": 8,
+   "playoff_losses": 0,
+   "playoff_wins": 3,
+   "points_against": 1632.06,
+   "points_for": 1726.8,
+   "results": "LLLWWLWWLLWLLWW",
+   "ties": 0,
+   "wins": 7
+  },
+  "dickey|edwards": {
+   "games": 16,
+   "last_meeting": [
+    2025,
+    6,
+    106.16,
+    125.48
+   ],
+   "longest_streak_a": 6,
+   "longest_streak_b": 2,
+   "losses": 4,
+   "playoff_losses": 1,
+   "playoff_wins": 1,
+   "points_against": 1476.92,
+   "points_for": 1730.08,
+   "results": "WWWWWWLWWWLWWWLL",
+   "ties": 0,
+   "wins": 12
+  },
+  "dickey|grudee": {
+   "games": 23,
+   "last_meeting": [
+    2025,
+    10,
+    138.38,
+    106.22
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 5,
+   "losses": 17,
+   "playoff_losses": 3,
+   "playoff_wins": 1,
+   "points_against": 2769.2,
+   "points_for": 2602.08,
+   "results": "LWLLLLWWLLLLLWLLLLWLLLW",
+   "ties": 0,
+   "wins": 6
+  },
+  "dickey|hunter": {
+   "games": 9,
+   "last_meeting": [
+    2025,
+    13,
+    102.3,
+    122.84
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 4,
+   "losses": 6,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 982.66,
+   "points_for": 957.76,
+   "results": "WLLLLWLWL",
+   "ties": 0,
+   "wins": 3
+  },
+  "dickey|joyce": {
+   "games": 15,
+   "last_meeting": [
+    2025,
+    14,
+    295.28,
+    191.92
+   ],
+   "longest_streak_a": 5,
+   "longest_streak_b": 4,
+   "losses": 6,
+   "playoff_losses": 2,
+   "playoff_wins": 2,
+   "points_against": 1808.6,
+   "points_for": 1928.5,
+   "results": "WTLWLWLLLLWWWWW",
+   "ties": 1,
+   "wins": 8
+  },
+  "dickey|kariuki": {
+   "games": 13,
+   "last_meeting": [
+    2021,
+    13,
+    76.02,
+    95.62
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 6,
+   "losses": 9,
+   "playoff_losses": 0,
+   "playoff_wins": 1,
+   "points_against": 1301.58,
+   "points_for": 1190.24,
+   "results": "LWLLLLLLWWWLL",
+   "ties": 0,
+   "wins": 4
+  },
+  "dickey|moundous": {
+   "games": 2,
+   "last_meeting": [
+    2015,
+    10,
+    70.0,
+    86.0
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 164.0,
+   "points_for": 163.0,
+   "results": "WL",
+   "ties": 0,
+   "wins": 1
+  },
+  "dickey|ray": {
+   "games": 2,
+   "last_meeting": [
+    2015,
+    9,
+    103.0,
+    74.0
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 0,
+   "losses": 0,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 163.0,
+   "points_for": 196.0,
+   "results": "WW",
+   "ties": 0,
+   "wins": 2
+  },
+  "dickey|richardson": {
+   "games": 13,
+   "last_meeting": [
+    2025,
+    12,
+    96.16,
+    101.86
+   ],
+   "longest_streak_a": 5,
+   "longest_streak_b": 3,
+   "losses": 6,
+   "playoff_losses": 0,
+   "playoff_wins": 2,
+   "points_against": 1428.12,
+   "points_for": 1507.74,
+   "results": "LWWWWWLLLWLWL",
+   "ties": 0,
+   "wins": 7
+  },
+  "dickey|sedaghat": {
+   "games": 14,
+   "last_meeting": [
+    2021,
+    9,
+    103.34,
+    95.88
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 3,
+   "losses": 8,
+   "playoff_losses": 2,
+   "playoff_wins": 1,
+   "points_against": 1658.96,
+   "points_for": 1531.48,
+   "results": "TLLLWLLWLWLLWW",
+   "ties": 1,
+   "wins": 5
+  },
+  "dickey|wilkins": {
+   "games": 8,
+   "last_meeting": [
+    2025,
+    9,
+    101.4,
+    103.92
+   ],
+   "longest_streak_a": 4,
+   "longest_streak_b": 3,
+   "losses": 4,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 788.44,
+   "points_for": 862.44,
+   "results": "LLLWWWWL",
+   "ties": 0,
+   "wins": 4
+  },
+  "dickey|wolfe": {
+   "games": 25,
+   "last_meeting": [
+    2025,
+    11,
+    128.32,
+    91.3
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 3,
+   "losses": 14,
+   "playoff_losses": 3,
+   "playoff_wins": 0,
+   "points_against": 2875.88,
+   "points_for": 2814.66,
+   "results": "LWWLWLWLLWWLLLWLLWWLLWLLW",
+   "ties": 0,
+   "wins": 11
+  },
+  "edwards|grudee": {
+   "games": 12,
+   "last_meeting": [
+    2025,
+    7,
+    88.24,
+    79.44
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 6,
+   "losses": 9,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 1329.96,
+   "points_for": 1109.78,
+   "results": "LWLLWLLLLLLW",
+   "ties": 0,
+   "wins": 3
+  },
+  "edwards|hunter": {
+   "games": 4,
+   "last_meeting": [
+    2025,
+    8,
+    112.38,
+    84.28
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 2,
+   "losses": 2,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 458.92,
+   "points_for": 443.24,
+   "results": "WLLW",
+   "ties": 0,
+   "wins": 2
+  },
+  "edwards|joyce": {
+   "games": 22,
+   "last_meeting": [
+    2025,
+    12,
+    169.24,
+    106.62
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 11,
+   "losses": 15,
+   "playoff_losses": 1,
+   "playoff_wins": 2,
+   "points_against": 2657.82,
+   "points_for": 2414.04,
+   "results": "WWWLWLLLLLLLLLLLWWLLLW",
+   "ties": 0,
+   "wins": 7
+  },
+  "edwards|kariuki": {
+   "games": 10,
+   "last_meeting": [
+    2021,
+    8,
+    88.36,
+    90.76
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 3,
+   "losses": 5,
+   "playoff_losses": 0,
+   "playoff_wins": 2,
+   "points_against": 971.74,
+   "points_for": 1061.36,
+   "results": "WLLLWWLWWL",
+   "ties": 0,
+   "wins": 5
+  },
+  "edwards|moundous": {
+   "games": 2,
+   "last_meeting": [
+    2015,
+    9,
+    115.0,
+    115.0
+   ],
+   "longest_streak_a": 0,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 214.0,
+   "points_for": 206.0,
+   "results": "LT",
+   "ties": 1,
+   "wins": 0
+  },
+  "edwards|ray": {
+   "games": 2,
+   "last_meeting": [
+    2015,
+    13,
+    104.0,
+    97.0
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 163.0,
+   "points_for": 166.0,
+   "results": "LW",
+   "ties": 0,
+   "wins": 1
+  },
+  "edwards|richardson": {
+   "games": 23,
+   "last_meeting": [
+    2025,
+    11,
+    88.86,
+    138.14
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 5,
+   "losses": 12,
+   "playoff_losses": 2,
+   "playoff_wins": 2,
+   "points_against": 2756.26,
+   "points_for": 2556.82,
+   "results": "WTWLLLLLWWLLWLWWWLWLLWL",
+   "ties": 1,
+   "wins": 10
+  },
+  "edwards|sedaghat": {
+   "games": 10,
+   "last_meeting": [
+    2021,
+    14,
+    105.7,
+    125.42
+   ],
+   "longest_streak_a": 5,
+   "longest_streak_b": 2,
+   "losses": 3,
+   "playoff_losses": 0,
+   "playoff_wins": 2,
+   "points_against": 996.34,
+   "points_for": 1096.78,
+   "results": "WWLWWWWWLL",
+   "ties": 0,
+   "wins": 7
+  },
+  "edwards|wilkins": {
+   "games": 4,
+   "last_meeting": [
+    2025,
+    2,
+    84.18,
+    80.32
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 331.66,
+   "points_for": 334.16,
+   "results": "WLWW",
+   "ties": 0,
+   "wins": 3
+  },
+  "edwards|wolfe": {
+   "games": 15,
+   "last_meeting": [
+    2025,
+    14,
+    235.84,
+    242.96
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 8,
+   "losses": 11,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 1689.3,
+   "points_for": 1476.66,
+   "results": "WLWWLLWLLLLLLLL",
+   "ties": 0,
+   "wins": 4
+  },
+  "grudee|hunter": {
+   "games": 9,
+   "last_meeting": [
+    2025,
+    14,
+    203.6,
+    256.78
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 2,
+   "losses": 4,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 1043.52,
+   "points_for": 1087.1,
+   "results": "WWLLWWLWL",
+   "ties": 0,
+   "wins": 5
+  },
+  "grudee|joyce": {
+   "games": 17,
+   "last_meeting": [
+    2025,
+    8,
+    103.76,
+    131.32
+   ],
+   "longest_streak_a": 5,
+   "longest_streak_b": 4,
+   "losses": 8,
+   "playoff_losses": 2,
+   "playoff_wins": 1,
+   "points_against": 2076.5,
+   "points_for": 2039.18,
+   "results": "LLWWWLLLLWWWWWLWL",
+   "ties": 0,
+   "wins": 9
+  },
+  "grudee|kariuki": {
+   "games": 10,
+   "last_meeting": [
+    2021,
+    11,
+    120.28,
+    89.54
+   ],
+   "longest_streak_a": 4,
+   "longest_streak_b": 1,
+   "losses": 2,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 980.22,
+   "points_for": 1096.28,
+   "results": "WWLWWLWWWW",
+   "ties": 0,
+   "wins": 8
+  },
+  "grudee|moundous": {
+   "games": 1,
+   "last_meeting": [
+    2015,
+    6,
+    99.0,
+    83.0
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 0,
+   "losses": 0,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 83.0,
+   "points_for": 99.0,
+   "results": "W",
+   "ties": 0,
+   "wins": 1
+  },
+  "grudee|ray": {
+   "games": 1,
+   "last_meeting": [
+    2015,
+    8,
+    72.0,
+    73.0
+   ],
+   "longest_streak_a": 0,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 73.0,
+   "points_for": 72.0,
+   "results": "L",
+   "ties": 0,
+   "wins": 0
+  },
+  "grudee|richardson": {
+   "games": 18,
+   "last_meeting": [
+    2025,
+    4,
+    152.0,
+    136.78
+   ],
+   "longest_streak_a": 4,
+   "longest_streak_b": 3,
+   "losses": 7,
+   "playoff_losses": 0,
+   "playoff_wins": 3,
+   "points_against": 1943.7,
+   "points_for": 2118.2,
+   "results": "LLLWWLWWWLWWWWLLWW",
+   "ties": 0,
+   "wins": 11
+  },
+  "grudee|sedaghat": {
+   "games": 15,
+   "last_meeting": [
+    2021,
+    12,
+    83.26,
+    106.12
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 2,
+   "losses": 5,
+   "playoff_losses": 0,
+   "playoff_wins": 1,
+   "points_against": 1442.1,
+   "points_for": 1659.74,
+   "results": "WWWLWWLWWLWWWLL",
+   "ties": 0,
+   "wins": 10
+  },
+  "grudee|wilkins": {
+   "games": 10,
+   "last_meeting": [
+    2025,
+    15,
+    154.4,
+    136.48
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 2,
+   "losses": 4,
+   "playoff_losses": 0,
+   "playoff_wins": 2,
+   "points_against": 1125.64,
+   "points_for": 1176.92,
+   "results": "LWWLLWWLWW",
+   "ties": 0,
+   "wins": 6
+  },
+  "grudee|wolfe": {
+   "games": 21,
+   "last_meeting": [
+    2025,
+    9,
+    96.34,
+    126.74
+   ],
+   "longest_streak_a": 5,
+   "longest_streak_b": 3,
+   "losses": 9,
+   "playoff_losses": 0,
+   "playoff_wins": 2,
+   "points_against": 2236.68,
+   "points_for": 2360.76,
+   "results": "WWLLLWWWWWLLWWWWLWLLL",
+   "ties": 0,
+   "wins": 12
+  },
+  "hunter|joyce": {
+   "games": 6,
+   "last_meeting": [
+    2025,
+    15,
+    209.34,
+    183.22
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 2,
+   "losses": 3,
+   "playoff_losses": 0,
+   "playoff_wins": 2,
+   "points_against": 984.94,
+   "points_for": 890.44,
+   "results": "LLWWLW",
+   "ties": 0,
+   "wins": 3
+  },
+  "hunter|richardson": {
+   "games": 5,
+   "last_meeting": [
+    2025,
+    6,
+    109.14,
+    107.56
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 1,
+   "losses": 2,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 647.48,
+   "points_for": 658.12,
+   "results": "WLWLW",
+   "ties": 0,
+   "wins": 3
+  },
+  "hunter|wilkins": {
+   "games": 9,
+   "last_meeting": [
+    2025,
+    10,
+    99.1,
+    119.24
+   ],
+   "longest_streak_a": 4,
+   "longest_streak_b": 3,
+   "losses": 4,
+   "playoff_losses": 0,
+   "playoff_wins": 1,
+   "points_against": 1001.44,
+   "points_for": 1093.12,
+   "results": "WLWWWWLLL",
+   "ties": 0,
+   "wins": 5
+  },
+  "hunter|wolfe": {
+   "games": 10,
+   "last_meeting": [
+    2025,
+    12,
+    94.26,
+    97.52
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 6,
+   "losses": 8,
+   "playoff_losses": 1,
+   "playoff_wins": 1,
+   "points_against": 1291.24,
+   "points_for": 1176.44,
+   "results": "LLWWLLLLLL",
+   "ties": 0,
+   "wins": 2
+  },
+  "joyce|kariuki": {
+   "games": 6,
+   "last_meeting": [
+    2021,
+    9,
+    82.64,
+    76.88
+   ],
+   "longest_streak_a": 4,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 507.7,
+   "points_for": 639.06,
+   "results": "WWWWLW",
+   "ties": 0,
+   "wins": 5
+  },
+  "joyce|moundous": {
+   "games": 1,
+   "last_meeting": [
+    2015,
+    7,
+    73.0,
+    106.0
+   ],
+   "longest_streak_a": 0,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 106.0,
+   "points_for": 73.0,
+   "results": "L",
+   "ties": 0,
+   "wins": 0
+  },
+  "joyce|ray": {
+   "games": 1,
+   "last_meeting": [
+    2015,
+    10,
+    80.0,
+    70.0
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 0,
+   "losses": 0,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 70.0,
+   "points_for": 80.0,
+   "results": "W",
+   "ties": 0,
+   "wins": 1
+  },
+  "joyce|richardson": {
+   "games": 23,
+   "last_meeting": [
+    2025,
+    13,
+    90.94,
+    133.58
+   ],
+   "longest_streak_a": 5,
+   "longest_streak_b": 6,
+   "losses": 13,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 2618.08,
+   "points_for": 2499.34,
+   "results": "WLWWLLLWWWWWLLLWWLLLLLL",
+   "ties": 0,
+   "wins": 10
+  },
+  "joyce|sedaghat": {
+   "games": 11,
+   "last_meeting": [
+    2021,
+    6,
+    83.3,
+    134.16
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 1,
+   "losses": 4,
+   "playoff_losses": 0,
+   "playoff_wins": 1,
+   "points_against": 1087.44,
+   "points_for": 1150.2,
+   "results": "LWWLWWLWWWL",
+   "ties": 0,
+   "wins": 7
+  },
+  "joyce|wilkins": {
+   "games": 6,
+   "last_meeting": [
+    2025,
+    6,
+    127.24,
+    88.8
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 2,
+   "losses": 2,
+   "playoff_losses": 1,
+   "playoff_wins": 1,
+   "points_against": 827.0,
+   "points_for": 836.7,
+   "results": "WLLWWW",
+   "ties": 0,
+   "wins": 4
+  },
+  "joyce|wolfe": {
+   "games": 14,
+   "last_meeting": [
+    2025,
+    1,
+    98.12,
+    86.62
+   ],
+   "longest_streak_a": 5,
+   "longest_streak_b": 3,
+   "losses": 7,
+   "playoff_losses": 0,
+   "playoff_wins": 2,
+   "points_against": 1525.48,
+   "points_for": 1466.82,
+   "results": "LLWWWWWLLLWLLW",
+   "ties": 0,
+   "wins": 7
+  },
+  "kariuki|richardson": {
+   "games": 7,
+   "last_meeting": [
+    2021,
+    6,
+    91.8,
+    160.12
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 4,
+   "losses": 5,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 734.7,
+   "points_for": 597.36,
+   "results": "WLWLLLL",
+   "ties": 0,
+   "wins": 2
+  },
+  "kariuki|sedaghat": {
+   "games": 11,
+   "last_meeting": [
+    2021,
+    10,
+    110.04,
+    88.46
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 6,
+   "losses": 9,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 1061.38,
+   "points_for": 879.32,
+   "results": "LLLWLLLLLLW",
+   "ties": 0,
+   "wins": 2
+  },
+  "kariuki|wolfe": {
+   "games": 12,
+   "last_meeting": [
+    2021,
+    12,
+    94.86,
+    58.44
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 3,
+   "losses": 6,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 1079.62,
+   "points_for": 1164.56,
+   "results": "WLLLWLWWLWLW",
+   "ties": 0,
+   "wins": 6
+  },
+  "moundous|ray": {
+   "games": 3,
+   "last_meeting": [
+    2015,
+    14,
+    153.0,
+    144.0
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 0,
+   "losses": 0,
+   "playoff_losses": 0,
+   "playoff_wins": 1,
+   "points_against": 323.0,
+   "points_for": 367.0,
+   "results": "WWW",
+   "ties": 0,
+   "wins": 3
+  },
+  "moundous|richardson": {
+   "games": 1,
+   "last_meeting": [
+    2015,
+    8,
+    91.0,
+    123.0
+   ],
+   "longest_streak_a": 0,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 123.0,
+   "points_for": 91.0,
+   "results": "L",
+   "ties": 0,
+   "wins": 0
+  },
+  "moundous|sedaghat": {
+   "games": 1,
+   "last_meeting": [
+    2015,
+    12,
+    81.0,
+    121.0
+   ],
+   "longest_streak_a": 0,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 121.0,
+   "points_for": 81.0,
+   "results": "L",
+   "ties": 0,
+   "wins": 0
+  },
+  "moundous|wolfe": {
+   "games": 2,
+   "last_meeting": [
+    2015,
+    13,
+    101.0,
+    106.0
+   ],
+   "longest_streak_a": 0,
+   "longest_streak_b": 2,
+   "losses": 2,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 208.0,
+   "points_for": 185.0,
+   "results": "LL",
+   "ties": 0,
+   "wins": 0
+  },
+  "ray|richardson": {
+   "games": 1,
+   "last_meeting": [
+    2015,
+    2,
+    67.0,
+    64.0
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 0,
+   "losses": 0,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 64.0,
+   "points_for": 67.0,
+   "results": "W",
+   "ties": 0,
+   "wins": 1
+  },
+  "ray|sedaghat": {
+   "games": 2,
+   "last_meeting": [
+    2015,
+    15,
+    150.0,
+    167.0
+   ],
+   "longest_streak_a": 1,
+   "longest_streak_b": 1,
+   "losses": 1,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 257.0,
+   "points_for": 249.0,
+   "results": "WL",
+   "ties": 0,
+   "wins": 1
+  },
+  "ray|wolfe": {
+   "games": 2,
+   "last_meeting": [
+    2015,
+    12,
+    114.0,
+    110.0
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 0,
+   "losses": 0,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 177.0,
+   "points_for": 189.0,
+   "results": "WW",
+   "ties": 0,
+   "wins": 2
+  },
+  "richardson|sedaghat": {
+   "games": 11,
+   "last_meeting": [
+    2021,
+    15,
+    201.46,
+    154.58
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 4,
+   "losses": 5,
+   "playoff_losses": 0,
+   "playoff_wins": 1,
+   "points_against": 1178.24,
+   "points_for": 1173.06,
+   "results": "WWLWWWLLLLW",
+   "ties": 0,
+   "wins": 6
+  },
+  "richardson|wilkins": {
+   "games": 5,
+   "last_meeting": [
+    2025,
+    8,
+    108.48,
+    107.52
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 2,
+   "losses": 2,
+   "playoff_losses": 1,
+   "playoff_wins": 0,
+   "points_against": 714.14,
+   "points_for": 656.72,
+   "results": "WLLWW",
+   "ties": 0,
+   "wins": 3
+  },
+  "richardson|wolfe": {
+   "games": 18,
+   "last_meeting": [
+    2025,
+    15,
+    278.14,
+    317.26
+   ],
+   "longest_streak_a": 3,
+   "longest_streak_b": 5,
+   "losses": 10,
+   "playoff_losses": 3,
+   "playoff_wins": 4,
+   "points_against": 2715.62,
+   "points_for": 2526.96,
+   "results": "WWLWLLWWWLWLWLLLLL",
+   "ties": 0,
+   "wins": 8
+  },
+  "sedaghat|wolfe": {
+   "games": 13,
+   "last_meeting": [
+    2021,
+    16,
+    221.22,
+    216.24
+   ],
+   "longest_streak_a": 6,
+   "longest_streak_b": 3,
+   "losses": 4,
+   "playoff_losses": 1,
+   "playoff_wins": 1,
+   "points_against": 1459.82,
+   "points_for": 1524.84,
+   "results": "WWLWLLLWWWWWW",
+   "ties": 0,
+   "wins": 9
+  },
+  "wilkins|wolfe": {
+   "games": 8,
+   "last_meeting": [
+    2025,
+    13,
+    87.52,
+    91.82
+   ],
+   "longest_streak_a": 2,
+   "longest_streak_b": 2,
+   "losses": 4,
+   "playoff_losses": 0,
+   "playoff_wins": 0,
+   "points_against": 859.4,
+   "points_for": 870.48,
+   "results": "WWLWLWLL",
+   "ties": 0,
+   "wins": 4
+  }
+ }
+}
