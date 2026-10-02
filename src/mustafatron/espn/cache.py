@@ -48,7 +48,8 @@ class Dataset:
 
 
 MATCHUPS = Dataset("matchups", (View.TEAM, View.MATCHUP_SCORE), ("members", "teams", "schedule"))
-DATASETS = {d.name: d for d in (MATCHUPS,)}
+SETTINGS = Dataset("settings", (View.SETTINGS,), ("settings", "status"))
+DATASETS = {d.name: d for d in (MATCHUPS, SETTINGS)}
 
 Source = Literal["cached", "fetched", "live"]
 

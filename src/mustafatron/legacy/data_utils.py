@@ -6,6 +6,8 @@ from typing import List
 from datetime import datetime, timedelta
 import requests
 import re
+
+from mustafatron.league_settings import load_settings
 #from data.configs import keys
 
 # https://github.com/cwendt94/espn-api/pull/487#issuecomment-1782273387
@@ -78,61 +80,12 @@ def best_flex(flexes, player_pool, num):
 
 # https://github.com/dtcarls/fantasy_football_chat_bot/blob/master/gamedaybot/espn/functionality.py
 def get_starter_counts(league):
+    """Number of starters per lineup slot, e.g. {'QB': 1, 'RB': 2, ..., 'RB/WR/TE': 1}.
+
+    Read from the season's ESPN mSettings rather than inferred from last week's box scores.
     """
-    Get the number of starters for each position
+    return load_settings(league.year).starter_slots
 
-    Parameters
-    ----------
-    league : object
-        The league object for which the starter counts are being generated
-
-    Returns
-    -------
-    dict
-        A dictionary containing the number of players at each position within the starting lineup.
-    """
-
-    # Get the box scores for last week
-    box_scores = league.box_scores(week=league.current_week - 1)
-    # Initialize a dictionary to store the home team's starters and their positions
-    h_starters = {}
-    # Initialize a variable to keep track of the number of home team starters
-    h_starter_count = 0
-    # Initialize a dictionary to store the away team's starters and their positions
-    a_starters = {}
-    # Initialize a variable to keep track of the number of away team starters
-    a_starter_count = 0
-    # Iterate through each game in the box scores
-    for i in box_scores:
-        # Iterate through each player in the home team's lineup
-        for player in i.home_lineup:
-            # Check if the player is a starter (not on the bench or injured)
-            if (player.slot_position != 'BE' and player.slot_position != 'IR'):
-                # Increment the number of home team starters
-                h_starter_count += 1
-                try:
-                    # Try to increment the count for this position in the h_starters dictionary
-                    h_starters[player.slot_position] = h_starters[player.slot_position] + 1
-                except KeyError:
-                    # If the position is not in the dictionary yet, add it and set the count to 1
-                    h_starters[player.slot_position] = 1
-        # in the rare case when someone has an empty slot we need to check the other team as well
-        for player in i.away_lineup:
-            if (player.slot_position != 'BE' and player.slot_position != 'IR'):
-                a_starter_count += 1
-                try:
-                    a_starters[player.slot_position] = a_starters[player.slot_position] + 1
-                except KeyError:
-                    a_starters[player.slot_position] = 1
-
-        # if statement for the ultra rare case of a matchup with both entire teams (or one with a bye) on the bench
-        if a_starter_count!=0 and h_starter_count != 0:
-            if a_starter_count > h_starter_count:
-                return a_starters
-            else:
-                return h_starters
-
-# https://github.com/dtcarls/fantasy_football_chat_bot/blob/master/gamedaybot/espn/functionality.py
 def optimal_lineup_score(lineup, starter_counts):
     """
     This function returns the optimal lineup score based on the provided lineup and starter counts.
@@ -839,10 +792,12 @@ def get_point_diff_for_trade(league: League, team: Team, start_week: int, player
     starter_counts = get_starter_counts(league)
     names_in_trade = [p.name for p in players_added] + [p.name for p in players_lost]
     total_point_diff = 0
-    for week in range(start_week, 18): ## Hard coded last week of season
+    for week in range(start_week, load_settings(league.year).final_matchup_period + 1):
         boxes = league.box_scores(week)
         week_lineup = [box.home_lineup if team.team_name == box.home_team.team_name else box.away_lineup for box in boxes 
                        if team.team_name in [box.home_team.team_name, box.away_team.team_name]]
+        if not week_lineup:  # eliminated from the playoffs: no lineup this week
+            continue
         week_lineup = week_lineup[0]
         new_players = [ReplacementBoxPlayer(p, week) for p in players_added]
         old_players = [ReplacementBoxPlayer(p, week) for p in players_lost]
@@ -855,7 +810,7 @@ def get_point_diff_for_trade(league: League, team: Team, start_week: int, player
     return total_point_diff
 
 
-def get_trade_evaluations_df(league: League, season_start_date, final_week_number=17) -> pd.DataFrame:
+def get_trade_evaluations_df(league: League, season_start_date, final_week_number=None) -> pd.DataFrame:
     """Compiles a DataFrame of all retroactively evaluated trades for the fantasy season based on ROS value for a team's roster.
 
     Args:
@@ -865,6 +820,8 @@ def get_trade_evaluations_df(league: League, season_start_date, final_week_numbe
         pd.DataFrame: DataFrame of all retroactively evaluated trades for the fantasy season
     """
 
+    if final_week_number is None:
+        final_week_number = load_settings(league.year).final_scoring_period
     team_list = []
     players_added_list = []
     players_lost_list = []
