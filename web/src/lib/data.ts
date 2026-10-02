@@ -139,3 +139,26 @@ export function series(me: string, them: string): Series {
   const poLosses = flip ? pair.playoff_wins : pair.playoff_losses;
   return { me, them, pair, wins, losses, ties: pair.ties, regWins: wins - poWins, regLosses: losses - poLosses };
 }
+
+let pairList: Pair[] | undefined;
+export function pairs(): Pair[] {
+  pairList ??= h2h().pairs;
+  return pairList;
+}
+
+/** Every final meeting between two managers, oldest first. */
+export function meetings(x: string, y: string): Game[] {
+  return games().filter((g) => (g.home === x && g.away === y) || (g.home === y && g.away === x));
+}
+
+/** Where a game lives on its season page: its week's column, or the bracket for a playoff matchup. */
+export function gameHref(g: Pick<Game, "season" | "week" | "tier">): string {
+  return `/seasons/${g.season}#${g.tier === REGULAR_SEASON ? `week-${g.week}` : "playoffs"}`;
+}
+
+export const TIER_LABELS: Record<string, string> = {
+  NONE: "Regular season",
+  WINNERS_BRACKET: "Playoffs",
+  WINNERS_CONSOLATION_LADDER: "3rd place game",
+  LOSERS_CONSOLATION_LADDER: "Consolation",
+};

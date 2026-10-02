@@ -1,0 +1,177 @@
+---
+import ManagerName from "../../components/ManagerName.astro";
+import SortableTables from "../../components/SortableTables.astro";
+import Base from "../../layouts/Base.astro";
+import { currentManagers, h2h, manager, pairs, rivalryHref } from "../../lib/data";
+import { pct, record, shade } from "../../lib/format";
+
+const all = pairs();
+const byKey = new Map(all.map((p) => [`${p.a}|${p.b}`, p]));
+const competitive = h2h().most_competitive.map(([a, b]) => byKey.get(`${a}|${b}`)!);
+const current = new Set(currentManagers().map((m) => m.id));
+const active = (p: (typeof all)[number]) => current.has(p.a) && current.has(p.b);
+const minMeetings = Math.min(...competitive.map((p) => p.games));
+
+// Headlines for series still being played: hot streaks and lopsided series.
+const headlines = all
+  .filter(active)
+  .flatMap((p) => p.flags.filter((f) => f.kind !== "dead_even").map((f) => ({ p, f })))
+  .sort((x, y) => y.f.wins - x.f.wins);
+
+const leader = (p: (typeof all)[number]) => (p.wins >= p.losses ? p.a : p.b);
+const leadRecord = (p: (typeof all)[number]) =>
+  p.wins >= p.losses ? record(p.wins, p.losses, p.ties) : record(p.losses, p.wins, p.ties);
+---
+
+<Base title="Rivalries" section="/rivalries" description="The league's closest, most lopsided and hottest head-to-head series.">
+  <h1>Rivalries</h1>
+  <p class="lede">
+    Every series in league history. A rivalry needs at least {minMeetings} meetings; the most competitive are the ones
+    closest to .500. The full grid is on the <a href="/h2h">head-to-head matrix</a>.
+  </p>
+
+  {
+    headlines.length > 0 && (
+      <section>
+        <h2>Running storylines</h2>
+        <ul class="headlines">
+          {headlines.map(({ p, f }) => (
+            <li class="card">
+              <a href={rivalryHref(p.a, p.b)}>
+                {f.kind === "streak" ? (
+                  <>
+                    <strong>{manager(f.holder!).name}</strong> has beaten {manager(f.holder === p.a ? p.b : p.a).name}{" "}
+                    <strong>{f.wins} straight</strong>
+                  </>
+                ) : (
+                  <>
+                    <strong>{manager(f.holder!).name}</strong> owns {manager(f.holder === p.a ? p.b : p.a).name},{" "}
+                    <strong>{record(f.wins, f.losses)}</strong>
+                  </>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <h2 id="competitive">Most competitive</h2>
+  <div class="table-scroll">
+    <table class="sticky-first">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col" class="text">Rivalry</th>
+          <th scope="col">Meetings</th>
+          <th scope="col" class="text">Series</th>
+          <th scope="col" title="Distance from an even series">Off .500</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          competitive.map((p, i) => (
+            <tr class:list={{ former: !active(p) }}>
+              <td>{i + 1}</td>
+              <th scope="row" class="text">
+                <a href={rivalryHref(p.a, p.b)}>
+                  <ManagerName id={p.a} short /> vs <ManagerName id={p.b} short />
+                </a>
+              </th>
+              <td>{p.games}</td>
+              <td class="text">
+                {p.wins === p.losses ? (
+                  `Tied ${record(p.wins, p.losses, p.ties)}`
+                ) : (
+                  <>
+                    <ManagerName id={leader(p)} short /> {leadRecord(p)}
+                  </>
+                )}
+              </td>
+              <td>{pct(Math.abs(0.5 - p.win_pct))}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="all">Every series</h2>
+  <p class="muted small">Tap a column to sort: most meetings, most lopsided, longest current streak.</p>
+  <div class="table-scroll">
+    <table class="sticky-first" data-sortable>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Series</th>
+          <th scope="col">Meetings</th>
+          <th scope="col" class="text">Leader</th>
+          <th scope="col">Record</th>
+          <th scope="col" title="The leader's win pct">Pct</th>
+          <th scope="col" class="text">Streak</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          [...all]
+            .sort((x, y) => y.games - x.games)
+            .map((p) => {
+              const lp = Math.max(p.win_pct, 1 - p.win_pct);
+              return (
+                <tr class:list={{ former: !active(p) }}>
+                  <th scope="row" class="text" data-sort={`${p.a} ${p.b}`}>
+                    <a href={rivalryHref(p.a, p.b)}>
+                      <ManagerName id={p.a} short /> – <ManagerName id={p.b} short />
+                    </a>
+                  </th>
+                  <td>{p.games}</td>
+                  <td class="text" data-sort={p.wins === p.losses ? "" : manager(leader(p)).short_name}>
+                    {p.wins === p.losses ? "Even" : <ManagerName id={leader(p)} short />}
+                  </td>
+                  <td data-sort={Math.abs(p.wins - p.losses)}>{leadRecord(p)}</td>
+                  <td class="shade" style={shade(lp)} data-sort={lp}>
+                    {pct(lp)}
+                  </td>
+                  <td class="text" data-sort={p.current_streak.length}>
+                    {p.current_streak.holder ? (
+                      <>
+                        <ManagerName id={p.current_streak.holder} short /> {p.current_streak.length}
+                      </>
+                    ) : (
+                      "–"
+                    )}
+                  </td>
+                </tr>
+              );
+            })
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="muted small">Gray rows: at least one manager is no longer in the league.</p>
+  <SortableTables />
+</Base>
+
+<style>
+  .headlines {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.6rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  }
+  .headlines a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .headlines li:hover {
+    border-color: var(--accent);
+  }
+  tr.former > * {
+    color: var(--muted);
+  }
+  tr.former a {
+    color: var(--muted);
+  }
+</style>

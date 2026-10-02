@@ -80,6 +80,21 @@
           "title": "A",
           "type": "string"
         },
+        "avg_margin": {
+          "description": "a's average margin; negative when b outscores a",
+          "title": "Avg Margin",
+          "type": "number"
+        },
+        "avg_opponent_score": {
+          "description": "b's average score",
+          "title": "Avg Opponent Score",
+          "type": "number"
+        },
+        "avg_score": {
+          "description": "a's average score",
+          "title": "Avg Score",
+          "type": "number"
+        },
         "b": {
           "title": "B",
           "type": "string"
@@ -103,6 +118,11 @@
         "games": {
           "title": "Games",
           "type": "integer"
+        },
+        "last_five": {
+          "description": "Last five results from a's side, oldest to newest",
+          "title": "Last Five",
+          "type": "string"
         },
         "last_meeting": {
           "$ref": "#/$defs/MeetingOut"
@@ -149,6 +169,11 @@
           "title": "Ties",
           "type": "integer"
         },
+        "win_pct": {
+          "description": "a's share of the series, ties counting half",
+          "title": "Win Pct",
+          "type": "number"
+        },
         "wins": {
           "title": "Wins",
           "type": "integer"
@@ -166,6 +191,11 @@
         "playoff_wins",
         "playoff_losses",
         "results",
+        "win_pct",
+        "avg_score",
+        "avg_opponent_score",
+        "avg_margin",
+        "last_five",
         "current_streak",
         "longest_streak_a",
         "longest_streak_b",
@@ -208,6 +238,24 @@
   },
   "additionalProperties": false,
   "properties": {
+    "most_competitive": {
+      "description": "Rivalries (a, b), closest to .500 first: abs(0.5 - win_pct), then most meetings",
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Most Competitive",
+      "type": "array"
+    },
     "pairs": {
       "items": {
         "$ref": "#/$defs/PairOut"
@@ -223,7 +271,8 @@
     }
   },
   "required": [
-    "pairs"
+    "pairs",
+    "most_competitive"
   ],
   "title": "H2HFile",
   "type": "object"

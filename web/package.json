@@ -14,7 +14,9 @@
     "types:check": "node scripts/gen-types.mjs --check"
   },
   "dependencies": {
-    "astro": "^7.3.5"
+    "@observablehq/plot": "^0.6.17",
+    "astro": "^7.3.5",
+    "linkedom": "^0.18.13"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
