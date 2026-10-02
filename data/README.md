@@ -2,9 +2,17 @@
 
 ## `raw/` — committed ESPN responses
 
-`raw/{season}/{view}.json`, one directory per season. Finished seasons are fetched once and never
+`raw/{season}/{dataset}.json`, one directory per season. Finished seasons are fetched once and never
 change, so they are committed: a fresh clone and every CI run work offline, and history survives
 if ESPN changes or drops old data. Only the current season is ever refetched.
+
+The rule lives in `mustafatron.espn.cache`: a season is **finished** once every matchup in its
+schedule has a result (no `UNDECIDED`). That is decided from the data, not the calendar, so the
+offseason needs no special case. (`rankFinal` can't be used: it is 0 for every team in every season
+of this league. `rankCalculatedFinal` holds the real finish.) Unfinished seasons are loaded live and
+never written. `uv run mustafatron fetch` backfills whatever is missing, resuming where an
+interrupted run stopped; `--refresh 2019` refetches and overwrites a finished season if ESPN
+corrects it.
 
 | File | ESPN views | Seasons |
 |---|---|---|
@@ -45,4 +53,5 @@ Top-level keys: `members`, `teams`, `schedule`.
 Known quirk: one manager has two SWIDs across seasons, so 2024–25 show 11 members for 10 teams.
 Canonical identity is resolved in M1 (`data/manual/managers.yml`).
 
-To regenerate from the legacy `.h2h_cache/`: `uv run python scripts/import_h2h_cache.py`.
+To refetch from ESPN: `uv run mustafatron fetch --refresh 2015-2025`. (The original import from the
+legacy `.h2h_cache/` was `scripts/import_h2h_cache.py`.)
