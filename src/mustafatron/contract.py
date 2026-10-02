@@ -1,0 +1,246 @@
+"""The site JSON contract: what ``publish.py`` writes to ``web/public/data/`` and the site reads.
+
+These pydantic models are the single source of truth. ``publish`` builds every file through them
+(so output can't drift from them), and their JSON Schemas are committed under ``schema/`` for the
+site to generate types from. ``uv run mustafatron publish --offline --check`` (run in CI) rebuilds
+everything, validates every file, and fails if ``schema/`` is stale.
+
+Conventions:
+
+- Managers are referenced by canonical id (``"dickey"``); names live only in ``managers.json``.
+- ``week`` is ESPN's matchup period: a playoff "week" here spans two NFL weeks.
+- Games are positional arrays, in the spirit of ``scratch_h2h.py --export``: ~850 rows stay small.
+  Each file that has them documents its column order in ``columns``.
+- Bump ``SCHEMA_VERSION`` on any breaking change.
+"""
+
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field
+
+SCHEMA_VERSION = 1
+
+TIERS = ("NONE", "WINNERS_BRACKET", "WINNERS_CONSOLATION_LADDER", "LOSERS_CONSOLATION_LADDER")
+GAME_COLUMNS = ("season", "week", "tier", "home", "away", "home_score", "away_score", "winner")
+UPCOMING_COLUMNS = ("season", "week", "home", "away")
+
+# [season, week, tier (index into TIERS), home, away, home_score, away_score, winner (null = tie)]
+GameRow = tuple[int, int, int, str, str, float, float, str | None]
+# [season, week, home, away]
+UpcomingRow = tuple[int, int, str, str]
+
+
+class _Model(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+
+class ContractFile(_Model):
+    schema_version: Literal[1] = SCHEMA_VERSION
+
+
+# meta.json ---------------------------------------------------------------------------------------
+
+
+class Meta(ContractFile):
+    """What was published: seasons covered and where the current season stands."""
+
+    league_name: str
+    seasons: list[int]
+    current_season: int
+    current_season_finished: bool
+    last_completed_week: int | None = Field(
+        description="Latest week of the current season with every game final"
+    )
+    upcoming_week: int | None = Field(description="Next week of the current season with games still to play")
+
+
+# managers.json -----------------------------------------------------------------------------------
+
+
+class ManagerOut(_Model):
+    id: str
+    name: str
+    short_name: str
+    first_season: int
+    last_season: int | None = Field(description="null while still in the league")
+    seasons: list[int] = Field(description="Seasons with a team, from the published data")
+
+
+class ManagersFile(ContractFile):
+    managers: list[ManagerOut]
+
+
+# games.json --------------------------------------------------------------------------------------
+
+
+class GamesFile(ContractFile):
+    """Every final game, all seasons, plus the current season's unplayed schedule."""
+
+    columns: list[str] = Field(default=list(GAME_COLUMNS))
+    tiers: list[str] = Field(default=list(TIERS), description="tier column values index into this")
+    games: list[GameRow]
+    upcoming_columns: list[str] = Field(default=list(UPCOMING_COLUMNS))
+    upcoming: list[UpcomingRow]
+
+
+# h2h.json ----------------------------------------------------------------------------------------
+
+
+class MeetingOut(_Model):
+    season: int
+    week: int
+    score: float = Field(description="Manager a's score")
+    opponent_score: float = Field(description="Manager b's score")
+
+
+class StreakOut(_Model):
+    holder: str | None = Field(description="null when the last meeting was a tie")
+    length: int
+
+
+class FlagOut(_Model):
+    kind: Literal["streak", "lopsided", "dead_even"]
+    holder: str | None = None
+    wins: int = 0
+    losses: int = 0
+
+
+class PairOut(_Model):
+    """One all-time series, from manager ``a``'s side (``a`` < ``b`` alphabetically)."""
+
+    a: str
+    b: str
+    games: int
+    wins: int
+    losses: int
+    ties: int
+    points_for: float
+    points_against: float
+    playoff_wins: int
+    playoff_losses: int
+    results: str = Field(description="W/L/T from a's side, oldest meeting first")
+    current_streak: StreakOut
+    longest_streak_a: int
+    longest_streak_b: int
+    last_meeting: MeetingOut
+    closest: MeetingOut
+    blowout: MeetingOut
+    rivalry: bool = Field(description="Enough meetings to count as a rivalry (league_rules.yml)")
+    flags: list[FlagOut]
+
+
+class H2HFile(ContractFile):
+    pairs: list[PairOut]
+
+
+# standings.json ----------------------------------------------------------------------------------
+
+
+class CareerOut(_Model):
+    manager: str
+    seasons: int
+    wins: int
+    losses: int
+    ties: int
+    win_pct: float
+    points_for: float
+    points_against: float
+    playoff_appearances: int
+    championships: int
+    runner_ups: int
+    third_places: int
+    best_finish: int | None
+    avg_finish: float | None
+    net_payout: float = Field(description="Career winnings in multiples of the buy-in")
+
+
+class StandingsFile(ContractFile):
+    """All-time standings, best regular season win percentage first."""
+
+    standings: list[CareerOut]
+
+
+# records.json ------------------------------------------------------------------------------------
+
+
+class GameMarkOut(_Model):
+    season: int
+    week: int
+    manager: str
+    opponent: str
+    score: float
+    opponent_score: float
+    playoff: bool
+
+
+class SeasonMarkOut(_Model):
+    season: int
+    manager: str
+    value: float
+    wins: int
+    losses: int
+    ties: int
+    points_for: float
+
+
+class RecordsFile(ContractFile):
+    """Top 10 of each record. Single-game records count one-week matchups only."""
+
+    game_records: dict[str, list[GameMarkOut]]
+    season_records: dict[str, list[SeasonMarkOut]]
+
+
+# seasons/{year}.json -----------------------------------------------------------------------------
+
+
+class SeasonSettingsOut(_Model):
+    team_count: int
+    regular_season_weeks: int
+    final_week: int
+    playoff_team_count: int
+    points_per_reception: float
+
+
+class TeamOut(_Model):
+    manager: str
+    team_id: int
+    name: str
+    abbrev: str
+    wins: int
+    losses: int
+    ties: int
+    points_for: float
+    points_against: float
+    playoff_seed: int
+    final_rank: int | None
+    acquisitions: int
+    trades: int
+    co_managers: list[str]
+
+
+class SeasonFile(ContractFile):
+    season: int
+    finished: bool
+    champion: str | None
+    settings: SeasonSettingsOut
+    teams: list[TeamOut] = Field(description="Final standings order once finished, else by seed")
+    columns: list[str] = Field(default=list(GAME_COLUMNS))
+    games: list[GameRow] = Field(description="Every game this season, final or not")
+
+
+# Published path → model. seasons/{year}.json all use SeasonFile.
+FILES: dict[str, type[ContractFile]] = {
+    "meta.json": Meta,
+    "managers.json": ManagersFile,
+    "games.json": GamesFile,
+    "h2h.json": H2HFile,
+    "standings.json": StandingsFile,
+    "records.json": RecordsFile,
+}
+SEASON_FILE = SeasonFile
+
+
+def model_for(relpath: str) -> type[ContractFile]:
+    if relpath.startswith("seasons/"):
+        return SEASON_FILE
+    return FILES[relpath]

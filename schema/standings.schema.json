@@ -1,0 +1,125 @@
+{
+  "$defs": {
+    "CareerOut": {
+      "additionalProperties": false,
+      "properties": {
+        "avg_finish": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Avg Finish"
+        },
+        "best_finish": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Best Finish"
+        },
+        "championships": {
+          "title": "Championships",
+          "type": "integer"
+        },
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "net_payout": {
+          "description": "Career winnings in multiples of the buy-in",
+          "title": "Net Payout",
+          "type": "number"
+        },
+        "playoff_appearances": {
+          "title": "Playoff Appearances",
+          "type": "integer"
+        },
+        "points_against": {
+          "title": "Points Against",
+          "type": "number"
+        },
+        "points_for": {
+          "title": "Points For",
+          "type": "number"
+        },
+        "runner_ups": {
+          "title": "Runner Ups",
+          "type": "integer"
+        },
+        "seasons": {
+          "title": "Seasons",
+          "type": "integer"
+        },
+        "third_places": {
+          "title": "Third Places",
+          "type": "integer"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "win_pct": {
+          "title": "Win Pct",
+          "type": "number"
+        },
+        "wins": {
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "seasons",
+        "wins",
+        "losses",
+        "ties",
+        "win_pct",
+        "points_for",
+        "points_against",
+        "playoff_appearances",
+        "championships",
+        "runner_ups",
+        "third_places",
+        "best_finish",
+        "avg_finish",
+        "net_payout"
+      ],
+      "title": "CareerOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "All-time standings, best regular season win percentage first.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "standings": {
+      "items": {
+        "$ref": "#/$defs/CareerOut"
+      },
+      "title": "Standings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "standings"
+  ],
+  "title": "StandingsFile",
+  "type": "object"
+}

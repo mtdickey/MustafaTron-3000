@@ -1,0 +1,128 @@
+{
+  "$defs": {
+    "GameMarkOut": {
+      "additionalProperties": false,
+      "properties": {
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "opponent": {
+          "title": "Opponent",
+          "type": "string"
+        },
+        "opponent_score": {
+          "title": "Opponent Score",
+          "type": "number"
+        },
+        "playoff": {
+          "title": "Playoff",
+          "type": "boolean"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "week": {
+          "title": "Week",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "season",
+        "week",
+        "manager",
+        "opponent",
+        "score",
+        "opponent_score",
+        "playoff"
+      ],
+      "title": "GameMarkOut",
+      "type": "object"
+    },
+    "SeasonMarkOut": {
+      "additionalProperties": false,
+      "properties": {
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "points_for": {
+          "title": "Points For",
+          "type": "number"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "wins": {
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "season",
+        "manager",
+        "value",
+        "wins",
+        "losses",
+        "ties",
+        "points_for"
+      ],
+      "title": "SeasonMarkOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Top 10 of each record. Single-game records count one-week matchups only.",
+  "properties": {
+    "game_records": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/GameMarkOut"
+        },
+        "type": "array"
+      },
+      "title": "Game Records",
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "season_records": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/SeasonMarkOut"
+        },
+        "type": "array"
+      },
+      "title": "Season Records",
+      "type": "object"
+    }
+  },
+  "required": [
+    "game_records",
+    "season_records"
+  ],
+  "title": "RecordsFile",
+  "type": "object"
+}

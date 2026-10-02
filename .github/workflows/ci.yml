@@ -23,6 +23,8 @@ jobs:
         run: uv run ruff format --check .
       - name: Test
         run: uv run pytest
+      - name: Site JSON contract
+        run: uv run mustafatron publish --offline --check
 
   gitleaks:
     runs-on: ubuntu-latest

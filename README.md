@@ -38,11 +38,14 @@ changing or dropping old data. Only the in-progress season is ever refetched.
 | `src/mustafatron/identity.py` | ESPN member IDs → canonical managers from [`data/manual/managers.yml`](data/manual/managers.yml) |
 | `src/mustafatron/model.py` | The entities stats code reads: `TeamSeason`, `Game`, `DraftPick`, `Transaction`, `Season`, `League` |
 | `src/mustafatron/transform.py` | Raw ESPN JSON → model; the only layer that knows how ESPN's eras differ. `load_league()` |
+| `src/mustafatron/stats/` | H2H series and rivalries (`h2h.py`, ported from `scratch_h2h.py`), all-time standings, records book |
+| `src/mustafatron/contract.py` | The site JSON contract (pydantic); JSON Schemas generated into [`schema/`](schema/) |
+| `src/mustafatron/publish.py` | Writes `web/public/data/*.json` through the contract |
 | `src/mustafatron/cli.py` | `uv run mustafatron fetch [--seasons 2019-2021] [--refresh 2019]` |
 | `src/mustafatron/pseudonymize.py` | Replaces ESPN SWIDs with stable opaque IDs before anything hits disk |
 | `src/mustafatron/legacy/` | The v1 matplotlib report code, kept until M1/M4 replace it |
 | `data/raw/` | Committed ESPN responses, one directory per season ([format](data/README.md)) |
-| `scratch_h2h.py` | All-time H2H and rivalry notes; becomes `stats/h2h.py` in M1 |
+| `scratch_h2h.py` | The original H2H script, kept as the reference `stats/h2h.py` is tested against |
 | `web/` | Astro site (M2) |
 
 ## Local setup
@@ -72,6 +75,9 @@ code itself already does this via `truststore`.
 ```sh
 uv run mustafatron fetch                              # backfill finished seasons, load the current one
 uv run mustafatron fetch --refresh 2019               # ESPN corrected a finished season: refetch it
+uv run mustafatron publish                            # site JSON -> web/public/data/ (current season live)
+uv run mustafatron publish --offline --check          # what CI runs: build, validate, schema/ up to date
+uv run mustafatron schema                             # after changing contract.py: regenerate schema/
 uv run python scratch_h2h.py --season 2026 --week 5   # H2H matrix, last week in context, upcoming previews
 uv run pytest                                         # tests
 uv run ruff check . && uv run ruff format --check .   # lint
@@ -79,9 +85,28 @@ uv run ruff check . && uv run ruff format --check .   # lint
 
 The local site (`npm run dev` in `web/`) arrives in M2.
 
+## Site data
+
+`web/public/data/` is generated and gitignored: CI builds it, it is never committed.
+
+| File | Contents |
+|---|---|
+| `meta.json` | Seasons covered, current season, last completed and upcoming week |
+| `managers.json` | Canonical managers: id, name, short name, seasons |
+| `games.json` | Every final game as `[season, week, tier, home, away, home_score, away_score, winner]`, plus upcoming |
+| `h2h.json` | Every all-time series: record, streaks, closest/blowout, playoff record, rivalry flags |
+| `standings.json` | All-time standings: record, titles, playoff appearances, net payout |
+| `records.json` | Records book: single-game (one-week matchups only) and single-season top 10s |
+| `seasons/{year}.json` | One season: settings, final standings, every game |
+
+Managers are referenced by canonical id everywhere; `week` is ESPN's matchup period (playoff weeks
+span two NFL weeks). The models in [`contract.py`](src/mustafatron/contract.py) are the contract,
+with JSON Schemas in [`schema/`](schema/) for the site to generate types from.
+
 ## CI
 
-[`ci.yml`](.github/workflows/ci.yml) runs ruff, pytest and [gitleaks](https://github.com/gitleaks/gitleaks)
+[`ci.yml`](.github/workflows/ci.yml) runs ruff, pytest, the site JSON contract check
+(`mustafatron publish --offline --check`) and [gitleaks](https://github.com/gitleaks/gitleaks)
 over the full history on every push and PR. The weekly in-season refresh (`etl.yml`: cron plus
 manual dispatch, reading ESPN cookies and `MANAGER_ID_KEY` from Actions secrets) and the Cloudflare
 deploy land in M2.
