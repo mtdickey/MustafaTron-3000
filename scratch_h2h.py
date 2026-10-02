@@ -11,19 +11,11 @@ import json
 import os
 from collections import defaultdict
 
-import requests
-
-try:  # use the OS cert store (needed behind TLS-inspecting proxies)
-    import truststore
-    truststore.inject_into_ssl()
-except ImportError:
-    pass
-
-from mustafatron.config import get_settings  # noqa: E402
-from mustafatron.pseudonymize import scrub_season  # noqa: E402
+from mustafatron.config import get_settings
+from mustafatron.espn import EspnClient, SeasonNotFoundError, View
+from mustafatron.pseudonymize import scrub_season
 
 SETTINGS = get_settings()
-LEAGUE_ID = SETTINGS.league_id
 RAW = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'raw')
 
 
@@ -34,20 +26,10 @@ def fetch_season(year, current_year):
         with open(path, encoding='utf-8') as f:
             return json.load(f)
 
-    if year >= 2018:
-        url = f'https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/{year}/segments/0/leagues/{LEAGUE_ID}'
-        params = {}
-    else:
-        url = f'https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/leagueHistory/{LEAGUE_ID}'
-        params = {'seasonId': year}
-    r = requests.get(url, params={**params, 'view': ['mTeam', 'mMatchupScore']}, cookies=SETTINGS.espn_cookies(), timeout=30)
-    if r.status_code != 200:
+    try:
+        data = EspnClient.from_settings(SETTINGS).season(year, [View.TEAM, View.MATCHUP_SCORE])
+    except SeasonNotFoundError:
         return None
-    data = r.json()
-    if isinstance(data, list):
-        if not data:
-            return None
-        data = data[0]
     # Scrub even the uncached current season, so its manager IDs match the committed seasons.
     out = scrub_season({k: data.get(k, []) for k in ('members', 'teams', 'schedule')}, SETTINGS.manager_key())
     if year < current_year:
