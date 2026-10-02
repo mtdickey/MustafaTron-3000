@@ -145,6 +145,16 @@ with JSON Schemas in [`schema/`](schema/) for the site to generate types from.
 The data is published live (current season from ESPN) when the ESPN secrets are available. If the
 cookies have expired the build fails and nothing is deployed, so the site keeps the last good build.
 
+[`etl.yml`](.github/workflows/etl.yml) is the weekly in-season refresh: Tuesdays at 14:00 UTC,
+September through January, after Monday night games are final, and on demand from the Actions tab.
+It runs `mustafatron fetch` with the ESPN cookies and `MANAGER_ID_KEY` from Actions secrets, commits
+any newly finished season to `data/raw/` (after the tests pass on it), then runs the deploy.
+
+**When the cookies expire** (a few times a year), `fetch` exits with code 3 and the run fails. The ETL
+then opens an issue titled *ESPN cookies expired* that says how to fix it, and the next successful
+run closes it. Only the current season stops updating; the site and every finished season keep
+working.
+
 One-time setup: create a Cloudflare API token with **Account → Cloudflare Pages → Edit**, and add it
 and the account ID as the Actions secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The
 first deploy creates the Pages project. Until those secrets exist, the workflow builds the site

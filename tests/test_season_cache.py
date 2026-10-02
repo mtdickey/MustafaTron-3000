@@ -5,7 +5,7 @@ import pytest
 
 from mustafatron.cli import parse_seasons
 from mustafatron.espn.cache import RAW_DIR, Dataset, SeasonCache, is_complete, latest_season
-from mustafatron.espn.client import SeasonNotFoundError, View
+from mustafatron.espn.client import EspnAuthError, SeasonNotFoundError, View
 from mustafatron.pseudonymize import MANAGER_ID_RE
 
 SWID = "{11111111-2222-3333-4444-555555555555}"
@@ -131,6 +131,19 @@ def test_backfill_resumes_where_it_left_off(tmp_path):
         (2017, "matchups", "fetched"),
     ]
     assert [y for y, _ in client.calls] == [2016, 2017]
+
+
+def test_backfill_stops_on_expired_cookies(tmp_path):
+    class Expired(FakeClient):
+        def season(self, year, views):
+            self.calls.append((year, tuple(views)))
+            raise EspnAuthError("401")
+
+    client = Expired({})
+    cache = SeasonCache(tmp_path, client=lambda: client, manager_key=lambda: b"k")
+    with pytest.raises(EspnAuthError):
+        cache.backfill([2015, 2016, 2017])
+    assert len(client.calls) == 1  # no point asking again with the same cookies
 
 
 def test_backfill_refresh_only_touches_named_seasons(tmp_path):

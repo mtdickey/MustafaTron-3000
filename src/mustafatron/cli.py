@@ -6,6 +6,9 @@ mustafatron fetch --refresh 2019        # ESPN corrected 2019: refetch and overw
 mustafatron publish [--offline]         # write the site JSON to web/public/data/
 mustafatron publish --offline --check   # CI: build, validate against the contract, schema current
 mustafatron schema                      # regenerate schema/*.schema.json from mustafatron.contract
+
+Exit codes: 0 ok, 1 failed (see output), 2 a secret is not configured, 3 ESPN rejected the cookies
+(they expired: refresh ESPN_SWID / ESPN_S2). The ETL workflow keys its alerting on 3.
 """
 
 import argparse
@@ -14,9 +17,13 @@ import sys
 from pathlib import Path
 
 from mustafatron import publish
+from mustafatron.config import MissingSecretError
 from mustafatron.espn.cache import DATASETS, SeasonCache, latest_season
+from mustafatron.espn.client import EspnAuthError
 
 FIRST_SEASON = 2015
+EXIT_MISSING_SECRET = 2
+EXIT_AUTH = 3
 
 
 def parse_seasons(spec: str) -> list[int]:
@@ -90,7 +97,14 @@ def main(argv: list[str] | None = None) -> int:
 
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING, format="%(message)s")
-    return args.func(args)
+    try:
+        return args.func(args)
+    except EspnAuthError as e:  # its message already says how to refresh the cookies
+        print(f"error: {e}", file=sys.stderr)
+        return EXIT_AUTH
+    except MissingSecretError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return EXIT_MISSING_SECRET
 
 
 if __name__ == "__main__":

@@ -29,7 +29,7 @@ from pathlib import Path
 from typing import Literal
 
 from mustafatron.config import get_settings
-from mustafatron.espn.client import EspnClient, EspnError, View
+from mustafatron.espn.client import EspnAuthError, EspnClient, EspnError, View
 from mustafatron.pseudonymize import find_swids, scrub_season
 
 log = logging.getLogger(__name__)
@@ -127,7 +127,8 @@ class SeasonCache:
         """Load every (season, dataset), writing finished ones. Resumable: frozen files are skipped.
 
         Returns ``(season, dataset, outcome)`` rows; a season ESPN cannot serve is reported, not raised,
-        so one missing season does not stop the rest.
+        so one missing season does not stop the rest. Expired cookies (:class:`EspnAuthError`) do
+        raise: every later request would fail the same way, and the caller has to say so loudly.
         """
         refresh, report = set(refresh), []
         datasets = list(datasets)
@@ -136,6 +137,8 @@ class SeasonCache:
                 try:
                     _, source = self.load_with_source(season, dataset, refresh=season in refresh)
                     report.append((season, dataset.name, source))
+                except EspnAuthError:
+                    raise
                 except EspnError as e:
                     report.append((season, dataset.name, f"error: {e}"))
                     break
