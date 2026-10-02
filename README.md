@@ -35,6 +35,8 @@ changing or dropping old data. Only the in-progress season is ever refetched.
 | `src/mustafatron/espn/cache.py` | Read-through `data/raw/` cache: finished seasons immutable, the one in progress always fresh |
 | `src/mustafatron/league_settings.py` | League structure per season (lineup, season length, playoffs, scoring) from ESPN `mSettings` |
 | `src/mustafatron/identity.py` | ESPN member IDs → canonical managers from [`data/manual/managers.yml`](data/manual/managers.yml) |
+| `src/mustafatron/model.py` | The entities stats code reads: `TeamSeason`, `Game`, `DraftPick`, `Transaction`, `Season`, `League` |
+| `src/mustafatron/transform.py` | Raw ESPN JSON → model; the only layer that knows how ESPN's eras differ. `load_league()` |
 | `src/mustafatron/cli.py` | `uv run mustafatron fetch [--seasons 2019-2021] [--refresh 2019]` |
 | `src/mustafatron/pseudonymize.py` | Replaces ESPN SWIDs with stable opaque IDs before anything hits disk |
 | `src/mustafatron/legacy/` | The v1 matplotlib report code, kept until M1/M4 replace it |
