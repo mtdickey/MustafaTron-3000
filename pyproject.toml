@@ -13,6 +13,9 @@ dependencies = [
     "truststore>=0.10",
 ]
 
+[project.scripts]
+mustafatron = "mustafatron.cli:main"
+
 [project.optional-dependencies]
 # Only needed by the ported v1 report code in mustafatron.legacy, which is
 # rewritten on raw requests + client-side charts in M1/M4 and then removed.

@@ -32,6 +32,8 @@ changing or dropping old data. Only the in-progress season is ever refetched.
 |---|---|
 | `src/mustafatron/config.py` | Settings from env / `.env` (`pydantic-settings`); never literals |
 | `src/mustafatron/espn/client.py` | ESPN v3 API client: endpoint cutover, retries, a clear error when cookies expire |
+| `src/mustafatron/espn/cache.py` | Read-through `data/raw/` cache: finished seasons immutable, the one in progress always fresh |
+| `src/mustafatron/cli.py` | `uv run mustafatron fetch [--seasons 2019-2021] [--refresh 2019]` |
 | `src/mustafatron/pseudonymize.py` | Replaces ESPN SWIDs with stable opaque IDs before anything hits disk |
 | `src/mustafatron/legacy/` | The v1 matplotlib report code, kept until M1/M4 replace it |
 | `data/raw/` | Committed ESPN responses, one directory per season ([format](data/README.md)) |
@@ -63,12 +65,14 @@ code itself already does this via `truststore`.
 ## Running
 
 ```sh
+uv run mustafatron fetch                              # backfill finished seasons, load the current one
+uv run mustafatron fetch --refresh 2019               # ESPN corrected a finished season: refetch it
 uv run python scratch_h2h.py --season 2026 --week 5   # H2H matrix, last week in context, upcoming previews
 uv run pytest                                         # tests
 uv run ruff check . && uv run ruff format --check .   # lint
 ```
 
-The ETL CLI and the local site (`npm run dev` in `web/`) arrive in M1 and M2.
+The local site (`npm run dev` in `web/`) arrives in M2.
 
 ## CI
 

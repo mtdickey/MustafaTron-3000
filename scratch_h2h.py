@@ -4,39 +4,25 @@ Usage:  python scratch_h2h.py [--season 2026] [--week 4] [--start 2015] [--no-pl
 
 --week is the upcoming week; the week just played is --week - 1.
 Raw ESPN API calls (requests only). Managers are keyed by pseudonymized owner SWID
-(see mustafatron.pseudonymize), so team renames don't matter. Completed seasons are read from data/raw/; only the current season hits ESPN.
+(see mustafatron.pseudonymize), so team renames don't matter. Seasons load through
+mustafatron.espn.cache: finished ones from data/raw/, only the season in progress from ESPN.
 """
 import argparse
 import json
-import os
 from collections import defaultdict
 
-from mustafatron.config import get_settings
-from mustafatron.espn import EspnClient, SeasonNotFoundError, View
-from mustafatron.pseudonymize import scrub_season
+from mustafatron.espn import SeasonNotFoundError
+from mustafatron.espn.cache import SeasonCache
 
-SETTINGS = get_settings()
-RAW = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'raw')
+CACHE = SeasonCache()
 
 
 def fetch_season(year, current_year):
-    """Return dict(members, teams, schedule) for a season, cached on disk for completed seasons."""
-    path = os.path.join(RAW, str(year), 'matchups.json')
-    if year < current_year and os.path.exists(path):
-        with open(path, encoding='utf-8') as f:
-            return json.load(f)
-
+    """Return dict(members, teams, schedule): from data/raw/ if finished, else live from ESPN."""
     try:
-        data = EspnClient.from_settings(SETTINGS).season(year, [View.TEAM, View.MATCHUP_SCORE])
+        return CACHE.load(year)
     except SeasonNotFoundError:
         return None
-    # Scrub even the uncached current season, so its manager IDs match the committed seasons.
-    out = scrub_season({k: data.get(k, []) for k in ('members', 'teams', 'schedule')}, SETTINGS.manager_key())
-    if year < current_year:
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, 'w', encoding='utf-8') as f:
-            f.write(json.dumps(out, indent=1, sort_keys=True) + '\n')
-    return out
 
 
 def clean(s):
