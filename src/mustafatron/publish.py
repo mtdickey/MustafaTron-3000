@@ -18,6 +18,7 @@ from mustafatron.model import Game, League, Season
 from mustafatron.rules import LeagueRules, load_rules
 from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags
 from mustafatron.stats.records import records_book
+from mustafatron.stats.seasons import all_play, superlatives, week_scores
 from mustafatron.stats.standings import all_time_standings, championship_ledger
 from mustafatron.transform import load_league
 
@@ -222,8 +223,46 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
                 for t in s.teams
             ],
             games=[game_row(g) for g in s.games],
+            **_season_detail(s),
         )
     return out
+
+
+def _season_detail(s: Season) -> dict:
+    """The week-by-week grid, all-play records and superlatives for a SeasonFile."""
+    weeks = week_scores(s)
+    periods = sorted({w.period for w in weeks})
+    cell = {(w.manager_id, w.period): w for w in weeks}
+    ap = all_play(s)
+    first_playoff = s.settings.regular_season_matchups + 1
+    return dict(
+        periods=periods,
+        playoff_start_period=(
+            s.settings.scoring_periods(first_playoff)[0]
+            if first_playoff in s.settings.matchup_periods
+            else None
+        ),
+        weekly=[
+            c.WeeklyOut(
+                manager=t.manager_id,
+                scores=[
+                    cell[(t.manager_id, p)].points if (t.manager_id, p) in cell else None for p in periods
+                ],
+                results="".join(
+                    (cell[(t.manager_id, p)].result if (t.manager_id, p) in cell else "") or "-"
+                    for p in periods
+                ),
+                all_play_wins=ap[t.manager_id].wins,
+                all_play_losses=ap[t.manager_id].losses,
+                all_play_ties=ap[t.manager_id].ties,
+            )
+            for t in s.teams
+        ],
+        superlatives=[
+            c.SuperlativeOut(key=x.key, manager=x.manager_id, value=x.value, period=x.period)  # type: ignore[arg-type]
+            for x in superlatives(s)
+        ],
+    )
 
 
 def write(files: dict[str, c.ContractFile], out_dir: Path) -> None:

@@ -61,3 +61,10 @@ def test_matchup_period_mapping():
     assert list(s.playoff_matchup_periods) == [14, 15]
     with pytest.raises(ValueError):
         s.matchup_period_of(18)
+
+
+def test_matchup_weeks_are_in_order():
+    # ESPN lists 2021's first playoff matchup as [16, 15]; the season grid relies on order.
+    assert load_settings(2021).scoring_periods(15) == (15, 16)
+    for season in range(2015, 2026):
+        assert all(list(w) == sorted(w) for w in load_settings(season).matchup_periods.values())

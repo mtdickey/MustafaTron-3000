@@ -122,7 +122,7 @@ lays out what the contract publishes.
 | `h2h.json` | Every all-time series: record, streaks, closest/blowout, playoff record, rivalry flags |
 | `standings.json` | All-time standings (regular season record and margin, playoff record, titles, best/worst finish, net payout and ROI) and the championship ledger |
 | `records.json` | Records book: single-game (one-week matchups only) and single-season top 10s |
-| `seasons/{year}.json` | One season: settings, final standings, every game |
+| `seasons/{year}.json` | One season: settings, final standings, every game, each team's points per NFL week, all-play records, superlatives |
 
 Managers are referenced by canonical id everywhere; `week` is ESPN's matchup period (playoff weeks
 span two NFL weeks). The models in [`contract.py`](src/mustafatron/contract.py) are the contract,

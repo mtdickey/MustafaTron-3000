@@ -103,7 +103,8 @@ def parse_settings(season: int, raw: dict) -> LeagueSettings:
     """Build ``LeagueSettings`` from a ``settings.json`` (the ``settings`` and ``status`` of mSettings)."""
     s, status = raw["settings"], raw.get("status", {})
     schedule = s["scheduleSettings"]
-    matchup_periods = {int(k): tuple(v) for k, v in schedule["matchupPeriods"].items()}
+    # Sorted: ESPN lists some out of order (2021: matchup 15 is [16, 15]).
+    matchup_periods = {int(k): tuple(sorted(v)) for k, v in schedule["matchupPeriods"].items()}
     slots = {
         SLOT_NAMES.get(int(k), f"slot{k}"): n for k, n in s["rosterSettings"]["lineupSlotCounts"].items() if n
     }

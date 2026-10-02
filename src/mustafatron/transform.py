@@ -83,9 +83,17 @@ def games(raw: RawSeason, season: int, managers: Managers) -> list[Game]:
                 away_score=round(float(away.get("totalPoints", 0.0)), 2),
                 final=winner in DECIDED,
                 winner_id=home_id if winner == "HOME" else away_id if winner == "AWAY" else None,
+                period_scores=period_scores(home, away),
             )
         )
     return sorted(out, key=lambda g: (g.week, g.home_id))
+
+
+def period_scores(home: dict, away: dict) -> tuple[tuple[int, float, float], ...]:
+    """Per-NFL-week points from ``pointsByScoringPeriod``, the breakdown of a multi-week matchup."""
+    h, a = home.get("pointsByScoringPeriod") or {}, away.get("pointsByScoringPeriod") or {}
+    weeks = sorted({int(w) for w in h} | {int(w) for w in a})
+    return tuple((w, round(float(h.get(str(w), 0.0)), 2), round(float(a.get(str(w), 0.0)), 2)) for w in weeks)
 
 
 def draft_picks(draft_detail: dict, season: int, team_managers: dict[int, str]) -> list[DraftPick]:

@@ -77,6 +77,9 @@ class Game:
     final: bool  # False for scheduled and in-progress games, whose scores are partial
     # ESPN's result, not the scores: playoff ties are broken by ESPN (2017 week 15 ended 154-154).
     winner_id: str | None = None  # None while not final, or for a regular season tie
+    # (NFL week, home points, away points) for each scoring period the matchup covers: one for a
+    # regular season game, two for a playoff matchup here. Empty when ESPN sent no breakdown.
+    period_scores: tuple[tuple[int, float, float], ...] = ()
 
     @property
     def is_playoff(self) -> bool:
