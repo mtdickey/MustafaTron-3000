@@ -330,6 +330,32 @@ class SeasonFile(ContractFile):
     superlatives: list[SuperlativeOut]
 
 
+# profiles.json -----------------------------------------------------------------------------------
+
+
+class WeekLineOut(_Model):
+    season: int
+    period: int = Field(description="NFL week")
+    points: float
+    opponent: str
+    result: Literal["W", "L", "T"] | None = Field(description="null for half of a two-week playoff matchup")
+
+
+class ProfileOut(_Model):
+    """What a manager's page needs beyond standings.json, seasons/*.json and h2h.json."""
+
+    manager: str
+    all_play_wins: int = Field(description="Career regular season record against the whole league each week")
+    all_play_losses: int
+    all_play_ties: int
+    best_weeks: list[WeekLineOut] = Field(description="Highest single NFL weeks, best first")
+    worst_weeks: list[WeekLineOut] = Field(description="Lowest single NFL weeks, worst first")
+
+
+class ProfilesFile(ContractFile):
+    profiles: list[ProfileOut]
+
+
 # Published path → model. seasons/{year}.json all use SeasonFile.
 FILES: dict[str, type[ContractFile]] = {
     "meta.json": Meta,
@@ -338,6 +364,7 @@ FILES: dict[str, type[ContractFile]] = {
     "h2h.json": H2HFile,
     "standings.json": StandingsFile,
     "records.json": RecordsFile,
+    "profiles.json": ProfilesFile,
 }
 SEASON_FILE = SeasonFile
 

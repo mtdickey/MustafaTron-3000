@@ -17,6 +17,7 @@ from mustafatron.espn.cache import SeasonCache
 from mustafatron.model import Game, League, Season
 from mustafatron.rules import LeagueRules, load_rules
 from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags, rivalries
+from mustafatron.stats.profiles import best_and_worst_weeks, career_all_play
 from mustafatron.stats.records import records_book
 from mustafatron.stats.seasons import all_play, superlatives, week_scores
 from mustafatron.stats.standings import all_time_standings, championship_ledger
@@ -230,6 +231,10 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
         },
     )
 
+    out["profiles.json"] = c.ProfilesFile(
+        profiles=[_profile(league, m.id) for m in league.managers_with_games()]
+    )
+
     for s in league.seasons.values():
         out[f"seasons/{s.season}.json"] = c.SeasonFile(
             season=s.season,
@@ -265,6 +270,25 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
             **_season_detail(s),
         )
     return out
+
+
+def _profile(league: League, manager_id: str) -> c.ProfileOut:
+    best, worst = best_and_worst_weeks(league, manager_id)
+    ap = career_all_play(league, manager_id)
+
+    def week(w) -> c.WeekLineOut:
+        return c.WeekLineOut(
+            season=w.season, period=w.period, points=w.points, opponent=w.opponent_id, result=w.result
+        )
+
+    return c.ProfileOut(
+        manager=manager_id,
+        all_play_wins=ap.wins,
+        all_play_losses=ap.losses,
+        all_play_ties=ap.ties,
+        best_weeks=[week(w) for w in best],
+        worst_weeks=[week(w) for w in worst],
+    )
 
 
 def _season_detail(s: Season) -> dict:

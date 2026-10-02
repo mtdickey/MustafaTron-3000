@@ -69,7 +69,7 @@ def regular_season_periods(season: Season) -> list[int]:
     ]
 
 
-def _final_periods(season: Season) -> set[int]:
+def final_periods(season: Season) -> set[int]:
     """NFL weeks whose matchups are all final (an in-progress week's partial scores don't count)."""
     done: dict[int, bool] = {}
     for g in season.games:
@@ -80,7 +80,7 @@ def _final_periods(season: Season) -> set[int]:
 
 def all_play(season: Season) -> dict[str, AllPlay]:
     """Each team's record against the whole league, week by week, over final regular season weeks."""
-    final = _final_periods(season) & set(regular_season_periods(season))
+    final = final_periods(season) & set(regular_season_periods(season))
     by_period: dict[int, dict[str, float]] = {}
     for w in week_scores(season):
         if w.period in final:
@@ -97,7 +97,7 @@ def all_play(season: Season) -> dict[str, AllPlay]:
 
 def superlatives(season: Season) -> list[Superlative]:
     """The season's headline numbers. Weekly ones use final weeks only; luck needs regular season games."""
-    final = _final_periods(season)
+    final = final_periods(season)
     weeks = [w for w in week_scores(season) if w.period in final]
     teams = [t for t in season.teams if t.games]
     out: list[Superlative] = []

@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "ProfileOut": {
+      "additionalProperties": false,
+      "description": "What a manager's page needs beyond standings.json, seasons/*.json and h2h.json.",
+      "properties": {
+        "all_play_losses": {
+          "title": "All Play Losses",
+          "type": "integer"
+        },
+        "all_play_ties": {
+          "title": "All Play Ties",
+          "type": "integer"
+        },
+        "all_play_wins": {
+          "description": "Career regular season record against the whole league each week",
+          "title": "All Play Wins",
+          "type": "integer"
+        },
+        "best_weeks": {
+          "description": "Highest single NFL weeks, best first",
+          "items": {
+            "$ref": "#/$defs/WeekLineOut"
+          },
+          "title": "Best Weeks",
+          "type": "array"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "worst_weeks": {
+          "description": "Lowest single NFL weeks, worst first",
+          "items": {
+            "$ref": "#/$defs/WeekLineOut"
+          },
+          "title": "Worst Weeks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "manager",
+        "all_play_wins",
+        "all_play_losses",
+        "all_play_ties",
+        "best_weeks",
+        "worst_weeks"
+      ],
+      "title": "ProfileOut",
+      "type": "object"
+    },
+    "WeekLineOut": {
+      "additionalProperties": false,
+      "properties": {
+        "opponent": {
+          "title": "Opponent",
+          "type": "string"
+        },
+        "period": {
+          "description": "NFL week",
+          "title": "Period",
+          "type": "integer"
+        },
+        "points": {
+          "title": "Points",
+          "type": "number"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "enum": [
+                "W",
+                "L",
+                "T"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "null for half of a two-week playoff matchup",
+          "title": "Result"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "season",
+        "period",
+        "points",
+        "opponent",
+        "result"
+      ],
+      "title": "WeekLineOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "profiles": {
+      "items": {
+        "$ref": "#/$defs/ProfileOut"
+      },
+      "title": "Profiles",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "profiles"
+  ],
+  "title": "ProfilesFile",
+  "type": "object"
+}
