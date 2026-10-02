@@ -5,7 +5,13 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from espn_api.football import League
 
+from mustafatron.identity import load_managers
 from mustafatron.legacy import data_utils as du
+
+
+def short_name(team_owner: str) -> str:
+    """Chart label for an ESPN owner name ("Matthew Albert" -> "Matt A."), from data/manual/managers.yml."""
+    return load_managers().by_name(team_owner.split(', ')[0]).short_name
 
 def biggest_steals_chart(draft_df: pd.DataFrame, week_number: int,
                          n_steals_to_plot: int = 10,
@@ -152,8 +158,7 @@ def if_only_wouldve_started_owner_chart(lineup_df: pd.DataFrame, week: int,
     top_n_subs_by_owner = (potential_points_by_team_and_player['potential_extra_points']
                         .groupby('team_owner', group_keys=False).nlargest(n_players_per_team).reset_index())
 
-    top_n_subs_by_owner['owner_first_name'] = top_n_subs_by_owner['team_owner'].apply(lambda x: x.split(' ')[0] if x.split(' ')[0] != "Matthew" else
-                                                                                                                f"Matt {x.split(' ')[1][0]}.")
+    top_n_subs_by_owner['owner_first_name'] = top_n_subs_by_owner['team_owner'].apply(short_name)
     top_n_subs_by_owner['bar_label'] = top_n_subs_by_owner['owner_first_name'] + " would've started " + top_n_subs_by_owner['player_name']
 
     ax = top_n_subs_by_owner.sort_values(by = 'potential_extra_points').plot(y = 'potential_extra_points', x = 'bar_label',
@@ -193,8 +198,7 @@ def if_only_wouldve_started_chart(lineup_df: pd.DataFrame, week: int, top_n: int
                                         .sort_values('potential_extra_points', ascending = False)
                                         .head(top_n).rename(columns = {'index': 'n_subs'}).reset_index())
 
-    potential_points_by_team_and_player['owner_first_name'] = potential_points_by_team_and_player['team_owner'].apply(lambda x: x.split(' ')[0] if x.split(' ')[0] != "Matthew" else
-                                                                                                                f"Matt {x.split(' ')[1][0]}.")
+    potential_points_by_team_and_player['owner_first_name'] = potential_points_by_team_and_player['team_owner'].apply(short_name)
     potential_points_by_team_and_player['bar_label'] = (potential_points_by_team_and_player['owner_first_name'] + 
                                                         " would've started " + potential_points_by_team_and_player['player_name'] + 
                                                         ' (' + potential_points_by_team_and_player['n_subs'].astype(str) + ')')

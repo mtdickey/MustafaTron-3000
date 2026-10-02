@@ -62,8 +62,16 @@ is 15 (16 in 2021); standard scoring through 2022, half-PPR from 2023.
 
 ### Quirks
 
-Known quirk: one manager has two SWIDs across seasons, so 2024–25 show 11 members for 10 teams.
-Canonical identity is resolved in M1 (`data/manual/managers.yml`).
+Known quirk: Ryan Richardson co-owns his team with a second ESPN account from 2024 (and Jon Grudee
+from 2026), so those seasons list more members than teams. Member IDs are never used as manager
+keys directly: `mustafatron.identity` resolves them to the canonical managers in
+[`manual/managers.yml`](manual/managers.yml).
+
+## `manual/` — hand-maintained league facts
+
+| File | What |
+|---|---|
+| `managers.yml` | One entry per person: canonical id, display and short names, every ESPN member ID they have used, seasons active |
 
 To refetch from ESPN: `uv run mustafatron fetch --refresh 2015-2025`. (The original import from the
 legacy `.h2h_cache/` was `scripts/import_h2h_cache.py`.)
