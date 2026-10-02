@@ -13,8 +13,10 @@ from collections import defaultdict
 
 from mustafatron.espn import SeasonNotFoundError
 from mustafatron.espn.cache import SeasonCache
+from mustafatron.rules import load_rules
 
 CACHE = SeasonCache()
+RULES = load_rules()
 
 
 def fetch_season(year, current_year):
@@ -125,17 +127,18 @@ def describe_pair(names, games, x, y, label_week=None):
 def notable_flags(names, games, x, y):
     """Short list of 'headline' items for a pair; empty if nothing notable."""
     gs = pair_games(games, x, y)
-    if len(gs) < 3:
+    r = RULES.rivalry
+    if len(gs) < r.notable_min_games:
         return []
     res = [result(a, b) for _, _, a, b, _ in gs]
     (cch, cn), _, _ = streaks(res)
     w, l = res.count('W'), res.count('L')
     flags = []
-    if cch != 'T' and cn >= 3:
+    if cch != 'T' and cn >= r.streak:
         flags.append(f'{names[x] if cch == "W" else names[y]} has won {cn} straight')
-    if max(w, l) / len(gs) >= 0.7:
+    if max(w, l) / len(gs) >= r.lopsided_pct:
         flags.append(f'lopsided series ({max(w, l)}-{min(w, l)})')
-    if abs(w - l) <= 1 and len(gs) >= 5:
+    if abs(w - l) <= r.dead_even_max_diff and len(gs) >= r.dead_even_min_games:
         flags.append('dead-even rivalry')
     return flags
 
@@ -162,7 +165,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--season', type=int, default=2026)
     ap.add_argument('--week', type=int, default=4, help='upcoming week; last week = week-1')
-    ap.add_argument('--start', type=int, default=2015)
+    ap.add_argument('--start', type=int, default=RULES.history_start)
     ap.add_argument('--no-playoffs', action='store_true')
     ap.add_argument('--export', help='write raw games as JSON to this path and exit')
     args = ap.parse_args()

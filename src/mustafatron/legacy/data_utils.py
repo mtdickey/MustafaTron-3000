@@ -3,11 +3,12 @@ import pandas as pd
 from espn_api.football import League, Player, Team
 from typing import List
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import requests
 import re
 
 from mustafatron.league_settings import load_settings
+from mustafatron.rules import load_rules
 #from data.configs import keys
 
 # https://github.com/cwendt94/espn-api/pull/487#issuecomment-1782273387
@@ -747,33 +748,22 @@ class ReplacementBoxPlayer():
             return 0
 
 
-def get_start_week_after_trade(trade_date: float, season_start_date: datetime, final_week_number: int) -> int:
+def get_start_week_after_trade(trade_date: float, season: int, final_week_number: int) -> int:
     """Find the first week of the season after the trade
+
+    Week boundaries come from the season's NFL week 1 kickoff in data/manual/league_rules.yml
+    (previously a hand-typed season_start_date, which disagreed with itself in 2025).
 
     Args:
         trade_date (float): ESPN's date of the trade, epoch milliseconds
-        season_start_date (datetime): date that the season started
+        season (int): fantasy season
         final_week_number (int): last week number of the season
 
     Returns:
-        int: first week number after the trade
+        int: first week number after the trade, or None if it came after the final week started
     """
-    weeks = []
-    dates = []
-    week = 1
-    date = season_start_date
-    for i in range(1, final_week_number+1):
-        weeks.append(week)
-        dates.append(date)
-        date = date + timedelta(days=7)
-        week+=1
-    dates_df = pd.DataFrame({'week': weeks, 'date':dates})
-    sub_dates_df = dates_df[dates_df['date'] > datetime.fromtimestamp(trade_date/1000)]
-    min_week_after_trade = list(sub_dates_df[sub_dates_df['date'] == sub_dates_df['date'].min()]['week'])
-    if len(min_week_after_trade) == 0:
-        return None
-    else:
-        return min_week_after_trade[0]
+    when = datetime.fromtimestamp(trade_date / 1000, tz=timezone.utc)
+    return load_rules().first_week_after(season, when, final_week=final_week_number)
 
 
 def get_point_diff_for_trade(league: League, team: Team, start_week: int, players_added: List[Player], players_lost: List[Player]) -> float:
@@ -810,7 +800,7 @@ def get_point_diff_for_trade(league: League, team: Team, start_week: int, player
     return total_point_diff
 
 
-def get_trade_evaluations_df(league: League, season_start_date, final_week_number=None) -> pd.DataFrame:
+def get_trade_evaluations_df(league: League, final_week_number=None) -> pd.DataFrame:
     """Compiles a DataFrame of all retroactively evaluated trades for the fantasy season based on ROS value for a team's roster.
 
     Args:
@@ -833,7 +823,7 @@ def get_trade_evaluations_df(league: League, season_start_date, final_week_numbe
         for team in teams:
             players_added = [action[2] for action in trade.actions if action[0] != team]
             players_lost  = [action[2] for action in trade.actions if action[0] == team]
-            start_week = get_start_week_after_trade(trade.date, season_start_date=season_start_date, final_week_number=final_week_number)
+            start_week = get_start_week_after_trade(trade.date, season=league.year, final_week_number=final_week_number)
             point_diff = get_point_diff_for_trade(league, team, start_week, players_added, players_lost)
             team_list.append(team)
             players_added_list.append(players_added)
