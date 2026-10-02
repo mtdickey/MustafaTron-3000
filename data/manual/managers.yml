@@ -1,0 +1,110 @@
+# Canonical managers of Mustafa Greene's Fan Club: one entry per person, across every season.
+#
+# Everything downstream (H2H, standings, records, keepers) keys on the canonical `id` here, never on
+# an ESPN member ID, because one person can have several ESPN accounts and ESPN's names are
+# inconsistently cased. Resolution lives in src/mustafatron/identity.py.
+#
+#   id          stable slug, used in URLs and published JSON. Never change one once published.
+#   name        display name
+#   short_name  label for charts and tight tables; unique across the league's history
+#   espn_ids    every ESPN member ID this person has owned a team under. These are the pseudonymized
+#               IDs from data/raw/ (m_ + 16 hex, see mustafatron.pseudonymize), never raw SWIDs.
+#   aliases     other spellings of the name ESPN has shown (matched case-insensitively)
+#   seasons     "2015-2025" or "2016-" (still active) or "2015"
+#
+# A new ESPN member ID showing up fails tests/test_identity.py until it is added here, so a
+# duplicate account can't quietly split someone's career in the record book.
+
+managers:
+  albert:
+    name: Matthew Albert
+    short_name: Matt A.
+    espn_ids: [m_a4f0d563b98b1fb1]
+    seasons: 2015-
+
+  alligood:
+    name: Brian Alligood
+    short_name: Brian
+    espn_ids: [m_f7ab1cd7c6fe24b0]
+    seasons: 2026-
+
+  carpenter:
+    name: Matthew Carpenter
+    short_name: Matt C.
+    espn_ids: [m_f90f2363985047cb]
+    seasons: 2016-
+
+  dickey:
+    name: Michael Dickey
+    short_name: Michael
+    espn_ids: [m_a196270bf1721a5c]
+    seasons: 2015-
+
+  edwards:
+    name: Dylan Edwards
+    short_name: Dylan
+    espn_ids: [m_41bf267dc2a08507]
+    seasons: 2015-
+
+  grudee:
+    name: Jon Grudee
+    short_name: Jon
+    # The second ID is a newer account ("Jonathan Grudee"), added as a co-owner of his team in 2026.
+    espn_ids: [m_385722442272a1ef, m_e934f1520f63c35f]
+    aliases: [Jonathan Grudee]
+    seasons: 2015-
+
+  hunter:
+    name: Will Hunter
+    short_name: Will
+    espn_ids: [m_27ae9a5d121c5d7d]
+    seasons: 2022-
+
+  joyce:
+    name: Andrew Joyce
+    short_name: Andrew J.
+    espn_ids: [m_e4b01c947100692d]
+    seasons: 2015-
+
+  kariuki:
+    name: Richard Kariuki
+    short_name: Richard
+    espn_ids: [m_f6f4dd963d3c5b89]
+    seasons: 2016-2021
+
+  moundous:
+    name: Ilya Moundous
+    short_name: Ilya
+    espn_ids: [m_b317c985ccb478f6]
+    seasons: "2015"
+
+  ray:
+    name: Andrew Ray
+    short_name: Andrew R.
+    espn_ids: [m_b24b6625d8e4b3ea]
+    seasons: "2015"
+
+  richardson:
+    name: Ryan Richardson
+    short_name: Ryan
+    # The second ID ("ESPNFAN4495800668") is a second account added as a co-owner of his team in 2024.
+    espn_ids: [m_63ab5f2297451f37, m_c8b2567badad1fbc]
+    seasons: 2015-
+
+  sedaghat:
+    name: Hamid Sedaghat
+    short_name: Hamid
+    espn_ids: [m_b1fe61717c673d2c]
+    seasons: 2015-2021
+
+  wilkins:
+    name: Rich Wilkins
+    short_name: Rich
+    espn_ids: [m_f774a345061b3ab1]
+    seasons: 2022-2025
+
+  wolfe:
+    name: Chris Wolfe
+    short_name: Chris
+    espn_ids: [m_d1839f51a0dae615]
+    seasons: 2015-
