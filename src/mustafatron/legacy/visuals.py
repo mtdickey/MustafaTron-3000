@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from espn_api.football import League
 
-import data_utils as du
+from mustafatron.legacy import data_utils as du
 
 def biggest_steals_chart(draft_df: pd.DataFrame, week_number: int,
                          n_steals_to_plot: int = 10,
@@ -45,7 +45,7 @@ def biggest_steals_chart(draft_df: pd.DataFrame, week_number: int,
     plt.yticks(fontsize=7)
     plt.xticks(fontsize=10)
     plt.title(f"Biggest Steals after Rd. {steals_after_rd}\nThrough Week {week_number}", fontsize=10)
-    plt.savefig(f'data/plots/biggest-steals-week-{week_number}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'output/plots/biggest-steals-week-{week_number}.png', dpi=300, bbox_inches='tight')
 
 
 def biggest_busts_chart(draft_df: pd.DataFrame, week_number: int,
@@ -85,7 +85,7 @@ def biggest_busts_chart(draft_df: pd.DataFrame, week_number: int,
     plt.yticks(fontsize=7)
     plt.xticks(fontsize=10)
     plt.title(f"Biggest Busts of Rds. 1 - 4\nThrough Week {week_number}", fontsize=10)
-    plt.savefig(f'data/plots/biggest-busts-week-{week_number}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'output/plots/biggest-busts-week-{week_number}.png', dpi=300, bbox_inches='tight')
 
 
 def total_points_left_on_bench_chart(lineup_df: pd.DataFrame, week: int,
@@ -121,7 +121,7 @@ def total_points_left_on_bench_chart(lineup_df: pd.DataFrame, week: int,
     ax.title.set_size(16)
     ax.set_xlabel("")
     ax.set_ylabel("")
-    plt.savefig(f'data/plots/total-points-on-bnch-week-{week}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'output/plots/total-points-on-bnch-week-{week}.png', dpi=300, bbox_inches='tight')
 
 def if_only_wouldve_started_owner_chart(lineup_df: pd.DataFrame, week: int,
                                          n_players_per_team: int = 2,
@@ -162,7 +162,7 @@ def if_only_wouldve_started_owner_chart(lineup_df: pd.DataFrame, week: int,
                                                                             title = 'If only...')
     ax.set_xlabel("Potential extra points gained")
     ax.set_ylabel("")
-    plt.savefig(f'data/plots/if-only-wouldve-started-owner-{week}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'output/plots/if-only-wouldve-started-owner-{week}.png', dpi=300, bbox_inches='tight')
 
 
 def if_only_wouldve_started_chart(lineup_df: pd.DataFrame, week: int, top_n: int = 10,
@@ -205,7 +205,7 @@ def if_only_wouldve_started_chart(lineup_df: pd.DataFrame, week: int, top_n: int
                 kind = 'barh', title = 'If only...'))
     ax.set_xlabel("Potential extra points gained")
     ax.set_ylabel("")
-    plt.savefig(f'data/plots/if-only-wouldve-started-{week}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'output/plots/if-only-wouldve-started-{week}.png', dpi=300, bbox_inches='tight')
 
 
 def record_vs_league_chart(weekly_scores_df, week, heatmap_color = 'Greens'):
@@ -257,9 +257,9 @@ def record_vs_league_chart(weekly_scores_df, week, heatmap_color = 'Greens'):
     fig, ax = plt.subplots()
     sns.set(font_scale=1.1)
     ax = sns.heatmap(heatmap_df, annot = labels_df, cmap=heatmap_color, fmt = '', annot_kws={"fontsize":8.5})
-    ax.set_title('Records vs. Entire League by Week')
+    ax.set_title('All-Play Records by Week')
     plt.ylabel('')
-    plt.savefig(f'data/plots/record-vs-league-week-{week}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'output/plots/record-vs-league-week-{week}.png', dpi=300, bbox_inches='tight')
 
 
 ## Barplot of records above and below expected based on records vs. entire league 
@@ -307,8 +307,8 @@ def luckiest_records_chart(weekly_scores_df, week,
     ax.legend_.remove()
     ax.set_title(f'Luckiest Records in the League Through Week {week}', fontsize = 14)
     plt.ylabel('')
-    plt.xlabel('Actual Win Pct. Minus Overall Win Pct. vs. Entire League')
-    plt.savefig(f'data/plots/luckiest-records-week-{week}.png', dpi=300, bbox_inches='tight')
+    plt.xlabel('Actual Win Pct. Minus All-Play Win Pct.')
+    plt.savefig(f'output/plots/luckiest-records-week-{week}.png', dpi=300, bbox_inches='tight')
 
 
 def number_trades_acquisition_chart(league, acquisition_type):
@@ -333,14 +333,14 @@ def number_trades_acquisition_chart(league, acquisition_type):
                                                      title=f'Number of {acquisition_type.title()} by Owner', legend = False)
     plt.xlabel('')
     plt.ylabel('')
-    plt.savefig(f'data/plots/number-of-{acquisition_type}.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'output/plots/number-of-{acquisition_type}.png', dpi=300, bbox_inches='tight')
 
 
 def best_worst_trade_chart(trade_eval_df, best_or_worst):
     """plot the best or worst trades based on the evaluations done in data_utils.
 
     Args:
-        trade_eval_df (_type_): DataFrame from du.get_trade_evalutions_df
+        trade_eval_df (_type_): DataFrame from du.get_trade_evaluations_df
         best_or_worst (str): either "best" or "worst"
     """
     trade_eval_df['label'] = trade_eval_df.apply(lambda x:
@@ -354,4 +354,4 @@ def best_worst_trade_chart(trade_eval_df, best_or_worst):
             x='label', y='point_diff', title='Worst Trades of the Year', legend=False)
     plt.ylabel('')
     plt.xlabel('ROS Value for Roster')
-    plt.savefig(f'data/plots/{best_or_worst}-trades.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'output/plots/{best_or_worst}-trades.png', dpi=300, bbox_inches='tight')
