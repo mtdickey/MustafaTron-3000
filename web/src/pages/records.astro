@@ -1,0 +1,193 @@
+---
+import RecordCard, { type Mark } from "../components/RecordCard.astro";
+import Base from "../layouts/Base.astro";
+import { meta, records } from "../lib/data";
+import { pct, points, record } from "../lib/format";
+
+const m = meta();
+const book = records();
+// A mark is live when it was set in the season still being played: it can still be beaten (or extended).
+const live = (season: number) => !m.current_season_finished && season === m.current_season;
+const weekHref = (season: number, week: number) => `/seasons/${season}#week-${week}`;
+
+type GameMark = (typeof book.game_records)[string][number];
+type SeasonMark = (typeof book.season_records)[string][number];
+
+const gameMarks = (key: string, value: (g: GameMark) => string, detail: (g: GameMark) => string): Mark[] =>
+  (book.game_records[key] ?? []).map((g) => ({
+    who: [g.manager],
+    value: value(g),
+    when: `${g.season} · week ${g.week}`,
+    href: weekHref(g.season, g.week),
+    live: live(g.season),
+    detail: detail(g),
+  }));
+const vs = (g: GameMark) => `${points(g.score, 2)}–${points(g.opponent_score, 2)}`;
+
+const seasonMarks = (key: string, value: (s: SeasonMark) => string): Mark[] =>
+  (book.season_records[key] ?? []).map((s) => ({
+    who: [s.manager],
+    value: value(s),
+    when: `${s.season}`,
+    href: `/seasons/${s.season}`,
+    detail: `${record(s.wins, s.losses, s.ties)}, ${points(s.points_for)} pts`,
+  }));
+
+const matchupMarks = (key: string): Mark[] =>
+  (book.matchup_records[key] ?? []).map((x) => ({
+    who: [x.home, x.away],
+    value: points(x.total, 2),
+    when: `${x.season} · week ${x.week}`,
+    href: weekHref(x.season, x.week),
+    live: live(x.season),
+    detail: `${points(x.home_score, 2)}–${points(x.away_score, 2)}`,
+  }));
+
+const streakMarks = (key: string): Mark[] =>
+  (book.streak_records[key] ?? []).map((s) => ({
+    who: [s.manager],
+    value: `${s.length}`,
+    when:
+      s.start_season === s.end_season
+        ? `${s.start_season} · weeks ${s.start_week}–${s.end_week}`
+        : `${s.start_season} wk ${s.start_week} – ${s.end_season} wk ${s.end_week}`,
+    href: `/seasons/${s.start_season}#week-${s.start_week}`,
+    live: s.active && live(s.end_season),
+    detail: s.active ? "active" : undefined,
+  }));
+
+const weekMarks = (key: string): Mark[] =>
+  (book.week_records[key] ?? []).map((w) => ({
+    who: [],
+    value: points(w.total, 1),
+    when: `${w.season} · NFL week ${w.period}`,
+    href: weekHref(w.season, w.period),
+    live: live(w.season),
+    detail: `${points(w.total / w.teams, 1)} per team`,
+  }));
+
+const sections: { id: string; title: string; note?: string; cards: { id: string; title: string; note?: string; marks: Mark[] }[] }[] = [
+  {
+    id: "games",
+    title: "Single game",
+    note: "One-week matchups only: playoff matchups here span two NFL weeks, so their totals aren't comparable.",
+    cards: [
+      { id: "highest-score", title: "Highest score", marks: gameMarks("highest_score", (g) => points(g.score, 2), vs) },
+      { id: "lowest-score", title: "Lowest score", marks: gameMarks("lowest_score", (g) => points(g.score, 2), vs) },
+      {
+        id: "biggest-blowout",
+        title: "Biggest blowout",
+        marks: gameMarks("biggest_blowout", (g) => points(g.score - g.opponent_score, 2), vs),
+      },
+      {
+        id: "narrowest-win",
+        title: "Narrowest win",
+        marks: gameMarks("narrowest_win", (g) => points(g.score - g.opponent_score, 2), vs),
+      },
+      {
+        id: "most-in-loss",
+        title: "Most points in a loss",
+        marks: gameMarks("most_points_in_loss", (g) => points(g.score, 2), vs),
+      },
+      {
+        id: "fewest-in-win",
+        title: "Fewest points in a win",
+        marks: gameMarks("fewest_points_in_win", (g) => points(g.score, 2), vs),
+      },
+    ],
+  },
+  {
+    id: "matchups",
+    title: "Matchups and weeks",
+    cards: [
+      { id: "highest-matchup", title: "Highest-scoring matchup", marks: matchupMarks("highest_scoring_matchup") },
+      { id: "lowest-matchup", title: "Lowest-scoring matchup", marks: matchupMarks("lowest_scoring_matchup") },
+      {
+        id: "highest-week",
+        title: "Highest-scoring week, league-wide",
+        note: "Every team's points in one NFL week, playoff weeks included.",
+        marks: weekMarks("highest_scoring_week"),
+      },
+      { id: "lowest-week", title: "Lowest-scoring week, league-wide", marks: weekMarks("lowest_scoring_week") },
+    ],
+  },
+  {
+    id: "seasons",
+    title: "Seasons",
+    note: "Finished seasons, regular season only. 2021 had a 14-week regular season, so it has a leg up on total points; points per game evens that out.",
+    cards: [
+      { id: "best-record", title: "Best record", marks: seasonMarks("best_record_season", (s) => pct(s.value)) },
+      { id: "worst-record", title: "Worst record", marks: seasonMarks("worst_record_season", (s) => pct(s.value)) },
+      { id: "most-points", title: "Most points", marks: seasonMarks("most_points_season", (s) => points(s.value, 1)) },
+      { id: "fewest-points", title: "Fewest points", marks: seasonMarks("fewest_points_season", (s) => points(s.value, 1)) },
+      {
+        id: "most-ppg",
+        title: "Most points per game",
+        marks: seasonMarks("most_points_per_game_season", (s) => points(s.value, 2)),
+      },
+      {
+        id: "fewest-ppg",
+        title: "Fewest points per game",
+        marks: seasonMarks("fewest_points_per_game_season", (s) => points(s.value, 2)),
+      },
+    ],
+  },
+  {
+    id: "streaks",
+    title: "Streaks",
+    note: "Regular season games in a row; a tie ends a streak.",
+    cards: [
+      { id: "win-streak", title: "Longest winning streak", note: "Can carry over into the next season.", marks: streakMarks("longest_win_streak") },
+      { id: "loss-streak", title: "Longest losing streak", note: "Can carry over into the next season.", marks: streakMarks("longest_loss_streak") },
+      { id: "win-streak-season", title: "Longest winning streak, one season", marks: streakMarks("longest_win_streak_season") },
+      { id: "loss-streak-season", title: "Longest losing streak, one season", marks: streakMarks("longest_loss_streak_season") },
+    ],
+  },
+];
+const liveCount = sections.flatMap((s) => s.cards).filter((c) => c.marks.some((x) => x.live)).length;
+---
+
+<Base title="Records book" section="/records" description="The league's all-time bests and worsts, every one linked to where it happened.">
+  <h1>Records book</h1>
+  <p class="lede">
+    The top ten of everything since {m.seasons[0]}. Tap a record to jump to the week it happened. Scoring went from
+    standard to half-PPR in 2023, so recent seasons have the edge on points.
+  </p>
+  {
+    liveCount > 0 && (
+      <p>
+        <span class="badge live">Live</span> marks a mark set this season ({m.current_season}), which can still move.
+        {liveCount} {liveCount === 1 ? "list has" : "lists have"} one so far.
+      </p>
+    )
+  }
+  <nav class="jump small" aria-label="Record sections">
+    {sections.map((s) => <a href={`#${s.id}`}>{s.title}</a>)}
+  </nav>
+
+  {
+    sections.map((s) => (
+      <section id={s.id}>
+        <h2>{s.title}</h2>
+        {s.note && <p class="muted small">{s.note}</p>}
+        <div class="grid records">
+          {s.cards.map((c) => (
+            <RecordCard {...c} />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+  }
+  .records {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    align-items: start;
+  }
+</style>

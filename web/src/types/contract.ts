@@ -180,7 +180,10 @@ export interface Meta {
   upcoming_week: number | null;
 }
 /**
- * Top 10 of each record. Single-game records count one-week matchups only.
+ * Top 10 of each record, best first.
+ *
+ * Game and matchup records count one-week matchups only; week records are per NFL week, league-wide;
+ * season records count finished seasons; streaks are regular season games (see stats/records.py).
  *
  * This interface was referenced by `ContractFiles`'s JSON-Schema
  * via the `definition` "RecordsFile".
@@ -189,9 +192,18 @@ export interface RecordsFile {
   game_records: {
     [k: string]: GameMarkOut[];
   };
+  matchup_records: {
+    [k: string]: MatchupMarkOut[];
+  };
   schema_version: 1;
   season_records: {
     [k: string]: SeasonMarkOut[];
+  };
+  streak_records: {
+    [k: string]: StreakMarkOut[];
+  };
+  week_records: {
+    [k: string]: WeekMarkOut[];
   };
 }
 /**
@@ -209,6 +221,20 @@ export interface GameMarkOut {
 }
 /**
  * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "MatchupMarkOut".
+ */
+export interface MatchupMarkOut {
+  away: string;
+  away_score: number;
+  home: string;
+  home_score: number;
+  playoff: boolean;
+  season: number;
+  total: number;
+  week: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
  * via the `definition` "SeasonMarkOut".
  */
 export interface SeasonMarkOut {
@@ -219,6 +245,38 @@ export interface SeasonMarkOut {
   ties: number;
   value: number;
   wins: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "StreakMarkOut".
+ */
+export interface StreakMarkOut {
+  /**
+   * Still running: includes the manager's latest regular season game
+   */
+  active: boolean;
+  end_season: number;
+  end_week: number;
+  length: number;
+  manager: string;
+  start_season: number;
+  start_week: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WeekMarkOut".
+ */
+export interface WeekMarkOut {
+  /**
+   * NFL week
+   */
+  period: number;
+  season: number;
+  teams: number;
+  /**
+   * Every team's points that NFL week
+   */
+  total: number;
 }
 /**
  * This interface was referenced by `ContractFiles`'s JSON-Schema

@@ -136,8 +136,8 @@ def test_single_game_records_skip_two_week_matchups():
     games = one_week_games(LEAGUE)
     assert games and all(len(LEAGUE.seasons[x.season].settings.scoring_periods(x.week)) == 1 for x in games)
     book = records_book(LEAGUE, n=5)
-    assert all(len(v) == 5 for v in book.values())
-    top = book["highest_score"]
+    assert all(len(v) == 5 for v in book.game.values())
+    top = book.game["highest_score"]
     assert [m.score for m in top] == sorted((m.score for m in top), reverse=True)
     assert top[0].score == max(max(x.home_score, x.away_score) for x in games)
-    assert all(m.margin > 0 for m in book["narrowest_win"])
+    assert all(m.margin > 0 for m in book.game["narrowest_win"])

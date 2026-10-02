@@ -212,11 +212,46 @@ class SeasonMarkOut(_Model):
     points_for: float
 
 
+class MatchupMarkOut(_Model):
+    season: int
+    week: int
+    home: str
+    away: str
+    home_score: float
+    away_score: float
+    total: float
+    playoff: bool
+
+
+class StreakMarkOut(_Model):
+    manager: str
+    length: int
+    start_season: int
+    start_week: int
+    end_season: int
+    end_week: int
+    active: bool = Field(description="Still running: includes the manager's latest regular season game")
+
+
+class WeekMarkOut(_Model):
+    season: int
+    period: int = Field(description="NFL week")
+    total: float = Field(description="Every team's points that NFL week")
+    teams: int
+
+
 class RecordsFile(ContractFile):
-    """Top 10 of each record. Single-game records count one-week matchups only."""
+    """Top 10 of each record, best first.
+
+    Game and matchup records count one-week matchups only; week records are per NFL week, league-wide;
+    season records count finished seasons; streaks are regular season games (see stats/records.py).
+    """
 
     game_records: dict[str, list[GameMarkOut]]
+    matchup_records: dict[str, list[MatchupMarkOut]]
     season_records: dict[str, list[SeasonMarkOut]]
+    streak_records: dict[str, list[StreakMarkOut]]
+    week_records: dict[str, list[WeekMarkOut]]
 
 
 # seasons/{year}.json -----------------------------------------------------------------------------

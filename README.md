@@ -121,7 +121,7 @@ lays out what the contract publishes.
 | `games.json` | Every final game as `[season, week, tier, home, away, home_score, away_score, winner]`, plus upcoming |
 | `h2h.json` | Every all-time series (record, win pct, average scores and margin, last five, streaks, closest/blowout, playoff record, rivalry flags) and the most competitive rivalries |
 | `standings.json` | All-time standings (regular season record and margin, playoff record, titles, best/worst finish, net payout and ROI) and the championship ledger |
-| `records.json` | Records book: single-game (one-week matchups only) and single-season top 10s |
+| `records.json` | Records book top 10s: single game and matchup (one-week matchups only), league-wide NFL week, season, and win/loss streaks |
 | `seasons/{year}.json` | One season: settings, final standings, every game, each team's points per NFL week, all-play records, superlatives |
 
 Managers are referenced by canonical id everywhere; `week` is ESPN's matchup period (playoff weeks
