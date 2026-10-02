@@ -1,0 +1,96 @@
+{
+ "_source": "ESPN final standings for 2021, from data/raw/2021/matchups.json (rankCalculatedFinal, record.overall, playoffSeed). To verify by hand: ESPN league page -> League -> History. Team names have runs of whitespace collapsed, as the transform does.",
+ "season": 2021,
+ "standings": [
+  {
+   "rank": 1,
+   "manager": "grudee",
+   "team": "Grudee's Grinder",
+   "record": "10-4-0",
+   "points_for": 1515.54,
+   "points_against": 1341.98,
+   "seed": 1
+  },
+  {
+   "rank": 2,
+   "manager": "richardson",
+   "team": "Say No To Ruggs",
+   "record": "8-6-0",
+   "points_for": 1471.54,
+   "points_against": 1451.68,
+   "seed": 2
+  },
+  {
+   "rank": 3,
+   "manager": "sedaghat",
+   "team": "Gronk's Kerryon Johnson",
+   "record": "10-4-0",
+   "points_for": 1469.58,
+   "points_against": 1392.74,
+   "seed": 3
+  },
+  {
+   "rank": 4,
+   "manager": "wolfe",
+   "team": "Ryan's Hinge Date",
+   "record": "10-4-0",
+   "points_for": 1455.8,
+   "points_against": 1305.06,
+   "seed": 4
+  },
+  {
+   "rank": 5,
+   "manager": "joyce",
+   "team": "Richmond Football Team",
+   "record": "6-8-0",
+   "points_for": 1307.48,
+   "points_against": 1387.02,
+   "seed": 7
+  },
+  {
+   "rank": 6,
+   "manager": "carpenter",
+   "team": "Tyreek Thrill",
+   "record": "7-7-0",
+   "points_for": 1318.66,
+   "points_against": 1389.36,
+   "seed": 5
+  },
+  {
+   "rank": 7,
+   "manager": "albert",
+   "team": "AllGas NoBrakes",
+   "record": "4-10-0",
+   "points_for": 1294.82,
+   "points_against": 1361.98,
+   "seed": 9
+  },
+  {
+   "rank": 8,
+   "manager": "kariuki",
+   "team": "Hamids Protege",
+   "record": "6-8-0",
+   "points_for": 1347.14,
+   "points_against": 1388.14,
+   "seed": 6
+  },
+  {
+   "rank": 9,
+   "manager": "dickey",
+   "team": "Screwed by CMC",
+   "record": "5-9-0",
+   "points_for": 1350.28,
+   "points_against": 1426.2,
+   "seed": 8
+  },
+  {
+   "rank": 10,
+   "manager": "edwards",
+   "team": "Ryan Penetrations",
+   "record": "4-10-0",
+   "points_for": 1239.54,
+   "points_against": 1326.22,
+   "seed": 10
+  }
+ ]
+}
