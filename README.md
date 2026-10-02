@@ -46,11 +46,12 @@ changing or dropping old data. Only the in-progress season is ever refetched.
 | `src/mustafatron/legacy/` | The v1 matplotlib report code, kept until M1/M4 replace it |
 | `data/raw/` | Committed ESPN responses, one directory per season ([format](data/README.md)) |
 | `scratch_h2h.py` | The original H2H script, kept as the reference `stats/h2h.py` is tested against |
-| `web/` | Astro site (M2) |
+| `web/` | Astro site: static pages built from the published JSON at build time ([below](#the-site)) |
 
 ## Local setup
 
-Requires [uv](https://docs.astral.sh/uv/). Python 3.12 is installed by uv.
+Requires [uv](https://docs.astral.sh/uv/) (Python 3.12 is installed by uv) and, for the site,
+Node 22.12+.
 
 ```sh
 uv sync                  # add --extra legacy to run the v1 report code
@@ -87,7 +88,27 @@ The test suite runs entirely on the committed `data/raw/` (the network is blocke
 `tests/conftest.py`), including golden files in [`tests/golden/`](tests/golden/): final standings
 for 2015, 2021 and 2025, and every head-to-head series as the original `scratch_h2h.py` computed it.
 
-The local site (`npm run dev` in `web/`) arrives in M2.
+## The site
+
+[Astro](https://astro.build), fully static: every page is rendered at build time from
+`web/public/data/`, so there is no runtime fetching and no loading state. Pages read the data through
+[`web/src/lib/data.ts`](web/src/lib/data.ts), typed by `web/src/types/contract.ts`, which is
+generated from `schema/`.
+
+```sh
+uv run mustafatron publish --offline   # or without --offline for the live current season
+cd web
+npm ci
+npm run dev                            # http://localhost:4321
+npm run check && npm run build         # what CI runs (plus `npm run types:check`)
+```
+
+After changing `contract.py`: `uv run mustafatron schema`, then `npm run types` in `web/`.
+
+Design: phone width first (links get opened from the group chat), light and dark mode, and the v0
+report's colors: orange for winning, lavender for losing. Tokens live in
+[`web/src/styles/global.css`](web/src/styles/global.css). Analytics stay in Python; the site only
+lays out what the contract publishes.
 
 ## Site data
 

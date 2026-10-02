@@ -1,0 +1,159 @@
+---
+import ManagerName from "../components/ManagerName.astro";
+import Base from "../layouts/Base.astro";
+import { games, gamesFile, h2h, managers, meta, season } from "../lib/data";
+import { points, record } from "../lib/format";
+
+const m = meta();
+const lastFinished = m.current_season_finished ? m.current_season : m.current_season - 1;
+const champ = m.seasons.includes(lastFinished) ? season(lastFinished).champion : null;
+const all = games();
+
+// This week's matchups with each series' all-time record, the scratch script's "upcoming" view.
+const pairs = new Map(h2h().pairs.map((p) => [`${p.a}|${p.b}`, p]));
+const upcoming = gamesFile().upcoming.map(([, , home, away]) => {
+  const [a, b] = [home, away].sort();
+  const p = pairs.get(`${a}|${b}`);
+  const flip = p && p.a !== home;
+  return {
+    home,
+    away,
+    wins: p ? (flip ? p.losses : p.wins) : 0,
+    losses: p ? (flip ? p.wins : p.losses) : 0,
+    ties: p?.ties ?? 0,
+  };
+});
+const lastWeek = m.current_season_finished
+  ? []
+  : all.filter((g) => g.season === m.current_season && g.week === m.last_completed_week);
+---
+
+<Base title={m.league_name} section="/" description="All-time head-to-head records, rivalries, standings and the records book.">
+  <section class="hero">
+    <p class="kicker">The league hub of</p>
+    <h1>{m.league_name}</h1>
+    <p class="lede">
+      {m.seasons.length} seasons, {all.length} games, {managers().length} managers, one trophy. Every
+      number since {m.seasons[0]}.
+    </p>
+  </section>
+
+  <div class="grid">
+    {
+      champ && (
+        <div class="card stat">
+          <span class="label">{lastFinished} champion</span>
+          <span class="value">
+            <span class="trophy" aria-hidden="true">
+              🏆
+            </span>{" "}
+            <ManagerName id={champ} />
+          </span>
+        </div>
+      )
+    }
+    <div class="card stat">
+      <span class="label">{m.current_season} season</span>
+      <span class="value">
+        {
+          m.current_season_finished
+            ? "Final"
+            : m.upcoming_week
+              ? `Week ${m.upcoming_week}`
+              : "In progress"
+        }
+      </span>
+    </div>
+    <div class="card stat">
+      <span class="label">Games on record</span>
+      <span class="value">{all.length.toLocaleString("en-US")}</span>
+    </div>
+  </div>
+
+  {
+    lastWeek.length > 0 && (
+      <section>
+        <h2>Week {m.last_completed_week} results</h2>
+        <ul class="matchups">
+          {lastWeek.map((g) => (
+            <li class="card">
+              <span class:list={["side", { won: g.winner === g.home }]}>
+                <ManagerName id={g.home} /> <span class="num">{points(g.homeScore)}</span>
+              </span>
+              <span class:list={["side", { won: g.winner === g.away }]}>
+                <ManagerName id={g.away} /> <span class="num">{points(g.awayScore)}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    upcoming.length > 0 && (
+      <section>
+        <h2>Week {m.upcoming_week} matchups</h2>
+        <p class="muted small">All-time series record, from the first-listed manager's side.</p>
+        <ul class="matchups">
+          {upcoming.map((u) => (
+            <li class="card">
+              <span class="side">
+                <ManagerName id={u.home} />
+              </span>
+              <span class="side">
+                <ManagerName id={u.away} />
+              </span>
+              <span class="series num">
+                {u.wins + u.losses + u.ties ? record(u.wins, u.losses, u.ties) : "First meeting"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .hero {
+    padding-block: 1rem 1.5rem;
+  }
+  .kicker {
+    margin: 0 0 0.25rem;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .matchups {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  }
+  .matchups li {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .side {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--muted);
+  }
+  .side.won {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .matchups li:has(.series) .side {
+    color: var(--ink);
+  }
+  .series {
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+</style>

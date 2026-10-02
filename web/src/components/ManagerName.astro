@@ -1,0 +1,15 @@
+---
+// A manager's display name from their canonical id.
+import { manager } from "../lib/data";
+
+interface Props {
+  id: string;
+  /** Use the short name, for tight tables. */
+  short?: boolean;
+}
+
+const { id, short = false } = Astro.props;
+const m = manager(id);
+---
+
+<span class="manager" title={short ? m.name : undefined}>{short ? m.short_name : m.name}</span>
