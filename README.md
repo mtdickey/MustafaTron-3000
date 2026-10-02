@@ -31,10 +31,11 @@ changing or dropping old data. Only the in-progress season is ever refetched.
 | Path | What |
 |---|---|
 | `src/mustafatron/config.py` | Settings from env / `.env` (`pydantic-settings`); never literals |
+| `src/mustafatron/espn/client.py` | ESPN v3 API client: endpoint cutover, retries, a clear error when cookies expire |
 | `src/mustafatron/pseudonymize.py` | Replaces ESPN SWIDs with stable opaque IDs before anything hits disk |
 | `src/mustafatron/legacy/` | The v1 matplotlib report code, kept until M1/M4 replace it |
 | `data/raw/` | Committed ESPN responses, one directory per season ([format](data/README.md)) |
-| `scratch_h2h.py` | All-time H2H and rivalry notes; becomes `espn/client.py` + `stats/h2h.py` in M1 |
+| `scratch_h2h.py` | All-time H2H and rivalry notes; becomes `stats/h2h.py` in M1 |
 | `web/` | Astro site (M2) |
 
 ## Local setup
