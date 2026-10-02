@@ -1,0 +1,236 @@
+{
+  "$defs": {
+    "SeasonSettingsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "final_week": {
+          "title": "Final Week",
+          "type": "integer"
+        },
+        "playoff_team_count": {
+          "title": "Playoff Team Count",
+          "type": "integer"
+        },
+        "points_per_reception": {
+          "title": "Points Per Reception",
+          "type": "number"
+        },
+        "regular_season_weeks": {
+          "title": "Regular Season Weeks",
+          "type": "integer"
+        },
+        "team_count": {
+          "title": "Team Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "team_count",
+        "regular_season_weeks",
+        "final_week",
+        "playoff_team_count",
+        "points_per_reception"
+      ],
+      "title": "SeasonSettingsOut",
+      "type": "object"
+    },
+    "TeamOut": {
+      "additionalProperties": false,
+      "properties": {
+        "abbrev": {
+          "title": "Abbrev",
+          "type": "string"
+        },
+        "acquisitions": {
+          "title": "Acquisitions",
+          "type": "integer"
+        },
+        "co_managers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Co Managers",
+          "type": "array"
+        },
+        "final_rank": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Final Rank"
+        },
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "playoff_seed": {
+          "title": "Playoff Seed",
+          "type": "integer"
+        },
+        "points_against": {
+          "title": "Points Against",
+          "type": "number"
+        },
+        "points_for": {
+          "title": "Points For",
+          "type": "number"
+        },
+        "team_id": {
+          "title": "Team Id",
+          "type": "integer"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "trades": {
+          "title": "Trades",
+          "type": "integer"
+        },
+        "wins": {
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "team_id",
+        "name",
+        "abbrev",
+        "wins",
+        "losses",
+        "ties",
+        "points_for",
+        "points_against",
+        "playoff_seed",
+        "final_rank",
+        "acquisitions",
+        "trades",
+        "co_managers"
+      ],
+      "title": "TeamOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "champion": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Champion"
+    },
+    "columns": {
+      "default": [
+        "season",
+        "week",
+        "tier",
+        "home",
+        "away",
+        "home_score",
+        "away_score",
+        "winner"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Columns",
+      "type": "array"
+    },
+    "finished": {
+      "title": "Finished",
+      "type": "boolean"
+    },
+    "games": {
+      "description": "Every game this season, final or not",
+      "items": {
+        "maxItems": 8,
+        "minItems": 8,
+        "prefixItems": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Games",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "season": {
+      "title": "Season",
+      "type": "integer"
+    },
+    "settings": {
+      "$ref": "#/$defs/SeasonSettingsOut"
+    },
+    "teams": {
+      "description": "Final standings order once finished, else by seed",
+      "items": {
+        "$ref": "#/$defs/TeamOut"
+      },
+      "title": "Teams",
+      "type": "array"
+    }
+  },
+  "required": [
+    "season",
+    "finished",
+    "champion",
+    "settings",
+    "teams",
+    "games"
+  ],
+  "title": "SeasonFile",
+  "type": "object"
+}

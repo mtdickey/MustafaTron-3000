@@ -1,0 +1,65 @@
+{
+  "additionalProperties": false,
+  "description": "What was published: seasons covered and where the current season stands.",
+  "properties": {
+    "current_season": {
+      "title": "Current Season",
+      "type": "integer"
+    },
+    "current_season_finished": {
+      "title": "Current Season Finished",
+      "type": "boolean"
+    },
+    "last_completed_week": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Latest week of the current season with every game final",
+      "title": "Last Completed Week"
+    },
+    "league_name": {
+      "title": "League Name",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "seasons": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Seasons",
+      "type": "array"
+    },
+    "upcoming_week": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Next week of the current season with games still to play",
+      "title": "Upcoming Week"
+    }
+  },
+  "required": [
+    "league_name",
+    "seasons",
+    "current_season",
+    "current_season_finished",
+    "last_completed_week",
+    "upcoming_week"
+  ],
+  "title": "Meta",
+  "type": "object"
+}

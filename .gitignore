@@ -7,6 +7,9 @@
 # Legacy local cache; superseded by the committed, pseudonymized data/raw/
 .h2h_cache/
 
+# Site JSON is generated (uv run mustafatron publish) and built in CI, never committed
+web/public/data/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,0 +1,230 @@
+{
+  "$defs": {
+    "FlagOut": {
+      "additionalProperties": false,
+      "properties": {
+        "holder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Holder"
+        },
+        "kind": {
+          "enum": [
+            "streak",
+            "lopsided",
+            "dead_even"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "losses": {
+          "default": 0,
+          "title": "Losses",
+          "type": "integer"
+        },
+        "wins": {
+          "default": 0,
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "FlagOut",
+      "type": "object"
+    },
+    "MeetingOut": {
+      "additionalProperties": false,
+      "properties": {
+        "opponent_score": {
+          "description": "Manager b's score",
+          "title": "Opponent Score",
+          "type": "number"
+        },
+        "score": {
+          "description": "Manager a's score",
+          "title": "Score",
+          "type": "number"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "week": {
+          "title": "Week",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "season",
+        "week",
+        "score",
+        "opponent_score"
+      ],
+      "title": "MeetingOut",
+      "type": "object"
+    },
+    "PairOut": {
+      "additionalProperties": false,
+      "description": "One all-time series, from manager ``a``'s side (``a`` < ``b`` alphabetically).",
+      "properties": {
+        "a": {
+          "title": "A",
+          "type": "string"
+        },
+        "b": {
+          "title": "B",
+          "type": "string"
+        },
+        "blowout": {
+          "$ref": "#/$defs/MeetingOut"
+        },
+        "closest": {
+          "$ref": "#/$defs/MeetingOut"
+        },
+        "current_streak": {
+          "$ref": "#/$defs/StreakOut"
+        },
+        "flags": {
+          "items": {
+            "$ref": "#/$defs/FlagOut"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "games": {
+          "title": "Games",
+          "type": "integer"
+        },
+        "last_meeting": {
+          "$ref": "#/$defs/MeetingOut"
+        },
+        "longest_streak_a": {
+          "title": "Longest Streak A",
+          "type": "integer"
+        },
+        "longest_streak_b": {
+          "title": "Longest Streak B",
+          "type": "integer"
+        },
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "playoff_losses": {
+          "title": "Playoff Losses",
+          "type": "integer"
+        },
+        "playoff_wins": {
+          "title": "Playoff Wins",
+          "type": "integer"
+        },
+        "points_against": {
+          "title": "Points Against",
+          "type": "number"
+        },
+        "points_for": {
+          "title": "Points For",
+          "type": "number"
+        },
+        "results": {
+          "description": "W/L/T from a's side, oldest meeting first",
+          "title": "Results",
+          "type": "string"
+        },
+        "rivalry": {
+          "description": "Enough meetings to count as a rivalry (league_rules.yml)",
+          "title": "Rivalry",
+          "type": "boolean"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "wins": {
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "a",
+        "b",
+        "games",
+        "wins",
+        "losses",
+        "ties",
+        "points_for",
+        "points_against",
+        "playoff_wins",
+        "playoff_losses",
+        "results",
+        "current_streak",
+        "longest_streak_a",
+        "longest_streak_b",
+        "last_meeting",
+        "closest",
+        "blowout",
+        "rivalry",
+        "flags"
+      ],
+      "title": "PairOut",
+      "type": "object"
+    },
+    "StreakOut": {
+      "additionalProperties": false,
+      "properties": {
+        "holder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "null when the last meeting was a tie",
+          "title": "Holder"
+        },
+        "length": {
+          "title": "Length",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "holder",
+        "length"
+      ],
+      "title": "StreakOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "pairs": {
+      "items": {
+        "$ref": "#/$defs/PairOut"
+      },
+      "title": "Pairs",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "pairs"
+  ],
+  "title": "H2HFile",
+  "type": "object"
+}

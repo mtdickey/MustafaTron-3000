@@ -1,0 +1,127 @@
+{
+  "additionalProperties": false,
+  "description": "Every final game, all seasons, plus the current season's unplayed schedule.",
+  "properties": {
+    "columns": {
+      "default": [
+        "season",
+        "week",
+        "tier",
+        "home",
+        "away",
+        "home_score",
+        "away_score",
+        "winner"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Columns",
+      "type": "array"
+    },
+    "games": {
+      "items": {
+        "maxItems": 8,
+        "minItems": 8,
+        "prefixItems": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Games",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "tiers": {
+      "default": [
+        "NONE",
+        "WINNERS_BRACKET",
+        "WINNERS_CONSOLATION_LADDER",
+        "LOSERS_CONSOLATION_LADDER"
+      ],
+      "description": "tier column values index into this",
+      "items": {
+        "type": "string"
+      },
+      "title": "Tiers",
+      "type": "array"
+    },
+    "upcoming": {
+      "items": {
+        "maxItems": 4,
+        "minItems": 4,
+        "prefixItems": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Upcoming",
+      "type": "array"
+    },
+    "upcoming_columns": {
+      "default": [
+        "season",
+        "week",
+        "home",
+        "away"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Upcoming Columns",
+      "type": "array"
+    }
+  },
+  "required": [
+    "games",
+    "upcoming"
+  ],
+  "title": "GamesFile",
+  "type": "object"
+}

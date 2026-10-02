@@ -1,0 +1,76 @@
+{
+  "$defs": {
+    "ManagerOut": {
+      "additionalProperties": false,
+      "properties": {
+        "first_season": {
+          "title": "First Season",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "last_season": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "null while still in the league",
+          "title": "Last Season"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "seasons": {
+          "description": "Seasons with a team, from the published data",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Seasons",
+          "type": "array"
+        },
+        "short_name": {
+          "title": "Short Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "short_name",
+        "first_season",
+        "last_season",
+        "seasons"
+      ],
+      "title": "ManagerOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "managers": {
+      "items": {
+        "$ref": "#/$defs/ManagerOut"
+      },
+      "title": "Managers",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "managers"
+  ],
+  "title": "ManagersFile",
+  "type": "object"
+}
