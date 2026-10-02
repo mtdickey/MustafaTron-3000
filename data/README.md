@@ -17,6 +17,7 @@ corrects it.
 | File | ESPN views | Seasons |
 |---|---|---|
 | `matchups.json` | `mTeam` + `mMatchupScore` | 2015–2025 |
+| `settings.json` | `mSettings` (`settings`, `status`) | 2015–2025 |
 
 More views (`mBoxscore`, `mRoster`, `mDraftDetail`, `mTransactions2`) arrive in M3 as sibling files.
 
@@ -49,6 +50,17 @@ Top-level keys: `members`, `teams`, `schedule`.
   `pointsByScoringPeriod`), `winner` (`HOME` / `AWAY` / `TIE`; `UNDECIDED` for unplayed games), `playoffTierType`
   (`NONE` / `WINNERS_BRACKET` / `WINNERS_CONSOLATION_LADDER` / `LOSERS_CONSOLATION_LADDER`).
   A bye has no `away` (none occur in 2015–2025).
+
+### `settings.json`
+
+Top-level keys: `settings` (`size`, `scheduleSettings`, `rosterSettings`, `scoringSettings`,
+`draftSettings`, `tradeSettings`, ...) and `status` (`finalScoringPeriod`, ...). Parsed by
+`mustafatron.league_settings` into team count, lineup slots, regular season length, playoff
+format and scoring. Across 2015–2025: 10 teams, QB/2RB/2WR/TE/FLEX/D-ST/K + 7 bench, 4-team
+playoffs of two-week matchups; 13 regular season matchups (14 in 2021), so the last matchup period
+is 15 (16 in 2021); standard scoring through 2022, half-PPR from 2023.
+
+### Quirks
 
 Known quirk: one manager has two SWIDs across seasons, so 2024–25 show 11 members for 10 teams.
 Canonical identity is resolved in M1 (`data/manual/managers.yml`).
