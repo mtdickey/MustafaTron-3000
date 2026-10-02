@@ -1,0 +1,74 @@
+---
+// Click-to-sort for every <table data-sortable> on the page. Include once per page.
+//
+// Progressive enhancement: the server-rendered order stands without JS. A cell sorts by its
+// data-sort attribute when present (use it for anything whose text isn't the value, like "8–3"),
+// otherwise by its text as a number, otherwise as text. Columns with <th data-nosort> stay fixed.
+---
+
+<script>
+  function value(cell: Element | undefined): number | string {
+    if (!cell) return "";
+    const raw = cell.getAttribute("data-sort") ?? cell.textContent?.trim() ?? "";
+    const n = Number(raw.replace(/[,+%]/g, "").replace("−", "-"));
+    return raw !== "" && Number.isFinite(n) ? n : raw.toLowerCase();
+  }
+
+  for (const table of document.querySelectorAll<HTMLTableElement>("table[data-sortable]")) {
+    const headers = Array.from(table.tHead?.rows[0]?.cells ?? []);
+    const body = table.tBodies[0];
+    if (!body) continue;
+    headers.forEach((th, col) => {
+      if (th.hasAttribute("data-nosort")) return;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "sort";
+      button.append(...Array.from(th.childNodes));
+      th.append(button);
+      button.addEventListener("click", () => {
+        const numeric = typeof value(body.rows[0]?.cells[col]) === "number";
+        // First click: numbers high → low, text A → Z. Then alternate.
+        const current = th.getAttribute("aria-sort");
+        const dir =
+          current === "descending" ? "ascending" : current === "ascending" ? "descending" : numeric ? "descending" : "ascending";
+        headers.forEach((h) => h.removeAttribute("aria-sort"));
+        th.setAttribute("aria-sort", dir);
+        const sign = dir === "ascending" ? 1 : -1;
+        const rows = Array.from(body.rows);
+        rows.sort((a, b) => {
+          const x = value(a.cells[col]);
+          const y = value(b.cells[col]);
+          return (x < y ? -1 : x > y ? 1 : 0) * sign;
+        });
+        body.append(...rows);
+      });
+    });
+  }
+</script>
+
+<style is:global>
+  th button.sort {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2em;
+  }
+  th button.sort:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  th button.sort::after {
+    content: "↕";
+    opacity: 0.35;
+    font-size: 0.9em;
+  }
+  th[aria-sort="descending"] button.sort::after {
+    content: "↓";
+    opacity: 1;
+  }
+  th[aria-sort="ascending"] button.sort::after {
+    content: "↑";
+    opacity: 1;
+  }
+</style>

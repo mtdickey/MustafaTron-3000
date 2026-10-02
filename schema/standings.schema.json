@@ -14,6 +14,11 @@
           ],
           "title": "Avg Finish"
         },
+        "avg_margin": {
+          "description": "Regular season (points for - against) per game",
+          "title": "Avg Margin",
+          "type": "number"
+        },
         "best_finish": {
           "anyOf": [
             {
@@ -27,6 +32,15 @@
         },
         "championships": {
           "title": "Championships",
+          "type": "integer"
+        },
+        "finished_seasons": {
+          "description": "Seasons with a final rank; finishes and payouts count these",
+          "title": "Finished Seasons",
+          "type": "integer"
+        },
+        "last_places": {
+          "title": "Last Places",
           "type": "integer"
         },
         "losses": {
@@ -46,12 +60,35 @@
           "title": "Playoff Appearances",
           "type": "integer"
         },
+        "playoff_losses": {
+          "title": "Playoff Losses",
+          "type": "integer"
+        },
+        "playoff_points_against": {
+          "title": "Playoff Points Against",
+          "type": "number"
+        },
+        "playoff_points_for": {
+          "title": "Playoff Points For",
+          "type": "number"
+        },
+        "playoff_wins": {
+          "description": "Championship bracket games; consolation ladders excluded",
+          "title": "Playoff Wins",
+          "type": "integer"
+        },
         "points_against": {
           "title": "Points Against",
           "type": "number"
         },
         "points_for": {
+          "description": "Regular season",
           "title": "Points For",
+          "type": "number"
+        },
+        "roi": {
+          "description": "net_payout per buy-in paid (finished seasons)",
+          "title": "Roi",
           "type": "number"
         },
         "runner_ups": {
@@ -75,34 +112,114 @@
           "type": "number"
         },
         "wins": {
+          "description": "Regular season",
           "title": "Wins",
           "type": "integer"
+        },
+        "worst_finish": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Worst Finish"
         }
       },
       "required": [
         "manager",
         "seasons",
+        "finished_seasons",
         "wins",
         "losses",
         "ties",
         "win_pct",
         "points_for",
         "points_against",
+        "avg_margin",
         "playoff_appearances",
+        "playoff_wins",
+        "playoff_losses",
+        "playoff_points_for",
+        "playoff_points_against",
         "championships",
         "runner_ups",
         "third_places",
+        "last_places",
         "best_finish",
+        "worst_finish",
         "avg_finish",
-        "net_payout"
+        "net_payout",
+        "roi"
       ],
       "title": "CareerOut",
+      "type": "object"
+    },
+    "LedgerOut": {
+      "additionalProperties": false,
+      "properties": {
+        "champion": {
+          "title": "Champion",
+          "type": "string"
+        },
+        "champion_seed": {
+          "title": "Champion Seed",
+          "type": "integer"
+        },
+        "last": {
+          "title": "Last",
+          "type": "string"
+        },
+        "most_points": {
+          "description": "Most regular season points for",
+          "title": "Most Points",
+          "type": "string"
+        },
+        "runner_up": {
+          "title": "Runner Up",
+          "type": "string"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "third": {
+          "title": "Third",
+          "type": "string"
+        },
+        "top_seed": {
+          "description": "Best regular season record (playoff seed 1)",
+          "title": "Top Seed",
+          "type": "string"
+        }
+      },
+      "required": [
+        "season",
+        "champion",
+        "runner_up",
+        "third",
+        "last",
+        "top_seed",
+        "most_points",
+        "champion_seed"
+      ],
+      "title": "LedgerOut",
       "type": "object"
     }
   },
   "additionalProperties": false,
-  "description": "All-time standings, best regular season win percentage first.",
+  "description": "All-time standings, best regular season win percentage first, and every finished season's podium.",
   "properties": {
+    "ledger": {
+      "description": "Finished seasons, newest first",
+      "items": {
+        "$ref": "#/$defs/LedgerOut"
+      },
+      "title": "Ledger",
+      "type": "array"
+    },
     "schema_version": {
       "const": 1,
       "default": 1,
@@ -118,7 +235,8 @@
     }
   },
   "required": [
-    "standings"
+    "standings",
+    "ledger"
   ],
   "title": "StandingsFile",
   "type": "object"

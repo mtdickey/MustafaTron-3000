@@ -248,14 +248,38 @@ export interface TeamOut {
   wins: number;
 }
 /**
- * All-time standings, best regular season win percentage first.
+ * All-time standings, best regular season win percentage first, and every finished season's podium.
  *
  * This interface was referenced by `ContractFiles`'s JSON-Schema
  * via the `definition` "StandingsFile".
  */
 export interface StandingsFile {
+  /**
+   * Finished seasons, newest first
+   */
+  ledger: LedgerOut[];
   schema_version: 1;
   standings: CareerOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "LedgerOut".
+ */
+export interface LedgerOut {
+  champion: string;
+  champion_seed: number;
+  last: string;
+  /**
+   * Most regular season points for
+   */
+  most_points: string;
+  runner_up: string;
+  season: number;
+  third: string;
+  /**
+   * Best regular season record (playoff seed 1)
+   */
+  top_seed: string;
 }
 /**
  * This interface was referenced by `ContractFiles`'s JSON-Schema
@@ -263,8 +287,17 @@ export interface StandingsFile {
  */
 export interface CareerOut {
   avg_finish: number | null;
+  /**
+   * Regular season (points for - against) per game
+   */
+  avg_margin: number;
   best_finish: number | null;
   championships: number;
+  /**
+   * Seasons with a final rank; finishes and payouts count these
+   */
+  finished_seasons: number;
+  last_places: number;
   losses: number;
   manager: string;
   /**
@@ -272,12 +305,30 @@ export interface CareerOut {
    */
   net_payout: number;
   playoff_appearances: number;
+  playoff_losses: number;
+  playoff_points_against: number;
+  playoff_points_for: number;
+  /**
+   * Championship bracket games; consolation ladders excluded
+   */
+  playoff_wins: number;
   points_against: number;
+  /**
+   * Regular season
+   */
   points_for: number;
+  /**
+   * net_payout per buy-in paid (finished seasons)
+   */
+  roi: number;
   runner_ups: number;
   seasons: number;
   third_places: number;
   ties: number;
   win_pct: number;
+  /**
+   * Regular season
+   */
   wins: number;
+  worst_finish: number | null;
 }

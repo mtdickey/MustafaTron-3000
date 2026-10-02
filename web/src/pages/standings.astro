@@ -1,0 +1,194 @@
+---
+import ManagerName from "../components/ManagerName.astro";
+import SortableTables from "../components/SortableTables.astro";
+import Base from "../layouts/Base.astro";
+import { currentManagers, meta, standings } from "../lib/data";
+import { ordinal, pct, points, record, shade, signed } from "../lib/format";
+
+const m = meta();
+const { standings: lines, ledger } = standings();
+const active = new Set(currentManagers().map((x) => x.id));
+const byTitles = [...lines].sort(
+  (a, b) => b.championships - a.championships || b.runner_ups - a.runner_ups || b.net_payout - a.net_payout,
+);
+const inProgress = !m.current_season_finished;
+---
+
+<Base
+  title="All-time standings"
+  section="/standings"
+  description="Career records, titles, playoff runs and return on the buy-in for every manager since 2015."
+>
+  <h1>All-time standings</h1>
+  <p class="lede">
+    Every manager's career, {m.seasons[0]}–{m.seasons.at(-1)}. Records are regular season{
+      inProgress && `, ${m.current_season} included so far`
+    }; finishes, titles and money count finished seasons only.
+  </p>
+
+  <h2 id="records">Regular season</h2>
+  <div class="table-scroll">
+    <table class="sticky-first" data-sortable>
+      <caption>Sorted by win percentage. Tap a column to re-sort.</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Manager</th>
+          <th scope="col">Yrs</th>
+          <th scope="col">Record</th>
+          <th scope="col">Pct</th>
+          <th scope="col">PF</th>
+          <th scope="col">PA</th>
+          <th scope="col" title="Average margin per game">Margin</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          lines.map((s) => (
+            <tr class:list={{ former: !active.has(s.manager) }}>
+              <th scope="row" data-sort={s.manager}>
+                <ManagerName id={s.manager} />
+              </th>
+              <td>{s.seasons}</td>
+              <td data-sort={s.wins + s.ties / 2}>{record(s.wins, s.losses, s.ties)}</td>
+              <td class="shade" style={shade(s.win_pct)} data-sort={s.win_pct}>
+                {pct(s.win_pct)}
+              </td>
+              <td data-sort={s.points_for}>{points(s.points_for, 0)}</td>
+              <td data-sort={s.points_against}>{points(s.points_against, 0)}</td>
+              <td data-sort={s.avg_margin}>{signed(s.avg_margin)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="finishes">Titles, playoffs and money</h2>
+  <p class="muted small">
+    Playoff record counts championship bracket games only. Net is career winnings in multiples of the buy-in
+    (the league's payout table); ROI is net per buy-in paid.
+  </p>
+  <div class="table-scroll">
+    <table class="sticky-first" data-sortable>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Manager</th>
+          <th scope="col" title="Championships">🏆</th>
+          <th scope="col">2nd</th>
+          <th scope="col">3rd</th>
+          <th scope="col">Last</th>
+          <th scope="col" title="Playoff appearances">Playoffs</th>
+          <th scope="col" title="Championship bracket record">Playoff W–L</th>
+          <th scope="col">Best</th>
+          <th scope="col">Worst</th>
+          <th scope="col">Avg</th>
+          <th scope="col">Net</th>
+          <th scope="col">ROI</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          byTitles.map((s) => (
+            <tr class:list={{ former: !active.has(s.manager) }}>
+              <th scope="row" data-sort={s.manager}>
+                <ManagerName id={s.manager} />
+              </th>
+              <td class:list={{ trophies: s.championships > 0 }}>{s.championships || "–"}</td>
+              <td>{s.runner_ups || "–"}</td>
+              <td>{s.third_places || "–"}</td>
+              <td>{s.last_places || "–"}</td>
+              <td data-sort={s.finished_seasons ? s.playoff_appearances / s.finished_seasons : -1}>
+                {s.finished_seasons ? `${s.playoff_appearances}/${s.finished_seasons}` : "–"}
+              </td>
+              <td data-sort={s.playoff_wins - s.playoff_losses}>
+                {s.playoff_wins + s.playoff_losses ? record(s.playoff_wins, s.playoff_losses) : "–"}
+              </td>
+              <td data-sort={-(s.best_finish ?? 99)}>{s.best_finish ? ordinal(s.best_finish) : "–"}</td>
+              <td data-sort={-(s.worst_finish ?? 99)}>{s.worst_finish ? ordinal(s.worst_finish) : "–"}</td>
+              <td data-sort={-(s.avg_finish ?? 99)}>{s.avg_finish?.toFixed(1) ?? "–"}</td>
+              {s.finished_seasons ? (
+                <>
+                  <td data-sort={s.net_payout}>{signed(s.net_payout)}</td>
+                  <td class="shade" style={shade(0.5 + s.roi / 8)} data-sort={s.roi}>
+                    {signed(s.roi * 100, 0)}%
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td data-sort="-999">–</td>
+                  <td data-sort="-999">–</td>
+                </>
+              )}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="muted small"><span class="former-key">Gray rows</span>: no longer in the league.</p>
+
+  <h2 id="ledger">Championship ledger</h2>
+  <div class="table-scroll">
+    <table class="sticky-first ledger">
+      <thead>
+        <tr>
+          <th scope="col" class="text">Season</th>
+          <th scope="col" class="text">Champion</th>
+          <th scope="col" class="text">Runner-up</th>
+          <th scope="col" class="text">Third</th>
+          <th scope="col" class="text">Last</th>
+          <th scope="col" class="text">Top seed</th>
+          <th scope="col" class="text">Most points</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          ledger.map((e) => (
+            <tr>
+              <th scope="row">{e.season}</th>
+              <td class="text champ">
+                <span class="trophy" aria-hidden="true">
+                  🏆
+                </span>{" "}
+                <ManagerName id={e.champion} /> <span class="muted small">({ordinal(e.champion_seed)} seed)</span>
+              </td>
+              <td class="text">
+                <ManagerName id={e.runner_up} />
+              </td>
+              <td class="text">
+                <ManagerName id={e.third} />
+              </td>
+              <td class="text">
+                <ManagerName id={e.last} />
+              </td>
+              <td class="text">
+                <ManagerName id={e.top_seed} />
+              </td>
+              <td class="text">
+                <ManagerName id={e.most_points} />
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <SortableTables />
+</Base>
+
+<style>
+  tr.former > *,
+  .former-key {
+    color: var(--muted);
+  }
+  .trophies {
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .champ {
+    font-weight: 600;
+  }
+  .ledger th[scope="row"] {
+    text-align: left;
+  }
+</style>
