@@ -53,6 +53,16 @@ def test_streaks_and_extremes():
     assert p.flipped().results == "LLTWW"
 
 
+def test_regular_season_series_add_up_to_espn_records():
+    """The H2H matrix's "regular season, everyone" totals are each manager's ESPN career record."""
+    for line in STANDINGS:
+        series = [record_between(PAIRS, line.manager_id, other) for other in {b for p in PAIRS for b in p}]
+        wins = sum(p.wins - p.playoff_wins for p in series)
+        losses = sum(p.losses - p.playoff_losses for p in series)
+        ties = sum(p.ties for p in series)
+        assert (wins, losses, ties) == (line.wins, line.losses, line.ties), line.manager_id
+
+
 def test_notable_flags():
     games = [g(2015 + i, 1, "a", "b", 100, 90) for i in range(4)]
     kinds = [(f.kind, f.holder) for f in notable_flags(pair_record(games, "a", "b"), RULES.rivalry)]

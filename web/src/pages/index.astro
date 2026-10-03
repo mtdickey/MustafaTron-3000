@@ -1,7 +1,7 @@
 ---
 import ManagerName from "../components/ManagerName.astro";
 import Base from "../layouts/Base.astro";
-import { games, gamesFile, h2h, managers, meta, season } from "../lib/data";
+import { games, gamesFile, managers, meta, rivalryHref, season, series } from "../lib/data";
 import { points, record } from "../lib/format";
 
 const m = meta();
@@ -10,19 +10,7 @@ const champ = m.seasons.includes(lastFinished) ? season(lastFinished).champion :
 const all = games();
 
 // This week's matchups with each series' all-time record, the scratch script's "upcoming" view.
-const pairs = new Map(h2h().pairs.map((p) => [`${p.a}|${p.b}`, p]));
-const upcoming = gamesFile().upcoming.map(([, , home, away]) => {
-  const [a, b] = [home, away].sort();
-  const p = pairs.get(`${a}|${b}`);
-  const flip = p && p.a !== home;
-  return {
-    home,
-    away,
-    wins: p ? (flip ? p.losses : p.wins) : 0,
-    losses: p ? (flip ? p.wins : p.losses) : 0,
-    ties: p?.ties ?? 0,
-  };
-});
+const upcoming = gamesFile().upcoming.map(([, , home, away]) => ({ home, away, ...series(home, away) }));
 const lastWeek = m.current_season_finished
   ? []
   : all.filter((g) => g.season === m.current_season && g.week === m.last_completed_week);
@@ -105,7 +93,11 @@ const lastWeek = m.current_season_finished
                 <ManagerName id={u.away} />
               </span>
               <span class="series num">
-                {u.wins + u.losses + u.ties ? record(u.wins, u.losses, u.ties) : "First meeting"}
+                {u.pair ? (
+                  <a href={rivalryHref(u.home, u.away)}>{record(u.wins, u.losses, u.ties)} all-time</a>
+                ) : (
+                  "First meeting"
+                )}
               </span>
             </li>
           ))}

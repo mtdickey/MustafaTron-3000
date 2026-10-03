@@ -103,3 +103,39 @@ export const opponentOf = (g: Game, id: string) => (g.home === id ? g.away : g.h
 export const resultFor = (g: Game, id: string): "W" | "L" | "T" =>
   g.winner === null ? "T" : g.winner === id ? "W" : "L";
 
+// Head-to-head --------------------------------------------------------------------------------------
+
+export type Pair = H2HFile["pairs"][number];
+
+/** URL of the rivalry page for two managers, in either order. */
+export function rivalryHref(x: string, y: string): string {
+  const [a, b] = [x, y].sort();
+  return `/rivalries/${a}-${b}`;
+}
+
+export interface Series {
+  me: string;
+  them: string;
+  pair: Pair | undefined;
+  wins: number;
+  losses: number;
+  ties: number;
+  /** Regular season only: the pair's record minus its playoff games (playoff ties are broken by ESPN). */
+  regWins: number;
+  regLosses: number;
+}
+
+let pairIndex: Map<string, Pair> | undefined;
+/** The all-time series from ``me``'s side, whichever way round h2h.json stores it. */
+export function series(me: string, them: string): Series {
+  pairIndex ??= new Map(h2h().pairs.map((p) => [`${p.a}|${p.b}`, p]));
+  const [a, b] = [me, them].sort();
+  const pair = pairIndex.get(`${a}|${b}`);
+  if (!pair) return { me, them, pair, wins: 0, losses: 0, ties: 0, regWins: 0, regLosses: 0 };
+  const flip = pair.a !== me;
+  const wins = flip ? pair.losses : pair.wins;
+  const losses = flip ? pair.wins : pair.losses;
+  const poWins = flip ? pair.playoff_losses : pair.playoff_wins;
+  const poLosses = flip ? pair.playoff_wins : pair.playoff_losses;
+  return { me, them, pair, wins, losses, ties: pair.ties, regWins: wins - poWins, regLosses: losses - poLosses };
+}

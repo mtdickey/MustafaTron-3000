@@ -1,0 +1,238 @@
+---
+import Base from "../layouts/Base.astro";
+import { currentManagers, manager, meta, rivalryHref, series, standings } from "../lib/data";
+import { pct, record, shadeColor } from "../lib/format";
+
+// Rows and columns in all-time standings order, so the heat runs from the top-left corner.
+const order = standings().standings.map((s) => s.manager);
+const current = new Set(currentManagers().map((m) => m.id));
+const m = meta();
+
+const winPct = (w: number, l: number, t = 0) => (w + l + t ? (w + t / 2) / (w + l + t) : 0.5);
+
+const rows = order.map((me) => {
+  const cells = order.map((them) => (me === them ? null : series(me, them)));
+  const total = (key: "all" | "reg", currentOnly: boolean) =>
+    cells.reduce(
+      (acc, c, i) => {
+        if (!c || (currentOnly && !current.has(order[i]!))) return acc;
+        acc.w += key === "all" ? c.wins : c.regWins;
+        acc.l += key === "all" ? c.losses : c.regLosses;
+        acc.t += c.ties;
+        return acc;
+      },
+      { w: 0, l: 0, t: 0 },
+    );
+  return {
+    me,
+    cells,
+    totals: [
+      { cls: "all everyone", ...total("all", false) },
+      { cls: "reg everyone", ...total("reg", false) },
+      { cls: "all current-only", ...total("all", true) },
+      { cls: "reg current-only", ...total("reg", true) },
+    ],
+  };
+});
+---
+
+<Base
+  title="Head-to-head"
+  section="/h2h"
+  description="Every manager's all-time record against every other manager."
+>
+  <h1>Head-to-head</h1>
+  <p class="lede">
+    Every manager's all-time record against every other, {m.seasons[0]}–{m.seasons.at(-1)}. Read across: the row
+    manager's record against the column manager. Tap a record for the full rivalry.
+  </p>
+
+  <div class="controls" id="controls" hidden>
+    <div class="segmented" role="group" aria-label="Games counted">
+      <button type="button" data-games="all" aria-pressed="true">All games</button>
+      <button type="button" data-games="reg" aria-pressed="false">Regular season</button>
+    </div>
+    <div class="segmented" role="group" aria-label="Managers shown">
+      <button type="button" data-who="current" aria-pressed="false">Current</button>
+      <button type="button" data-who="all" aria-pressed="true">Everyone</button>
+    </div>
+  </div>
+
+  <div class="table-scroll matrix-scroll">
+    <table class="matrix sticky-first" id="matrix" data-games="all" data-who="all">
+      <caption class="visually-hidden">All-time head-to-head records, row manager versus column manager</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="corner text"><span class="muted">vs →</span></th>
+          {
+            order.map((id) => (
+              <th scope="col" class:list={{ former: !current.has(id) }} title={manager(id).name}>
+                {manager(id).short_name}
+              </th>
+            ))
+          }
+          <th scope="col" class="total">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map(({ me, cells, totals }) => (
+            <tr class:list={{ former: !current.has(me) }}>
+              <th scope="row" title={manager(me).name}>
+                {manager(me).short_name}
+              </th>
+              {cells.map((c, i) => {
+                const them = order[i]!;
+                const former = !current.has(them);
+                if (!c) return <td class:list={["self", { former }]} aria-hidden="true" />;
+                if (!c.pair) return <td class:list={["never", { former }]}>·</td>;
+                const regGames = c.regWins + c.regLosses + c.ties;
+                const label = `${manager(me).name} vs ${manager(them).name}`;
+                return (
+                  <td
+                    class:list={["cell", { former }]}
+                    style={`--bg-all: ${shadeColor(winPct(c.wins, c.losses, c.ties))}; --bg-reg: ${
+                      regGames ? shadeColor(winPct(c.regWins, c.regLosses, c.ties)) : "var(--surface)"
+                    }`}
+                  >
+                    <a href={rivalryHref(me, them)} aria-label={`${label}: ${record(c.wins, c.losses, c.ties)}`}>
+                      <span class="all">{record(c.wins, c.losses, c.ties)}</span>
+                      <span class="reg">{regGames ? record(c.regWins, c.regLosses, c.ties) : "·"}</span>
+                    </a>
+                  </td>
+                );
+              })}
+              <td class="total">
+                {totals.map((t) => (
+                  <span class={t.cls}>
+                    {record(t.w, t.l, t.t)} <span class="muted">{pct(winPct(t.w, t.l, t.t))}</span>
+                  </span>
+                ))}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="muted small">
+    Orange: the row manager leads the series; lavender: trails it. "All games" includes the playoffs and consolation
+    ladder; "Regular season" leaves them out. · = never met. Totals count the managers shown.
+  </p>
+</Base>
+
+<script>
+  // Progressive enhancement: without JS the table shows everyone, all games.
+  const table = document.querySelector<HTMLTableElement>("#matrix");
+  const controls = document.querySelector<HTMLElement>("#controls");
+  function set(key: string, value: string) {
+    if (!table || !controls) return;
+    table.dataset[key] = value;
+    for (const b of controls.querySelectorAll<HTMLButtonElement>(`button[data-${key}]`)) {
+      b.setAttribute("aria-pressed", String(b.dataset[key] === value));
+    }
+  }
+  if (table && controls) {
+    controls.hidden = false;
+    set("who", "current");
+    for (const button of controls.querySelectorAll<HTMLButtonElement>("button")) {
+      button.addEventListener("click", () => {
+        const [key, value] = Object.entries(button.dataset)[0] ?? [];
+        if (key && value) set(key, value);
+      });
+    }
+  }
+</script>
+
+<style>
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .controls[hidden] {
+    display: none;
+  }
+
+  /* Scrolls both ways inside itself so the header row and first column can both stay put */
+  .matrix-scroll {
+    max-height: min(80vh, 44rem);
+    overflow: auto;
+    width: fit-content;
+    max-width: 100%;
+  }
+  .matrix {
+    width: auto;
+  }
+  .matrix th,
+  .matrix td {
+    text-align: center;
+    border-right: 1px solid var(--line);
+  }
+  .matrix thead th {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: var(--step--1);
+    color: var(--ink);
+    min-width: 4.25rem;
+  }
+  .matrix tbody th {
+    text-align: left;
+    font-weight: 600;
+  }
+  .matrix td.cell {
+    padding: 0;
+    background: var(--bg-all);
+  }
+  .matrix[data-games="reg"] td.cell {
+    background: var(--bg-reg);
+  }
+  .matrix td.cell a {
+    display: block;
+    padding: 0.55rem 0.5rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .matrix td.cell a:hover,
+  .matrix td.cell a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+    text-decoration: underline;
+  }
+  .matrix .self {
+    background: repeating-linear-gradient(135deg, var(--panel) 0 4px, var(--surface) 4px 8px);
+  }
+  .matrix .never {
+    color: var(--muted);
+  }
+  .matrix .total {
+    font-weight: 600;
+    text-align: right;
+    background: var(--panel);
+  }
+  .matrix tbody td.total {
+    background: var(--panel);
+  }
+
+  /* Toggles. Games: cells and totals carry .all or .reg. Managers: totals also carry .everyone or
+     .current-only (more specific, so it wins), and former managers' rows and columns hide. */
+  .matrix .reg,
+  .matrix[data-games="reg"] .all {
+    display: none;
+  }
+  .matrix[data-games="reg"] .reg {
+    display: inline;
+  }
+  .matrix[data-who="all"] td.total .current-only,
+  .matrix[data-who="current"] td.total .everyone,
+  .matrix[data-who="current"] .former {
+    display: none;
+  }
+  .matrix tr.former > th {
+    color: var(--muted);
+  }
+  .corner {
+    font-weight: 400;
+  }
+</style>
