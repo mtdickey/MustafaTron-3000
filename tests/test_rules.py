@@ -10,7 +10,7 @@ ET = timezone(timedelta(hours=-4))  # EDT, for readable September dates
 
 def test_payouts():
     p = RULES.payouts(2025)
-    assert [p.for_rank(r) for r in (1, 2, 3, 4, 10)] == [6.5, 2.5, 0.0, -1.0, -1.0]
+    assert [p.for_rank(r) for r in (1, 2, 3, 4, 10)] == [5.5, 1.5, 0.0, -1.0, -1.0]
 
 
 def test_keeper_eligibility_starts_with_espn_keepers():

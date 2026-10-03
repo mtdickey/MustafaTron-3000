@@ -24,7 +24,7 @@ class Payouts:
     otherwise: float
 
     def for_rank(self, rank: int) -> float:
-        """Net return as a multiple of the buy-in: 6.5 for a title, -1.0 for losing the buy-in."""
+        """Net return as a multiple of the buy-in: +5.5 for a title, -1.0 for losing the buy-in."""
         return self.by_rank.get(rank, self.otherwise)
 
 
