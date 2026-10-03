@@ -1,6 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import { currentManagers, manager, meta, rivalryHref, series, standings } from "../lib/data";
+import { currentManagers, manager, managerHref, meta, rivalryHref, series, standings } from "../lib/data";
 import { pct, record, shadeColor } from "../lib/format";
 
 // Rows and columns in all-time standings order, so the heat runs from the top-left corner.
@@ -79,7 +79,7 @@ const rows = order.map((me) => {
           rows.map(({ me, cells, totals }) => (
             <tr class:list={{ former: !current.has(me) }}>
               <th scope="row" title={manager(me).name}>
-                {manager(me).short_name}
+                <a class="manager" href={managerHref(me)}>{manager(me).short_name}</a>
               </th>
               {cells.map((c, i) => {
                 const them = order[i]!;

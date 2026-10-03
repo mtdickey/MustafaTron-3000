@@ -14,6 +14,7 @@ import type {
   ManagerOut,
   ManagersFile,
   Meta,
+  ProfilesFile,
   RecordsFile,
   SeasonFile,
   StandingsFile,
@@ -44,6 +45,9 @@ export const h2h = (): H2HFile => load("h2h.json");
 export const standings = (): StandingsFile => load("standings.json");
 export const records = (): RecordsFile => load("records.json");
 export const season = (year: number): SeasonFile => load(`seasons/${year}.json`);
+export const profiles = (): ProfilesFile => load("profiles.json");
+
+export const managerHref = (id: string) => `/managers/${id}`;
 
 // Managers ----------------------------------------------------------------------------------------
 

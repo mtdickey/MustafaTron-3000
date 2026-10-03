@@ -68,7 +68,7 @@ const bars = games.map((g, i) => ({
 
   <header class="versus">
     <div class:list={["side", { leads: leader === p.a }]}>
-      <span class="name"><ManagerName id={p.a} /></span>
+      <span class="name"><ManagerName id={p.a} link /></span>
       <span class="big num">{p.wins}</span>
     </div>
     <div class="mid">
@@ -76,7 +76,7 @@ const bars = games.map((g, i) => ({
       {p.ties > 0 && <span class="muted small">{p.ties} tie{p.ties > 1 && "s"}</span>}
     </div>
     <div class:list={["side", "right", { leads: leader === p.b }]}>
-      <span class="name"><ManagerName id={p.b} /></span>
+      <span class="name"><ManagerName id={p.b} link /></span>
       <span class="big num">{p.losses}</span>
     </div>
   </header>

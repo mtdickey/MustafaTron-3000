@@ -46,7 +46,7 @@ const inProgress = !m.current_season_finished;
           lines.map((s) => (
             <tr class:list={{ former: !active.has(s.manager) }}>
               <th scope="row" data-sort={s.manager}>
-                <ManagerName id={s.manager} />
+                <ManagerName id={s.manager} link />
               </th>
               <td>{s.seasons}</td>
               <td data-sort={s.wins + s.ties / 2}>{record(s.wins, s.losses, s.ties)}</td>
@@ -91,7 +91,7 @@ const inProgress = !m.current_season_finished;
           byTitles.map((s) => (
             <tr class:list={{ former: !active.has(s.manager) }}>
               <th scope="row" data-sort={s.manager}>
-                <ManagerName id={s.manager} />
+                <ManagerName id={s.manager} link />
               </th>
               <td class:list={{ trophies: s.championships > 0 }}>{s.championships || "–"}</td>
               <td>{s.runner_ups || "–"}</td>
@@ -150,22 +150,22 @@ const inProgress = !m.current_season_finished;
                 <span class="trophy" aria-hidden="true">
                   🏆
                 </span>{" "}
-                <ManagerName id={e.champion} /> <span class="muted small">({ordinal(e.champion_seed)} seed)</span>
+                <ManagerName id={e.champion} link /> <span class="muted small">({ordinal(e.champion_seed)} seed)</span>
               </td>
               <td class="text">
-                <ManagerName id={e.runner_up} />
+                <ManagerName id={e.runner_up} link />
               </td>
               <td class="text">
-                <ManagerName id={e.third} />
+                <ManagerName id={e.third} link />
               </td>
               <td class="text">
-                <ManagerName id={e.last} />
+                <ManagerName id={e.last} link />
               </td>
               <td class="text">
-                <ManagerName id={e.top_seed} />
+                <ManagerName id={e.top_seed} link />
               </td>
               <td class="text">
-                <ManagerName id={e.most_points} />
+                <ManagerName id={e.most_points} link />
               </td>
             </tr>
           ))

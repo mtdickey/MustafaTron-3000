@@ -2,7 +2,7 @@
 // An Observable Plot chart rendered at build time to static SVG: no client JS, nothing to load.
 //
 // Colors come from CSS, not Plot options, so charts follow the light/dark theme: give a mark a
-// className ("win", "loss", "accent", "muted") and the styles below fill it with the matching token.
+// className ("win", "loss", "tie", "accent", or "line" for an unfilled stroke) and the styles below fill it with the matching token.
 import * as Plot from "@observablehq/plot";
 import { parseHTML } from "linkedom";
 
@@ -51,5 +51,9 @@ svg.setAttribute("aria-label", label);
   }
   figure.plot .tie {
     fill: var(--muted);
+  }
+  figure.plot .line {
+    fill: none;
+    stroke: var(--accent);
   }
 </style>

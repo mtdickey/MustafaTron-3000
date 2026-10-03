@@ -90,7 +90,7 @@ const SUPERLATIVES: Record<string, { label: string; fmt: (v: number) => string }
             <span class="trophy" aria-hidden="true">
               🏆
             </span>{" "}
-            <ManagerName id={s.champion} />
+            <ManagerName id={s.champion} link />
           </span>
           <span class="muted small">{team.get(s.champion)?.name}</span>
         </div>
@@ -98,7 +98,7 @@ const SUPERLATIVES: Record<string, { label: string; fmt: (v: number) => string }
           <div class="card stat">
             <span class="label">Runner-up</span>
             <span class="value">
-              <ManagerName id={runnerUp} />
+              <ManagerName id={runnerUp} link />
             </span>
             <span class="muted small">{team.get(runnerUp)?.name}</span>
           </div>
@@ -107,7 +107,7 @@ const SUPERLATIVES: Record<string, { label: string; fmt: (v: number) => string }
           <div class="card stat">
             <span class="label">Last place</span>
             <span class="value">
-              <ManagerName id={last} />
+              <ManagerName id={last} link />
             </span>
             <span class="muted small">{team.get(last)?.name}</span>
           </div>
@@ -147,7 +147,7 @@ const SUPERLATIVES: Record<string, { label: string; fmt: (v: number) => string }
             return (
               <tr>
                 <th scope="row" class="team">
-                  <ManagerName id={t.manager} />
+                  <ManagerName id={t.manager} link />
                   <span class="muted small">{t.name}</span>
                 </th>
                 {!live && <td>{t.final_rank ? ordinal(t.final_rank) : "–"}</td>}

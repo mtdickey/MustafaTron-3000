@@ -1,0 +1,79 @@
+---
+import ManagerName from "../../components/ManagerName.astro";
+import Base from "../../layouts/Base.astro";
+import { managerHref, managers, meta, standings } from "../../lib/data";
+import { pct, record } from "../../lib/format";
+
+const latest = meta().current_season;
+const career = new Map(standings().standings.map((s) => [s.manager, s]));
+const all = managers().map((m) => ({ m, c: career.get(m.id)! }));
+const current = all.filter(({ m }) => m.seasons.includes(latest));
+const former = all.filter(({ m }) => !m.seasons.includes(latest));
+const span = (s: number[]) => (s.length === 1 ? `${s[0]}` : `${s[0]}–${s.at(-1)}`);
+---
+
+<Base title="Managers" section="/managers" description="Every manager in league history: career records, titles and seasons.">
+  <h1>Managers</h1>
+  <p class="lede">Everyone who has run a team in the league, with a page each.</p>
+
+  {
+    [
+      ["In the league", current],
+      ["Former managers", former],
+    ].map(([title, list]) => (
+      <section>
+        <h2>{title as string}</h2>
+        <ul class="managers">
+          {(list as typeof all).map(({ m, c }) => (
+            <li>
+              <a class="card" href={managerHref(m.id)}>
+                <span class="name">
+                  <ManagerName id={m.id} />
+                  {c.championships > 0 && (
+                    <span class="trophy" title={`${c.championships} championships`}>
+                      {" "}
+                      {"🏆".repeat(c.championships)}
+                    </span>
+                  )}
+                </span>
+                <span class="muted small">
+                  {span(m.seasons)} · {m.seasons.length} season{m.seasons.length > 1 && "s"}
+                </span>
+                <span class="num">
+                  {record(c.wins, c.losses, c.ties)} <span class="muted">{pct(c.win_pct)}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .managers {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  }
+  .managers a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    height: 100%;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .managers a:hover {
+    border-color: var(--accent);
+  }
+  .name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-1);
+  }
+</style>

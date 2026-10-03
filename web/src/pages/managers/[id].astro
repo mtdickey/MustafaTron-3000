@@ -1,0 +1,348 @@
+---
+import * as Plot from "@observablehq/plot";
+import ManagerName from "../../components/ManagerName.astro";
+import PlotFigure from "../../components/PlotFigure.astro";
+import SortableTables from "../../components/SortableTables.astro";
+import Base from "../../layouts/Base.astro";
+import { managers, meta, profiles, rivalryHref, season, series, standings, type Manager } from "../../lib/data";
+import { ordinal, pct, points, record, shade, signed } from "../../lib/format";
+
+export function getStaticPaths() {
+  return managers().map((m) => ({ params: { id: m.id }, props: { m } }));
+}
+
+interface Props {
+  m: Manager;
+}
+
+const { m } = Astro.props;
+const meta_ = meta();
+const career = standings().standings.find((s) => s.manager === m.id)!;
+const profile = profiles().profiles.find((p) => p.manager === m.id)!;
+const still = m.last_season === null;
+const span = `${m.seasons[0]}–${still ? "" : m.seasons.at(-1)}`;
+
+// One row per season played, from that season's file.
+const rows = m.seasons.map((year) => {
+  const s = season(year);
+  const t = s.teams.find((x) => x.manager === m.id)!;
+  const w = s.weekly.find((x) => x.manager === m.id)!;
+  const games = t.wins + t.losses + t.ties;
+  return {
+    year,
+    finished: s.finished,
+    teamCount: s.settings.team_count,
+    playoffTeams: s.settings.playoff_team_count,
+    t,
+    winPct: games ? (t.wins + t.ties / 2) / games : 0,
+    allPlay: [w.all_play_wins, w.all_play_losses, w.all_play_ties] as const,
+  };
+});
+const finished = rows.filter((r) => r.finished && r.t.final_rank);
+// Best and worst by final finish; record, then points, break ties.
+type Row = (typeof rows)[number];
+const better = (a: Row, b: Row) =>
+  a.t.final_rank! - b.t.final_rank! || b.winPct - a.winPct || b.t.points_for - a.t.points_for;
+const best = [...finished].sort(better)[0];
+const worst = [...finished].sort((a, b) => better(b, a))[0];
+
+// Every opponent ever faced, most meetings first.
+const opponents = managers()
+  .filter((o) => o.id !== m.id)
+  .map((o) => series(m.id, o.id))
+  .filter((s) => s.pair)
+  .map((s) => ({ ...s, games: s.wins + s.losses + s.ties, pct: (s.wins + s.ties / 2) / (s.wins + s.losses + s.ties) }))
+  .sort((a, b) => b.games - a.games);
+const qualifying = opponents.filter((o) => o.games >= 5);
+const favorite = [...qualifying].sort((a, b) => b.pct - a.pct || b.games - a.games)[0];
+const nemesis = [...qualifying].sort((a, b) => a.pct - b.pct || b.games - a.games)[0];
+
+const ap = profile;
+const apGames = ap.all_play_wins + ap.all_play_losses + ap.all_play_ties;
+const apPct = apGames ? (ap.all_play_wins + ap.all_play_ties / 2) / apGames : 0;
+const weekLine = (w: (typeof profile.best_weeks)[number]) => ({
+  ...w,
+  href: `/seasons/${w.season}#week-${w.period}`,
+});
+const teamCount = Math.max(...rows.map((r) => r.teamCount));
+---
+
+<Base
+  title={m.name}
+  section="/managers"
+  description={`${m.name}: ${record(career.wins, career.losses, career.ties)} career, ${career.championships} title${career.championships === 1 ? "" : "s"}, ${span}.`}
+>
+  <p class="crumbs small"><a href="/managers">Managers</a></p>
+  <h1>
+    {m.name}
+    {career.championships > 0 && <span class="trophies" title={`${career.championships} championships`}>{"🏆".repeat(career.championships)}</span>}
+  </h1>
+  <p class="lede">
+    {still ? `In the league since ${m.seasons[0]}` : `In the league ${span}`} · {m.seasons.length} season{
+      m.seasons.length > 1 && "s"
+    }{!still && " · no longer in the league"}
+    {m.seasons.at(-1) === meta_.current_season && !meta_.current_season_finished && ` · ${meta_.current_season} in progress`}
+  </p>
+
+  <div class="grid tiles">
+    <div class="card stat">
+      <span class="label">Career record</span>
+      <span class="value">{record(career.wins, career.losses, career.ties)}</span>
+      <span class="muted small">{pct(career.win_pct)} · {signed(career.avg_margin)} per game</span>
+    </div>
+    <div class="card stat">
+      <span class="label">Titles</span>
+      <span class="value">{career.championships}</span>
+      <span class="muted small">
+        {career.runner_ups} runner-up · {career.third_places} third · {career.playoff_appearances}/{career.finished_seasons} playoffs
+      </span>
+    </div>
+    <div class="card stat">
+      <span class="label">Return on the buy-in</span>
+      <span class="value">{career.finished_seasons ? `${signed(career.roi * 100, 0)}%` : "–"}</span>
+      <span class="muted small">{career.finished_seasons ? `${signed(career.net_payout)} buy-ins net` : "No finished season yet"}</span>
+    </div>
+    <div class="card stat">
+      <span class="label">Vs the field</span>
+      <span class="value">{apGames ? record(ap.all_play_wins, ap.all_play_losses, ap.all_play_ties) : "–"}</span>
+      <span class="muted small">
+        {apGames ? `${pct(apPct)} playing everyone every week · luck ${signed((career.win_pct - apPct) * 100, 1)}` : ""}
+      </span>
+    </div>
+  </div>
+
+  {
+    best && worst && best !== worst && (
+      <div class="grid bests">
+        <a class="card stat" href={`/seasons/${best.year}`}>
+          <span class="label">Best season</span>
+          <span class="value small-value">
+            {best.year}: {ordinal(best.t.final_rank!)}
+          </span>
+          <span class="muted small">
+            {best.t.name} · {record(best.t.wins, best.t.losses, best.t.ties)}, {points(best.t.points_for)} pts
+          </span>
+        </a>
+        <a class="card stat" href={`/seasons/${worst.year}`}>
+          <span class="label">Worst season</span>
+          <span class="value small-value">
+            {worst.year}: {ordinal(worst.t.final_rank!)}
+          </span>
+          <span class="muted small">
+            {worst.t.name} · {record(worst.t.wins, worst.t.losses, worst.t.ties)}, {points(worst.t.points_for)} pts
+          </span>
+        </a>
+      </div>
+    )
+  }
+
+  <h2 id="seasons">Season by season</h2>
+  {
+    finished.length > 1 && (
+      <PlotFigure
+        label={`${m.name}'s final finish each season`}
+        caption="Final finish each season (1st at the top). The shaded band is the playoffs."
+        options={{
+          height: 180,
+          width: 560,
+          marginLeft: 36,
+          marginRight: 16,
+          x: { label: null, tickFormat: "d", ticks: finished.map((r) => r.year) },
+          y: { label: null, domain: [teamCount, 1], ticks: [1, 4, 7, 10].filter((n) => n <= teamCount), tickFormat: (d: number) => ordinal(d) },
+          marks: [
+            Plot.rectY([0], { x1: finished[0]!.year - 0.5, x2: finished.at(-1)!.year + 0.5, y1: 0.5, y2: finished[0]!.playoffTeams + 0.5, className: "band" }),
+            Plot.line(finished, { x: "year", y: (r) => r.t.final_rank, className: "line", strokeWidth: 2 }),
+            Plot.dot(finished, { x: "year", y: (r) => r.t.final_rank, r: 4.5, className: "accent", title: (r) => `${r.year}: ${ordinal(r.t.final_rank!)}` }),
+          ],
+        }}
+      />
+    )
+  }
+  <div class="table-scroll">
+    <table class="sticky-first" data-sortable>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Season</th>
+          <th scope="col" class="text">Team</th>
+          <th scope="col">Record</th>
+          <th scope="col">PF</th>
+          <th scope="col">PA</th>
+          <th scope="col">All-play</th>
+          <th scope="col">Seed</th>
+          <th scope="col">Finish</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          [...rows].reverse().map((r) => (
+            <tr class:list={{ best: r === best, worst: r === worst }}>
+              <th scope="row" class="text">
+                <a href={`/seasons/${r.year}`}>{r.year}</a>
+              </th>
+              <td class="text">{r.t.name}</td>
+              <td class="shade" style={shade(r.winPct)} data-sort={r.winPct}>
+                {record(r.t.wins, r.t.losses, r.t.ties)}
+              </td>
+              <td data-sort={r.t.points_for}>{points(r.t.points_for)}</td>
+              <td data-sort={r.t.points_against}>{points(r.t.points_against)}</td>
+              <td data-sort={r.allPlay[0] - r.allPlay[1]}>{record(r.allPlay[0], r.allPlay[1], r.allPlay[2])}</td>
+              <td>{r.t.playoff_seed}</td>
+              <td data-sort={-(r.t.final_rank ?? 99)}>
+                {r.t.final_rank === 1 ? (
+                  <span class="trophy">🏆 1st</span>
+                ) : r.t.final_rank ? (
+                  ordinal(r.t.final_rank)
+                ) : (
+                  <span class="badge live">Live</span>
+                )}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid weeks">
+    {
+      (
+        [
+          ["Best weeks", profile.best_weeks],
+          ["Worst weeks", profile.worst_weeks],
+        ] as const
+      ).map(([title, list]) => (
+        <section class="card">
+          <h2 class="h3">{title}</h2>
+          <ol>
+            {list.map(weekLine).map((w) => (
+              <li>
+                <span class="num pts">{points(w.points, 2)}</span>
+                <a href={w.href}>
+                  {w.season} · week {w.period}
+                </a>{" "}
+                <span class="muted small">
+                  vs <ManagerName id={w.opponent} short />
+                  {w.result && ` (${w.result})`}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+  </div>
+
+  <h2 id="rivalries">Head-to-head</h2>
+  {
+    (favorite || nemesis) && (
+      <div class="grid bests">
+        {favorite && favorite.pct > 0.5 && (
+          <a class="card stat" href={rivalryHref(m.id, favorite.them)}>
+            <span class="label">Favorite opponent</span>
+            <span class="value small-value">
+              <ManagerName id={favorite.them} />
+            </span>
+            <span class="muted small">{record(favorite.wins, favorite.losses, favorite.ties)} all-time</span>
+          </a>
+        )}
+        {nemesis && nemesis.pct < 0.5 && (
+          <a class="card stat" href={rivalryHref(m.id, nemesis.them)}>
+            <span class="label">Nemesis</span>
+            <span class="value small-value">
+              <ManagerName id={nemesis.them} />
+            </span>
+            <span class="muted small">{record(nemesis.wins, nemesis.losses, nemesis.ties)} all-time</span>
+          </a>
+        )}
+      </div>
+    )
+  }
+  <div class="table-scroll">
+    <table class="sticky-first" data-sortable>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Opponent</th>
+          <th scope="col">Meetings</th>
+          <th scope="col">Record</th>
+          <th scope="col">Pct</th>
+          <th scope="col" class="text" data-nosort>Series</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          opponents.map((o) => (
+            <tr>
+              <th scope="row" class="text" data-sort={o.them}>
+                <ManagerName id={o.them} link />
+              </th>
+              <td>{o.games}</td>
+              <td data-sort={o.wins - o.losses}>{record(o.wins, o.losses, o.ties)}</td>
+              <td class="shade" style={shade(o.pct)} data-sort={o.pct}>
+                {pct(o.pct)}
+              </td>
+              <td class="text">
+                <a href={rivalryHref(m.id, o.them)}>Rivalry page</a>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <SortableTables />
+</Base>
+
+<style>
+  .crumbs {
+    margin-bottom: 0.5rem;
+  }
+  .trophies {
+    font-size: 0.6em;
+    vertical-align: middle;
+    margin-left: 0.3rem;
+    letter-spacing: -0.1em;
+  }
+  .tiles,
+  .bests {
+    margin-bottom: 1rem;
+  }
+  .bests a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .bests a:hover {
+    border-color: var(--accent);
+  }
+  .small-value {
+    font-size: var(--step-2);
+  }
+  tr.best > th:first-child {
+    box-shadow: inset 3px 0 var(--win);
+  }
+  tr.worst > th:first-child {
+    box-shadow: inset 3px 0 var(--loss);
+  }
+  .weeks {
+    margin-top: 1.5rem;
+  }
+  .h3 {
+    font-size: var(--step-1);
+    margin: 0 0 0.5rem;
+  }
+  ol {
+    margin: 0;
+    padding-left: 1.3rem;
+  }
+  li {
+    padding: 0.15rem 0;
+  }
+  .pts {
+    display: inline-block;
+    min-width: 4.5em;
+    font-weight: 700;
+  }
+  :global(figure.plot .band) {
+    fill: var(--win);
+    opacity: 0.12;
+  }
+</style>

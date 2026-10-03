@@ -9,6 +9,7 @@ export interface ContractFiles {
   h2h: H2HFile;
   managers: ManagersFile;
   meta: Meta;
+  profiles: ProfilesFile;
   records: RecordsFile;
   season: SeasonFile;
   standings: StandingsFile;
@@ -178,6 +179,54 @@ export interface Meta {
    * Next week of the current season with games still to play
    */
   upcoming_week: number | null;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "ProfilesFile".
+ */
+export interface ProfilesFile {
+  profiles: ProfileOut[];
+  schema_version: 1;
+}
+/**
+ * What a manager's page needs beyond standings.json, seasons/*.json and h2h.json.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "ProfileOut".
+ */
+export interface ProfileOut {
+  all_play_losses: number;
+  all_play_ties: number;
+  /**
+   * Career regular season record against the whole league each week
+   */
+  all_play_wins: number;
+  /**
+   * Highest single NFL weeks, best first
+   */
+  best_weeks: WeekLineOut[];
+  manager: string;
+  /**
+   * Lowest single NFL weeks, worst first
+   */
+  worst_weeks: WeekLineOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WeekLineOut".
+ */
+export interface WeekLineOut {
+  opponent: string;
+  /**
+   * NFL week
+   */
+  period: number;
+  points: number;
+  /**
+   * null for half of a two-week playoff matchup
+   */
+  result: ("W" | "L" | "T") | null;
+  season: number;
 }
 /**
  * Top 10 of each record, best first.

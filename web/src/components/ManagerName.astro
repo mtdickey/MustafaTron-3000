@@ -1,15 +1,29 @@
 ---
-// A manager's display name from their canonical id.
-import { manager } from "../lib/data";
+// A manager's display name from their canonical id, optionally linked to their profile.
+// Leave `link` off inside something that is already a link (cards, record holders).
+import { manager, managerHref } from "../lib/data";
 
 interface Props {
   id: string;
   /** Use the short name, for tight tables. */
   short?: boolean;
+  link?: boolean;
 }
 
-const { id, short = false } = Astro.props;
+const { id, short = false, link = false } = Astro.props;
 const m = manager(id);
+const text = short ? m.short_name : m.name;
+const title = short ? m.name : undefined;
 ---
 
-<span class="manager" title={short ? m.name : undefined}>{short ? m.short_name : m.name}</span>
+{
+  link ? (
+    <a class="manager" href={managerHref(id)} title={title}>
+      {text}
+    </a>
+  ) : (
+    <span class="manager" title={title}>
+      {text}
+    </span>
+  )
+}
