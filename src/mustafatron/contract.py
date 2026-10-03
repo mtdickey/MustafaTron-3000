@@ -230,7 +230,10 @@ class StreakMarkOut(_Model):
     start_week: int
     end_season: int
     end_week: int
-    active: bool = Field(description="Still running: includes the manager's latest regular season game")
+    active: bool = Field(
+        description="Can still grow: includes the manager's latest regular season game, the manager is "
+        "still in the league, and (one-season streaks) that season's regular season isn't over"
+    )
 
 
 class WeekMarkOut(_Model):

@@ -6,8 +6,6 @@ import { pct, points, record } from "../lib/format";
 
 const m = meta();
 const book = records();
-// A mark is live when it was set in the season still being played: it can still be beaten (or extended).
-const live = (season: number) => !m.current_season_finished && season === m.current_season;
 const weekHref = (season: number, week: number) => `/seasons/${season}#week-${week}`;
 
 type GameMark = (typeof book.game_records)[string][number];
@@ -19,7 +17,6 @@ const gameMarks = (key: string, value: (g: GameMark) => string, detail: (g: Game
     value: value(g),
     when: `${g.season} · week ${g.week}`,
     href: weekHref(g.season, g.week),
-    live: live(g.season),
     detail: detail(g),
   }));
 const vs = (g: GameMark) => `${points(g.score, 2)}–${points(g.opponent_score, 2)}`;
@@ -39,7 +36,6 @@ const matchupMarks = (key: string): Mark[] =>
     value: points(x.total, 2),
     when: `${x.season} · week ${x.week}`,
     href: weekHref(x.season, x.week),
-    live: live(x.season),
     detail: `${points(x.home_score, 2)}–${points(x.away_score, 2)}`,
   }));
 
@@ -52,7 +48,7 @@ const streakMarks = (key: string): Mark[] =>
         ? `${s.start_season} · weeks ${s.start_week}–${s.end_week}`
         : `${s.start_season} wk ${s.start_week} – ${s.end_season} wk ${s.end_week}`,
     href: `/seasons/${s.start_season}#week-${s.start_week}`,
-    live: s.active && live(s.end_season),
+    active: s.active,
     detail: s.active ? "active" : undefined,
   }));
 
@@ -62,7 +58,6 @@ const weekMarks = (key: string): Mark[] =>
     value: points(w.total, 1),
     when: `${w.season} · NFL week ${w.period}`,
     href: weekHref(w.season, w.period),
-    live: live(w.season),
     detail: `${points(w.total / w.teams, 1)} per team`,
   }));
 
@@ -135,7 +130,7 @@ const sections: { id: string; title: string; note?: string; cards: { id: string;
   {
     id: "streaks",
     title: "Streaks",
-    note: "Regular season games in a row; a tie ends a streak.",
+    note: "Regular season games in a row; a tie ends a streak. Active: still running, so it can still grow.",
     cards: [
       { id: "win-streak", title: "Longest winning streak", note: "Can carry over into the next season.", marks: streakMarks("longest_win_streak") },
       { id: "loss-streak", title: "Longest losing streak", note: "Can carry over into the next season.", marks: streakMarks("longest_loss_streak") },
@@ -144,7 +139,6 @@ const sections: { id: string; title: string; note?: string; cards: { id: string;
     ],
   },
 ];
-const liveCount = sections.flatMap((s) => s.cards).filter((c) => c.marks.some((x) => x.live)).length;
 ---
 
 <Base title="Records book" section="/records" description="The league's all-time bests and worsts, every one linked to where it happened.">
@@ -153,14 +147,6 @@ const liveCount = sections.flatMap((s) => s.cards).filter((c) => c.marks.some((x
     The top ten of everything since {m.seasons[0]}. Tap a record to jump to the week it happened. Scoring went from
     standard to half-PPR in 2023, so recent seasons have the edge on points.
   </p>
-  {
-    liveCount > 0 && (
-      <p>
-        <span class="badge live">Live</span> marks a mark set this season ({m.current_season}), which can still move.
-        {liveCount} {liveCount === 1 ? "list has" : "lists have"} one so far.
-      </p>
-    )
-  }
   <nav class="jump small" aria-label="Record sections">
     {sections.map((s) => <a href={`#${s.id}`}>{s.title}</a>)}
   </nav>

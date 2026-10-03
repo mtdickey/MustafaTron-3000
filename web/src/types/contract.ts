@@ -301,7 +301,7 @@ export interface SeasonMarkOut {
  */
 export interface StreakMarkOut {
   /**
-   * Still running: includes the manager's latest regular season game
+   * Can still grow: includes the manager's latest regular season game, the manager is still in the league, and (one-season streaks) that season's regular season isn't over
    */
   active: boolean;
   end_season: number;

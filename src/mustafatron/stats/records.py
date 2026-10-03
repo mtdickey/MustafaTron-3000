@@ -74,7 +74,7 @@ class StreakMark:
     start_week: int
     end_season: int
     end_week: int
-    active: bool  # still running: it includes the manager's latest regular season game
+    active: bool  # can still grow: see streaks()
 
 
 @dataclass(frozen=True)
@@ -123,7 +123,17 @@ def _season_marks(league: League, value: Callable[[TeamSeason], float]) -> list[
 
 
 def streaks(league: League, result: str, *, span_seasons: bool) -> list[StreakMark]:
-    """Every run of consecutive regular season ``result`` ("W" or "L") per manager."""
+    """Every run of consecutive regular season ``result`` ("W" or "L") per manager.
+
+    A streak is ``active`` while it can still grow: it includes the manager's latest regular season
+    game, the manager is in the league's latest season, and, for a streak confined to one season,
+    that season still has regular season games to play.
+    """
+    latest = league.seasons[max(league.seasons)]
+    still_in = {t.manager_id for t in latest.teams}
+    open_seasons = {
+        s.season for s in league.seasons.values() if any(not g.final and not g.is_playoff for g in s.games)
+    }
     by_manager: dict[str, list[Game]] = {}
     for g in league.games:
         if not g.is_playoff:
@@ -146,7 +156,9 @@ def streaks(league: League, result: str, *, span_seasons: bool) -> list[StreakMa
                     run[0].week,
                     run[-1].season,
                     run[-1].week,
-                    run[-1] is games[-1],
+                    run[-1] is games[-1]
+                    and mid in still_in
+                    and (span_seasons or run[-1].season in open_seasons),
                 )
             )
     return out
