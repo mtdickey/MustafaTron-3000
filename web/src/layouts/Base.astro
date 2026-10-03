@@ -1,0 +1,203 @@
+---
+// The page shell: header with wordmark and nav, main content, footer with data freshness.
+import "../styles/global.css";
+import { meta } from "../lib/data";
+import { NAV } from "../lib/nav";
+
+interface Props {
+  title: string;
+  description?: string;
+  /** The nav item this page belongs to ("/" for home). */
+  section?: string;
+}
+
+const { title, description, section } = Astro.props;
+const m = meta();
+const fullTitle = title === m.league_name ? `${title} · MustafaTron-3000` : `${title} · ${m.league_name}`;
+const freshness = m.current_season_finished
+  ? `Through the ${m.current_season} season`
+  : m.last_completed_week
+    ? `Through ${m.current_season} week ${m.last_completed_week}`
+    : `${m.current_season} season not started`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <meta property="og:title" content={fullTitle} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#f16913" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      // Apply a saved theme before first paint. "system" (no attribute) follows the OS.
+      try {
+        const t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip visually-hidden" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="wrap bar">
+        <a class="brand" href="/" aria-label="MustafaTron-3000 home">
+          <img src="/favicon.svg" alt="" width="28" height="28" />
+          <span class="wordmark">MustafaTron<span class="model">-3000</span></span>
+        </a>
+        <button class="theme-toggle" type="button" aria-label="Color theme: system" title="Color theme">
+          <span aria-hidden="true">◐</span>
+        </button>
+      </div>
+      <nav class="wrap" aria-label="Sections">
+        <ul>
+          {
+            NAV.map((item) => (
+              <li>
+                <a href={item.href} aria-current={item.href === section ? "page" : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </header>
+
+    <main id="main" class="wrap">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>
+          <strong>{m.league_name}</strong> · {m.seasons[0]}–{m.seasons.at(-1)} · {freshness}.
+        </p>
+        <p class="muted small">
+          The Mustafa Report™, rebuilt. Data from ESPN, recomputed every week of the season.{" "}
+          <a href="https://github.com/mtdickey/MustafaTron-3000">Source</a>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Cycle system → light → dark. Saved per browser; the page works the same without it.
+      const order = ["system", "light", "dark"] as const;
+      const button = document.querySelector<HTMLButtonElement>(".theme-toggle");
+      const root = document.documentElement;
+      const current = () => (root.dataset.theme as (typeof order)[number] | undefined) ?? "system";
+      const label = () => button?.setAttribute("aria-label", `Color theme: ${current()}`);
+      label();
+      button?.addEventListener("click", () => {
+        const next = order[(order.indexOf(current()) + 1) % order.length];
+        if (next === "system") delete root.dataset.theme;
+        else root.dataset.theme = next;
+        try {
+          if (next === "system") localStorage.removeItem("theme");
+          else localStorage.setItem("theme", next);
+        } catch {}
+        label();
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip:focus {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    padding: 0.5rem 0.75rem;
+    background: var(--accent);
+    color: var(--accent-ink);
+    z-index: 10;
+    border-radius: var(--radius);
+  }
+
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.6rem 0.25rem;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-1);
+    letter-spacing: -0.01em;
+  }
+  .model {
+    color: var(--accent);
+  }
+  .theme-toggle {
+    font: inherit;
+    font-size: var(--step-1);
+    line-height: 1;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  /* One row of section links that scrolls sideways on a phone instead of wrapping */
+  nav ul {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0.1rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav ul::-webkit-scrollbar {
+    display: none;
+  }
+  nav a {
+    display: block;
+    padding: 0.5rem 0.7rem;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    font-weight: 500;
+  }
+  nav a:hover {
+    color: var(--ink);
+  }
+  nav a[aria-current="page"] {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--line);
+    padding-block: 1.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    font-size: var(--step--1);
+  }
+  .site-footer p {
+    margin-bottom: 0.25rem;
+  }
+</style>
