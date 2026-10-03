@@ -141,7 +141,7 @@
       "additionalProperties": false,
       "properties": {
         "active": {
-          "description": "Still running: includes the manager's latest regular season game",
+          "description": "Can still grow: includes the manager's latest regular season game, the manager is still in the league, and (one-season streaks) that season's regular season isn't over",
           "title": "Active",
           "type": "boolean"
         },

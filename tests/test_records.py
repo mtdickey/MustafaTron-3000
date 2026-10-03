@@ -80,3 +80,18 @@ def test_week_totals_are_league_wide():
     top = BOOK.week["highest_scoring_week"][0]
     pts = [w.points for w in week_scores(LEAGUE.seasons[top.season]) if w.period == top.period]
     assert top.total == pytest.approx(sum(pts)) and top.teams == len(pts) == 10
+
+
+def test_active_streaks_can_still_grow():
+    # 2015-2025 only: the regular season is over, so nothing confined to a season is still running.
+    assert not any(m.active for f in ("W", "L") for m in streaks(LEAGUE, f, span_seasons=False))
+    in_2025 = {t.manager_id for t in LEAGUE.seasons[2025].teams}
+    for r in ("W", "L"):
+        for m in streaks(LEAGUE, r, span_seasons=True):
+            if m.active:
+                # Carries into next season, but only for someone still in the league.
+                assert m.manager_id in in_2025 and m.end_season == 2025
+    left = {"kariuki", "sedaghat", "ray", "moundous"}
+    assert not any(
+        m.active for r in ("W", "L") for m in streaks(LEAGUE, r, span_seasons=True) if m.manager_id in left
+    )

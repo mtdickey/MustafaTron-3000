@@ -9,8 +9,8 @@ export interface Mark {
   /** Where and when, e.g. "2019 · week 5". */
   when: string;
   href: string;
-  /** Set in the season in progress, or a streak still running. */
-  live?: boolean;
+  /** A streak still running: it can still grow. */
+  active?: boolean;
   detail?: string;
 }
 
@@ -39,7 +39,7 @@ const [top, ...rest] = marks;
               <ManagerName id={w} />
             </>
           ))}
-          {top.live && <span class="badge live">Live</span>}
+          {top.active && <span class="badge live">Active</span>}
         </span>
         <span class="muted small">
           {top.when}
@@ -62,7 +62,7 @@ const [top, ...rest] = marks;
                   <ManagerName id={w} short />
                 </>
               ))}
-              {m.live && <span class="badge live">Live</span>}
+              {m.active && <span class="badge live">Active</span>}
             </span>
             <a class="small" href={m.href}>
               {m.when}
