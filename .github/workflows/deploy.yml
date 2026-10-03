@@ -1,0 +1,130 @@
+name: Deploy
+
+# Builds the site and deploys it to Cloudflare Pages.
+#
+#   push to main       → production (https://mustafatron.pages.dev)
+#   pull request       → a preview at <branch>.mustafatron.pages.dev, linked in a PR comment
+#   workflow_dispatch  → production, by hand
+#   workflow_call      → production, from etl.yml after the weekly refresh
+#
+# The site data is published live (the current season from ESPN) whenever the ESPN secrets are
+# available, and from the committed finished seasons only when they are not (pull requests from
+# forks). An expired cookie fails the build loudly and nothing is deployed, so the site keeps
+# serving the last good build: the current season stops updating, nothing else breaks.
+#
+# Needs repository secrets CLOUDFLARE_API_TOKEN (Account → Cloudflare Pages → Edit) and
+# CLOUDFLARE_ACCOUNT_ID. Until they exist, the site is still built and checked but not deployed.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      ESPN_SWID:
+        required: false
+      ESPN_S2:
+        required: false
+      MANAGER_ID_KEY:
+        required: false
+      CLOUDFLARE_API_TOKEN:
+        required: false
+      CLOUDFLARE_ACCOUNT_ID:
+        required: false
+
+permissions:
+  contents: read
+  pull-requests: write # the preview link comment
+  deployments: write
+
+concurrency:
+  group: deploy-${{ github.event.pull_request.number || 'production' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  PAGES_PROJECT: mustafatron
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: uv sync --locked
+
+      - name: Publish site data
+        env:
+          ESPN_SWID: ${{ secrets.ESPN_SWID }}
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          MANAGER_ID_KEY: ${{ secrets.MANAGER_ID_KEY }}
+        run: |
+          if [ -n "$ESPN_S2" ] && [ -n "$ESPN_SWID" ] && [ -n "$MANAGER_ID_KEY" ]; then
+            uv run mustafatron publish
+          else
+            echo "::notice::ESPN secrets unavailable (fork PR?): publishing finished seasons only"
+            uv run mustafatron publish --offline
+          fi
+          cat web/public/data/meta.json
+
+      - name: Build site
+        working-directory: web
+        run: |
+          npm ci
+          npm run build
+
+      - name: Check for Cloudflare credentials
+        id: cf
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$TOKEN" ] && [ -n "$ACCOUNT" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not set: built, not deployed"
+          fi
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        if: steps.cf.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.147.0"
+          workingDirectory: web
+          # The first run creates the project; afterwards `create` fails harmlessly as it exists.
+          preCommands: npx wrangler pages project create ${{ env.PAGES_PROJECT }} --production-branch=main || true
+          command: >-
+            pages deploy dist
+            --project-name=${{ env.PAGES_PROJECT }}
+            --branch=${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+            --commit-hash=${{ github.event.pull_request.head.sha || github.sha }}
+            --commit-dirty=true
+
+      - name: Comment the preview link
+        if: github.event_name == 'pull_request' && steps.deploy.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          URL: ${{ steps.deploy.outputs.deployment-url }}
+          ALIAS: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          body="**Preview:** ${ALIAS:-$URL}  (this commit: $URL, built from \`${SHA:0:7}\`)"
+          # One comment per PR, updated on each push.
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+            --jq '[.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("**Preview:**")))][0].id // empty')
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -f body="$body" >/dev/null
+          else
+            gh pr comment "$PR" --body "$body"
+          fi

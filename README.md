@@ -5,8 +5,8 @@ all-time head-to-head records, rivalries, standings and records book first, week
 reports second, and eventually per-manager logins for keeper selection.
 
 > **Status:** being rebuilt. Milestone 0 (secure and consolidate) is done; the site itself
-> lands in [M2](https://github.com/mtdickey/MustafaTron-3000/milestone/3) and will be served from
-> Cloudflare Pages. Progress is tracked in the
+> lands in [M2](https://github.com/mtdickey/MustafaTron-3000/milestone/3), served from
+> Cloudflare Pages at https://mustafatron.pages.dev. Progress is tracked in the
 > [milestones](https://github.com/mtdickey/MustafaTron-3000/milestones).
 
 ## Architecture
@@ -128,13 +128,28 @@ Managers are referenced by canonical id everywhere; `week` is ESPN's matchup per
 span two NFL weeks). The models in [`contract.py`](src/mustafatron/contract.py) are the contract,
 with JSON Schemas in [`schema/`](schema/) for the site to generate types from.
 
-## CI
+## CI and deploy
 
 [`ci.yml`](.github/workflows/ci.yml) runs ruff, pytest, the site JSON contract check
-(`mustafatron publish --offline --check`) and [gitleaks](https://github.com/gitleaks/gitleaks)
-over the full history on every push and PR. The weekly in-season refresh (`etl.yml`: cron plus
-manual dispatch, reading ESPN cookies and `MANAGER_ID_KEY` from Actions secrets) and the Cloudflare
-deploy land in M2.
+(`mustafatron publish --offline --check`), the site's type check and build, and
+[gitleaks](https://github.com/gitleaks/gitleaks) over the full history on every push and PR.
+
+[`deploy.yml`](.github/workflows/deploy.yml) builds the site and deploys it to
+[Cloudflare Pages](https://pages.cloudflare.com) as the `mustafatron` project:
+
+| Trigger | Goes to |
+|---|---|
+| push to `main`, manual dispatch | production, `https://mustafatron.pages.dev` |
+| pull request | a preview at `<branch>.mustafatron.pages.dev`, linked in a PR comment |
+
+The data is published live (current season from ESPN) when the ESPN secrets are available. If the
+cookies have expired the build fails and nothing is deployed, so the site keeps the last good build.
+
+One-time setup: create a Cloudflare API token with **Account → Cloudflare Pages → Edit**, and add it
+and the account ID as the Actions secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The
+first deploy creates the Pages project. Until those secrets exist, the workflow builds the site
+and skips the deploy with a warning. The site is on the default `*.pages.dev` URL. A custom domain
+can be attached later in the Pages dashboard without touching the workflow.
 
 ## The v0 report
 
