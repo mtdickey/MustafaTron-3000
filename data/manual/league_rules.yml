@@ -13,13 +13,15 @@
 # First season of all-time history (H2H, records). The league's ESPN history starts here.
 history_start: 2015
 
-# Net return on the buy-in by final rank: 1st wins 6.5x the buy-in, 2nd 2.5x, 3rd gets it back.
-# Every other rank loses the buy-in. (From roi-calculations.ipynb, whose dict wrote "4: -1" for
-# "4th or worse".)
+# Net return on the buy-in by final rank, in multiples of the buy-in. 1st takes home 6.5 buy-ins and
+# 2nd 2.5 (nets +5.5 and +1.5 once their own buy-in is counted), 3rd gets the buy-in back (0), and
+# every other rank loses it (-1). The pot balances: 6.5 + 2.5 + 1 = 10 buy-ins from 10 teams, so the
+# league nets exactly 0 each season (tests/test_stats.py). roi-calculations.ipynb wrote the
+# take-home amounts, {1: 6.5, 2: 2.5, 3: 0, 4: -1}, mixed in with net ones.
 payouts:
   - since: 2015
     value:
-      by_rank: {1: 6.5, 2: 2.5, 3: 0.0}
+      by_rank: {1: 5.5, 2: 1.5, 3: 0.0}
       otherwise: -1.0
 
 # Keepers: only players drafted after this round can be kept (run_keepers.py: round_num > 3).

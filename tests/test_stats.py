@@ -93,8 +93,8 @@ def test_standings_add_up():
     assert sum(s.runner_ups for s in STANDINGS) == sum(s.third_places for s in STANDINGS) == len(SEASONS)
     assert sum(s.playoff_appearances for s in STANDINGS) == 4 * len(SEASONS)
     assert sum(s.wins for s in STANDINGS) == sum(s.losses for s in STANDINGS)
-    # Each season pays out 6.5 + 2.5 + 0 and seven buy-ins are lost: +2.0 net across the league.
-    assert sum(s.net_payout for s in STANDINGS) == pytest.approx(2.0 * len(SEASONS))
+    # The pot balances: winners net 5.5 + 1.5 + 0 and seven buy-ins are lost, so the league nets 0.
+    assert sum(s.net_payout for s in STANDINGS) == pytest.approx(0.0)
     assert sum(s.seasons for s in STANDINGS) == 10 * len(SEASONS)
 
 
