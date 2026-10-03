@@ -120,7 +120,7 @@ lays out what the contract publishes.
 | `managers.json` | Canonical managers: id, name, short name, seasons |
 | `games.json` | Every final game as `[season, week, tier, home, away, home_score, away_score, winner]`, plus upcoming |
 | `h2h.json` | Every all-time series: record, streaks, closest/blowout, playoff record, rivalry flags |
-| `standings.json` | All-time standings: record, titles, playoff appearances, net payout |
+| `standings.json` | All-time standings (regular season record and margin, playoff record, titles, best/worst finish, net payout and ROI) and the championship ledger |
 | `records.json` | Records book: single-game (one-week matchups only) and single-season top 10s |
 | `seasons/{year}.json` | One season: settings, final standings, every game |
 

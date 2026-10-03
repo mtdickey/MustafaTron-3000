@@ -18,7 +18,7 @@ from mustafatron.model import Game, League, Season
 from mustafatron.rules import LeagueRules, load_rules
 from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags
 from mustafatron.stats.records import records_book
-from mustafatron.stats.standings import all_time_standings
+from mustafatron.stats.standings import all_time_standings, championship_ledger
 from mustafatron.transform import load_league
 
 REPO = Path(__file__).resolve().parents[2]
@@ -126,22 +126,32 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
             c.CareerOut(
                 manager=s.manager_id,
                 seasons=s.seasons,
+                finished_seasons=s.finished_seasons,
                 wins=s.wins,
                 losses=s.losses,
                 ties=s.ties,
                 win_pct=round(s.win_pct, 4),
                 points_for=s.points_for,
                 points_against=s.points_against,
+                avg_margin=round(s.avg_margin, 2),
                 playoff_appearances=s.playoff_appearances,
+                playoff_wins=s.playoff_wins,
+                playoff_losses=s.playoff_losses,
+                playoff_points_for=s.playoff_points_for,
+                playoff_points_against=s.playoff_points_against,
                 championships=s.championships,
                 runner_ups=s.runner_ups,
                 third_places=s.third_places,
+                last_places=s.last_places,
                 best_finish=s.best_finish,
+                worst_finish=s.worst_finish,
                 avg_finish=s.avg_finish,
                 net_payout=s.net_payout,
+                roi=round(s.roi, 4),
             )
             for s in all_time_standings(league, rules)
-        ]
+        ],
+        ledger=[c.LedgerOut(**vars(e)) for e in championship_ledger(league)],
     )
 
     book = records_book(league)

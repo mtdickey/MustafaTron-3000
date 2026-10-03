@@ -37,7 +37,8 @@ export function seasonRange(seasons: number[]): string {
  * value reads correctly in light and dark mode.
  */
 export function shade(winPct: number): string {
-  const strength = Math.min(1, Math.abs(winPct - 0.5) * 2);
+  // Full color at .250 / .750: real records rarely stray further, and a gentler ramp washes out.
+  const strength = Math.min(1, Math.abs(winPct - 0.5) / 0.25);
   const hue = winPct >= 0.5 ? "var(--win)" : "var(--loss)";
-  return `--shade: ${hue}; --strength: ${Math.round(strength * 85)}%`;
+  return `--shade: ${hue}; --strength: ${Math.round(8 + strength * 72)}%`;
 }

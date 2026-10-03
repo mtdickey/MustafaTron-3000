@@ -139,25 +139,46 @@ class H2HFile(ContractFile):
 class CareerOut(_Model):
     manager: str
     seasons: int
-    wins: int
+    finished_seasons: int = Field(description="Seasons with a final rank; finishes and payouts count these")
+    wins: int = Field(description="Regular season")
     losses: int
     ties: int
     win_pct: float
-    points_for: float
+    points_for: float = Field(description="Regular season")
     points_against: float
+    avg_margin: float = Field(description="Regular season (points for - against) per game")
     playoff_appearances: int
+    playoff_wins: int = Field(description="Championship bracket games; consolation ladders excluded")
+    playoff_losses: int
+    playoff_points_for: float
+    playoff_points_against: float
     championships: int
     runner_ups: int
     third_places: int
+    last_places: int
     best_finish: int | None
+    worst_finish: int | None
     avg_finish: float | None
     net_payout: float = Field(description="Career winnings in multiples of the buy-in")
+    roi: float = Field(description="net_payout per buy-in paid (finished seasons)")
+
+
+class LedgerOut(_Model):
+    season: int
+    champion: str
+    runner_up: str
+    third: str
+    last: str
+    top_seed: str = Field(description="Best regular season record (playoff seed 1)")
+    most_points: str = Field(description="Most regular season points for")
+    champion_seed: int
 
 
 class StandingsFile(ContractFile):
-    """All-time standings, best regular season win percentage first."""
+    """All-time standings, best regular season win percentage first, and every finished season's podium."""
 
     standings: list[CareerOut]
+    ledger: list[LedgerOut] = Field(description="Finished seasons, newest first")
 
 
 # records.json ------------------------------------------------------------------------------------

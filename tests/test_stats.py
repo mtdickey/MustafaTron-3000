@@ -6,7 +6,7 @@ from mustafatron.model import Game
 from mustafatron.rules import load_rules
 from mustafatron.stats.h2h import all_pairs, notable_flags, pair_record, record_between, rivalries
 from mustafatron.stats.records import one_week_games, records_book
-from mustafatron.stats.standings import all_time_standings
+from mustafatron.stats.standings import all_time_standings, championship_ledger
 from mustafatron.transform import load_league
 
 SEASONS = range(2015, 2026)
@@ -73,6 +73,33 @@ def test_standings_add_up():
     # Each season pays out 6.5 + 2.5 + 0 and seven buy-ins are lost: +2.0 net across the league.
     assert sum(s.net_payout for s in STANDINGS) == pytest.approx(2.0 * len(SEASONS))
     assert sum(s.seasons for s in STANDINGS) == 10 * len(SEASONS)
+
+
+def test_standings_splits_and_finishes():
+    assert sum(s.last_places for s in STANDINGS) == len(SEASONS)
+    assert sum(s.playoff_wins for s in STANDINGS) == sum(s.playoff_losses for s in STANDINGS)
+    for s in STANDINGS:
+        assert s.finished_seasons == s.seasons  # 2015-2025 are all finished
+        assert s.best_finish <= s.avg_finish <= s.worst_finish
+        assert s.roi == pytest.approx(s.net_payout / s.seasons)
+        assert s.avg_margin == pytest.approx((s.points_for - s.points_against) / s.games)
+        # Every champion won its bracket games: at least two playoff wins per title.
+        assert s.playoff_wins >= 2 * s.championships
+        if s.playoff_appearances == 0:
+            assert s.playoff_wins == s.playoff_losses == 0
+
+
+def test_championship_ledger():
+    ledger = championship_ledger(LEAGUE)
+    assert [e.season for e in ledger] == sorted(SEASONS, reverse=True)
+    for e in ledger:
+        season = LEAGUE.seasons[e.season]
+        assert e.champion == season.champion_id
+        assert len({e.champion, e.runner_up, e.third, e.last}) == 4
+        assert season.team_of(e.top_seed).playoff_seed == 1
+        assert 1 <= e.champion_seed <= season.settings.playoff_team_count
+    titles = {s.manager_id: s.championships for s in STANDINGS}
+    assert all(titles[e.champion] >= 1 for e in ledger)
 
 
 def test_playoff_appearances_match_the_bracket():
