@@ -1,0 +1,100 @@
+---
+import ManagerName from "../../components/ManagerName.astro";
+import Base from "../../layouts/Base.astro";
+import { games, meta, season } from "../../lib/data";
+import { points, record } from "../../lib/format";
+
+const years = [...meta().seasons].reverse();
+const rows = years.map((year) => {
+  const s = season(year);
+  const byRank = new Map(s.teams.filter((t) => t.final_rank).map((t) => [t.final_rank!, t]));
+  const champ = s.champion ? byRank.get(1) : undefined;
+  const best = [...s.teams].sort((a, b) => a.playoff_seed - b.playoff_seed)[0];
+  return { year, s, champ, runnerUp: byRank.get(2), best };
+});
+---
+
+<Base title="Seasons" section="/seasons" description="Every season since 2015: champions, standings, brackets and weekly scores.">
+  <h1>Seasons</h1>
+  <p class="lede">Every season of the league, each with its final standings, playoff bracket and every week's scores.</p>
+
+  <ul class="seasons">
+    {
+      rows.map(({ year, s, champ, runnerUp, best }) => (
+        <li>
+          <a class="card" href={`/seasons/${year}`}>
+            <span class="year">{year}</span>
+            {champ ? (
+              <span class="who">
+                <span>
+                  <span class="trophy" aria-hidden="true">
+                    🏆
+                  </span>{" "}
+                  <ManagerName id={champ.manager} />
+                </span>
+                <span class="muted small">
+                  {record(champ.wins, champ.losses, champ.ties)} · {points(champ.points_for, 0)} pts
+                </span>
+              </span>
+            ) : (
+              <span class="who">
+                <span>
+                  <span class="badge live">In progress</span>
+                </span>
+                {best && (
+                  <span class="muted small">
+                    Top seed: <ManagerName id={best.manager} /> ({record(best.wins, best.losses, best.ties)})
+                  </span>
+                )}
+              </span>
+            )}
+            {runnerUp && (
+              <span class="muted small">
+                Runner-up: <ManagerName id={runnerUp.manager} />
+              </span>
+            )}
+            <span class="muted small">
+              {s.settings.regular_season_weeks}-week regular season ·{" "}
+              {s.finished ? `${s.games.length} games` : `${games().filter((g) => g.season === year).length} of ${s.games.length} games played`}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Base>
+
+<style>
+  .seasons {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  }
+  .seasons a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    height: 100%;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .seasons a:hover {
+    border-color: var(--accent);
+  }
+  .year {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .who {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    font-size: var(--step-1);
+  }
+</style>

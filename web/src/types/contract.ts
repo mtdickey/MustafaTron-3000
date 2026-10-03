@@ -208,13 +208,26 @@ export interface SeasonFile {
    * Every game this season, final or not
    */
   games: [number, number, number, string, string, number, number, string | null][];
+  /**
+   * NFL weeks with scores so far, in order
+   */
+  periods: number[];
+  /**
+   * First NFL week of the playoffs
+   */
+  playoff_start_period: number | null;
   schema_version: 1;
   season: number;
   settings: SeasonSettingsOut;
+  superlatives: SuperlativeOut[];
   /**
    * Final standings order once finished, else by seed
    */
   teams: TeamOut[];
+  /**
+   * Same order as teams
+   */
+  weekly: WeeklyOut[];
 }
 /**
  * This interface was referenced by `ContractFiles`'s JSON-Schema
@@ -226,6 +239,30 @@ export interface SeasonSettingsOut {
   points_per_reception: number;
   regular_season_weeks: number;
   team_count: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "SuperlativeOut".
+ */
+export interface SuperlativeOut {
+  key:
+    | "high_week"
+    | "low_week"
+    | "most_points"
+    | "fewest_points"
+    | "most_points_against"
+    | "best_all_play"
+    | "luckiest"
+    | "unluckiest";
+  manager: string;
+  /**
+   * NFL week, for single-week superlatives
+   */
+  period: number | null;
+  /**
+   * Points, or a win pct (best_all_play), or win pct minus all-play pct (luck)
+   */
+  value: number;
 }
 /**
  * This interface was referenced by `ContractFiles`'s JSON-Schema
@@ -246,6 +283,29 @@ export interface TeamOut {
   ties: number;
   trades: number;
   wins: number;
+}
+/**
+ * One team's season, NFL week by NFL week.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WeeklyOut".
+ */
+export interface WeeklyOut {
+  all_play_losses: number;
+  all_play_ties: number;
+  /**
+   * Regular season record against the whole league each week
+   */
+  all_play_wins: number;
+  manager: string;
+  /**
+   * One character per period: W/L/T for a final one-week matchup, '-' otherwise
+   */
+  results: string;
+  /**
+   * Points per NFL week, aligned with SeasonFile.periods
+   */
+  scores: (number | null)[];
 }
 /**
  * All-time standings, best regular season win percentage first, and every finished season's podium.

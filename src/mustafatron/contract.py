@@ -239,6 +239,40 @@ class TeamOut(_Model):
     co_managers: list[str]
 
 
+class WeeklyOut(_Model):
+    """One team's season, NFL week by NFL week."""
+
+    manager: str
+    scores: list[float | None] = Field(description="Points per NFL week, aligned with SeasonFile.periods")
+    results: str = Field(
+        description="One character per period: W/L/T for a final one-week matchup, '-' otherwise"
+    )
+    all_play_wins: int = Field(description="Regular season record against the whole league each week")
+    all_play_losses: int
+    all_play_ties: int
+
+
+SUPERLATIVES = (
+    "high_week",
+    "low_week",
+    "most_points",
+    "fewest_points",
+    "most_points_against",
+    "best_all_play",
+    "luckiest",
+    "unluckiest",
+)
+
+
+class SuperlativeOut(_Model):
+    key: Literal[SUPERLATIVES]  # type: ignore[valid-type]
+    manager: str
+    value: float = Field(
+        description="Points, or a win pct (best_all_play), or win pct minus all-play pct (luck)"
+    )
+    period: int | None = Field(description="NFL week, for single-week superlatives")
+
+
 class SeasonFile(ContractFile):
     season: int
     finished: bool
@@ -247,6 +281,10 @@ class SeasonFile(ContractFile):
     teams: list[TeamOut] = Field(description="Final standings order once finished, else by seed")
     columns: list[str] = Field(default=list(GAME_COLUMNS))
     games: list[GameRow] = Field(description="Every game this season, final or not")
+    periods: list[int] = Field(description="NFL weeks with scores so far, in order")
+    playoff_start_period: int | None = Field(description="First NFL week of the playoffs")
+    weekly: list[WeeklyOut] = Field(description="Same order as teams")
+    superlatives: list[SuperlativeOut]
 
 
 # Published path → model. seasons/{year}.json all use SeasonFile.

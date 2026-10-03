@@ -1,0 +1,452 @@
+---
+import ManagerName from "../../components/ManagerName.astro";
+import Base from "../../layouts/Base.astro";
+import { decodeGame, games as allGames, meta, season } from "../../lib/data";
+import { ordinal, pct, points, record, shade, signed } from "../../lib/format";
+
+export function getStaticPaths() {
+  return meta().seasons.map((year) => ({ params: { year: String(year) } }));
+}
+
+const year = Number(Astro.params.year);
+const s = season(year);
+const m = meta();
+const seasons = m.seasons;
+const prev = seasons.includes(year - 1) ? year - 1 : null;
+const next = seasons.includes(year + 1) ? year + 1 : null;
+const live = !s.finished;
+
+const games = s.games.map((r) => decodeGame(r));
+const finals = allGames().filter((g) => g.season === year).length; // games.json holds final games only
+const team = new Map(s.teams.map((t) => [t.manager, t]));
+const weekly = new Map(s.weekly.map((w) => [w.manager, w]));
+const byRank = new Map(s.teams.filter((t) => t.final_rank).map((t) => [t.final_rank!, t.manager]));
+const runnerUp = byRank.get(2);
+const last = byRank.get(s.settings.team_count);
+
+// Playoff bracket: championship rounds by matchup period, then the 3rd-place game, then the ladder.
+const bracket = games.filter((g) => g.tier === "WINNERS_BRACKET");
+const rounds = [...new Set(bracket.map((g) => g.week))].sort((a, b) => a - b);
+const roundName = (i: number) =>
+  i === rounds.length - 1 ? "Championship" : i === rounds.length - 2 ? "Semifinals" : `Round ${i + 1}`;
+const thirdPlace = games.filter((g) => g.tier === "WINNERS_CONSOLATION_LADDER");
+const ladder = games.filter((g) => g.tier === "LOSERS_CONSOLATION_LADDER");
+
+// Week grid: shade each score by how it ranked league-wide that NFL week (its all-play pct).
+const periodIndex = s.periods.map((_, i) => i);
+const weekAllPlay = (i: number, score: number) => {
+  const col = s.weekly.map((w) => w.scores[i]).filter((v): v is number => v !== null);
+  const below = col.filter((v) => v < score).length;
+  const equal = col.filter((v) => v === score).length - 1;
+  return col.length > 1 ? (below + equal / 2) / (col.length - 1) : 0.5;
+};
+// A regular season week is final once every result is in; playoff weeks finish with the season.
+const isLive = (i: number) => {
+  const p = s.periods[i]!;
+  const playoff = s.playoff_start_period !== null && p >= s.playoff_start_period;
+  return live && (playoff ? true : s.weekly.some((w) => w.results[i] === "-"));
+};
+const highWeek = Math.max(...s.weekly.flatMap((w) => w.scores.filter((v): v is number => v !== null)));
+
+const SUPERLATIVES: Record<string, { label: string; fmt: (v: number) => string }> = {
+  high_week: { label: "Highest week", fmt: (v) => points(v, 2) },
+  low_week: { label: "Lowest week", fmt: (v) => points(v, 2) },
+  most_points: { label: "Most points", fmt: (v) => points(v, 1) },
+  fewest_points: { label: "Fewest points", fmt: (v) => points(v, 1) },
+  most_points_against: { label: "Most points against", fmt: (v) => points(v, 1) },
+  best_all_play: { label: "Best all-play record", fmt: (v) => pct(v) },
+  luckiest: { label: "Luckiest", fmt: (v) => `${signed(v * 100, 1)} pts of win pct` },
+  unluckiest: { label: "Unluckiest", fmt: (v) => `${signed(v * 100, 1)} pts of win pct` },
+};
+---
+
+<Base
+  title={`${year} season`}
+  section="/seasons"
+  description={s.champion ? `${year}: final standings, playoff bracket and every week's scores.` : `${year} season so far.`}
+>
+  <nav class="pager" aria-label="Other seasons">
+    {prev ? <a href={`/seasons/${prev}`}>← {prev}</a> : <span />}
+    <a href="/seasons">All seasons</a>
+    {next ? <a href={`/seasons/${next}`}>{next} →</a> : <span />}
+  </nav>
+
+  <h1>
+    {year} season {live && <span class="badge live">In progress</span>}
+  </h1>
+  <p class="lede">
+    {s.settings.team_count} teams · {s.settings.regular_season_weeks}-week regular season ·
+    {" "}{s.settings.playoff_team_count}-team playoff · {
+      s.settings.points_per_reception ? `${s.settings.points_per_reception} PPR` : "standard scoring"
+    } · {live ? `${finals} of ${games.length} games played` : `${games.length} games`}
+  </p>
+
+  {
+    s.champion && (
+      <div class="grid podium">
+        <div class="card stat champion">
+          <span class="label">Champion</span>
+          <span class="value">
+            <span class="trophy" aria-hidden="true">
+              🏆
+            </span>{" "}
+            <ManagerName id={s.champion} />
+          </span>
+          <span class="muted small">{team.get(s.champion)?.name}</span>
+        </div>
+        {runnerUp && (
+          <div class="card stat">
+            <span class="label">Runner-up</span>
+            <span class="value">
+              <ManagerName id={runnerUp} />
+            </span>
+            <span class="muted small">{team.get(runnerUp)?.name}</span>
+          </div>
+        )}
+        {last && (
+          <div class="card stat">
+            <span class="label">Last place</span>
+            <span class="value">
+              <ManagerName id={last} />
+            </span>
+            <span class="muted small">{team.get(last)?.name}</span>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  <h2 id="standings">{live ? "Standings" : "Final standings"}</h2>
+  <div class="table-scroll">
+    <table class="sticky-first">
+      <caption>
+        {live ? "By current playoff seed." : "By final finish."} Record and points are regular season. All-play is
+        the record against the whole league every week; luck is win pct minus all-play pct.
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Team</th>
+          {!live && <th scope="col">Finish</th>}
+          <th scope="col">Seed</th>
+          <th scope="col">Record</th>
+          <th scope="col">PF</th>
+          <th scope="col">PA</th>
+          <th scope="col">All-play</th>
+          <th scope="col">Luck</th>
+          <th scope="col" title="Acquisitions / trades">Moves</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          s.teams.map((t) => {
+            const w = weekly.get(t.manager)!;
+            const apGames = w.all_play_wins + w.all_play_losses + w.all_play_ties;
+            const apPct = apGames ? (w.all_play_wins + w.all_play_ties / 2) / apGames : 0;
+            const g = t.wins + t.losses + t.ties;
+            const winPct = g ? (t.wins + t.ties / 2) / g : 0;
+            return (
+              <tr>
+                <th scope="row" class="team">
+                  <ManagerName id={t.manager} />
+                  <span class="muted small">{t.name}</span>
+                </th>
+                {!live && <td>{t.final_rank ? ordinal(t.final_rank) : "–"}</td>}
+                <td>{t.playoff_seed}</td>
+                <td class="shade" style={shade(winPct)}>
+                  {record(t.wins, t.losses, t.ties)}
+                </td>
+                <td>{points(t.points_for)}</td>
+                <td>{points(t.points_against)}</td>
+                <td>{apGames ? record(w.all_play_wins, w.all_play_losses, w.all_play_ties) : "–"}</td>
+                <td>{apGames ? signed((winPct - apPct) * 100, 1) : "–"}</td>
+                <td>
+                  {t.acquisitions} / {t.trades}
+                </td>
+              </tr>
+            );
+          })
+        }
+      </tbody>
+    </table>
+  </div>
+
+  {
+    bracket.length > 0 && (
+      <section>
+        <h2 id="playoffs">Playoffs</h2>
+        <p class="muted small">Playoff matchups here span two NFL weeks; scores are the two-week totals.</p>
+        <div class="bracket">
+          {rounds.map((wk, i) => (
+            <div class="round">
+              <h3>{roundName(i)}</h3>
+              {bracket
+                .filter((g) => g.week === wk)
+                .map((g) => (
+                  <div class="card matchup">
+                    {[g.home, g.away]
+                      .sort((a, b) => (team.get(a)?.playoff_seed ?? 0) - (team.get(b)?.playoff_seed ?? 0))
+                      .map((id) => (
+                        <div class:list={["side", { won: g.winner === id }]}>
+                          <span class="seed">{team.get(id)?.playoff_seed}</span>
+                          <ManagerName id={id} />
+                          <span class="num">{points(id === g.home ? g.homeScore : g.awayScore)}</span>
+                        </div>
+                      ))}
+                  </div>
+                ))}
+              {i === rounds.length - 1 &&
+                thirdPlace.map((g) => (
+                  <>
+                    <h3 class="sub">Third place</h3>
+                    <div class="card matchup">
+                      {[g.home, g.away].map((id) => (
+                        <div class:list={["side", { won: g.winner === id }]}>
+                          <span class="seed">{team.get(id)?.playoff_seed}</span>
+                          <ManagerName id={id} />
+                          <span class="num">{points(id === g.home ? g.homeScore : g.awayScore)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ))}
+            </div>
+          ))}
+        </div>
+        {ladder.length > 0 && (
+          <details>
+            <summary>Consolation ladder ({ladder.length} games)</summary>
+            <ul class="ladder">
+              {ladder.map((g) => (
+                <li>
+                  <span class="muted">Round {g.week - rounds[0]! + 1}:</span>{" "}
+                  <span class:list={{ won: g.winner === g.home }}>
+                    <ManagerName id={g.home} short /> {points(g.homeScore)}
+                  </span>
+                  {" – "}
+                  <span class:list={{ won: g.winner === g.away }}>
+                    {points(g.awayScore)} <ManagerName id={g.away} short />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
+      </section>
+    )
+  }
+
+  <h2 id="weeks">Week by week</h2>
+  <p class="muted small">
+    Points per NFL week, shaded by where the score ranked league-wide that week (orange = top, lavender = bottom).
+    W/L is the head-to-head result.{live && " Unfinished weeks show live scores."}
+  </p>
+  <div class="table-scroll">
+    <table class="sticky-first weeks">
+      <thead>
+        <tr>
+          <th scope="col" class="text">Team</th>
+          {
+            s.periods.map((p, i) => (
+              <th
+                scope="col"
+                id={`week-${p}`}
+                class:list={{
+                  playoff: s.playoff_start_period !== null && p >= s.playoff_start_period,
+                  first: p === s.playoff_start_period,
+                }}
+              >
+                {p === s.playoff_start_period ? `PO ${p}` : p}
+                {isLive(i) && <span class="dot" title="In progress" />}
+              </th>
+            ))
+          }
+          <th scope="col" title="Regular season all-play record">All-play</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          s.weekly.map((w) => (
+            <tr>
+              <th scope="row">
+                <ManagerName id={w.manager} short />
+              </th>
+              {periodIndex.map((i) => {
+                const v = w.scores[i];
+                const r = w.results[i];
+                const p = s.periods[i]!;
+                return v === null || v === undefined ? (
+                  <td class="empty">–</td>
+                ) : isLive(i) ? (
+                  <td class="live-score" title="Live: not final">
+                    {points(v)}
+                  </td>
+                ) : (
+                  <td
+                    class:list={[
+                      "shade",
+                      {
+                        playoff: s.playoff_start_period !== null && p >= s.playoff_start_period,
+                        first: p === s.playoff_start_period,
+                        best: v === highWeek,
+                      },
+                    ]}
+                    style={shade(weekAllPlay(i, v))}
+                  >
+                    {r !== "-" && <span class:list={["result", r]}>{r}</span>}
+                    {points(v)}
+                  </td>
+                );
+              })}
+              <td>{record(w.all_play_wins, w.all_play_losses, w.all_play_ties)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  {
+    s.superlatives.length > 0 && (
+      <section>
+        <h2 id="superlatives">Superlatives</h2>
+        <div class="grid">
+          {s.superlatives.map((x) => (
+            <div class="card stat">
+              <span class="label">
+                {SUPERLATIVES[x.key]?.label ?? x.key}
+                {x.period !== null && (
+                  <>
+                    {" · "}
+                    <a href={`#week-${x.period}`}>week {x.period}</a>
+                  </>
+                )}
+              </span>
+              <span class="value small-value">
+                <ManagerName id={x.manager} />
+              </span>
+              <span class="num">{SUPERLATIVES[x.key]?.fmt(x.value) ?? x.value}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: var(--step--1);
+    margin-bottom: 1rem;
+  }
+  .podium {
+    margin-bottom: 1rem;
+  }
+  .champion {
+    border-color: var(--gold);
+  }
+  .team {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+  }
+  .small-value {
+    font-size: var(--step-1);
+  }
+
+  .bracket {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    align-items: start;
+  }
+  .round h3 {
+    font-size: var(--step-0);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .round h3.sub {
+    margin-top: 1rem;
+  }
+  .matchup {
+    display: grid;
+    gap: 0.3rem;
+    margin-bottom: 0.75rem;
+  }
+  .side {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr auto;
+    gap: 0.5rem;
+    color: var(--muted);
+  }
+  .side.won,
+  .won {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .seed {
+    color: var(--muted);
+    font-size: var(--step--1);
+    font-weight: 400;
+  }
+  details {
+    margin-top: 0.5rem;
+  }
+  summary {
+    cursor: pointer;
+    color: var(--accent);
+  }
+  .ladder {
+    font-size: var(--step--1);
+    padding-left: 1.2rem;
+  }
+  .ladder .won {
+    font-weight: 600;
+  }
+
+  .weeks td {
+    padding-inline: 0.45rem;
+    position: relative;
+  }
+  .weeks td .result {
+    width: 1.1em;
+    height: 1.1em;
+    margin-right: 0.3em;
+    font-size: 0.65rem;
+    vertical-align: 0.1em;
+  }
+  .weeks .first {
+    border-left: 2px solid var(--ink);
+  }
+  .weeks thead th.playoff {
+    color: var(--accent);
+  }
+  .weeks td.best {
+    outline: 2px solid var(--gold);
+    outline-offset: -2px;
+    font-weight: 700;
+  }
+  .weeks th:target {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .empty,
+  .live-score {
+    color: var(--muted);
+  }
+  .live-score {
+    font-style: italic;
+  }
+  .dot {
+    display: inline-block;
+    width: 0.45em;
+    height: 0.45em;
+    margin-left: 0.25em;
+    border-radius: 50%;
+    background: var(--live);
+    vertical-align: 0.15em;
+  }
+</style>

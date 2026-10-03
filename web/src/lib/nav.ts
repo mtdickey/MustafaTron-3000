@@ -9,4 +9,5 @@ export interface NavItem {
 export const NAV: NavItem[] = [
   { href: "/", label: "Home" },
   { href: "/standings", label: "Standings" },
+  { href: "/seasons", label: "Seasons" },
 ];

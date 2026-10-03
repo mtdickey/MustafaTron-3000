@@ -34,6 +34,54 @@
       "title": "SeasonSettingsOut",
       "type": "object"
     },
+    "SuperlativeOut": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "enum": [
+            "high_week",
+            "low_week",
+            "most_points",
+            "fewest_points",
+            "most_points_against",
+            "best_all_play",
+            "luckiest",
+            "unluckiest"
+          ],
+          "title": "Key",
+          "type": "string"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "NFL week, for single-week superlatives",
+          "title": "Period"
+        },
+        "value": {
+          "description": "Points, or a win pct (best_all_play), or win pct minus all-play pct (luck)",
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "key",
+        "manager",
+        "value",
+        "period"
+      ],
+      "title": "SuperlativeOut",
+      "type": "object"
+    },
     "TeamOut": {
       "additionalProperties": false,
       "properties": {
@@ -122,6 +170,59 @@
       ],
       "title": "TeamOut",
       "type": "object"
+    },
+    "WeeklyOut": {
+      "additionalProperties": false,
+      "description": "One team's season, NFL week by NFL week.",
+      "properties": {
+        "all_play_losses": {
+          "title": "All Play Losses",
+          "type": "integer"
+        },
+        "all_play_ties": {
+          "title": "All Play Ties",
+          "type": "integer"
+        },
+        "all_play_wins": {
+          "description": "Regular season record against the whole league each week",
+          "title": "All Play Wins",
+          "type": "integer"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "results": {
+          "description": "One character per period: W/L/T for a final one-week matchup, '-' otherwise",
+          "title": "Results",
+          "type": "string"
+        },
+        "scores": {
+          "description": "Points per NFL week, aligned with SeasonFile.periods",
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Scores",
+          "type": "array"
+        }
+      },
+      "required": [
+        "manager",
+        "scores",
+        "results",
+        "all_play_wins",
+        "all_play_losses",
+        "all_play_ties"
+      ],
+      "title": "WeeklyOut",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -201,6 +302,26 @@
       "title": "Games",
       "type": "array"
     },
+    "periods": {
+      "description": "NFL weeks with scores so far, in order",
+      "items": {
+        "type": "integer"
+      },
+      "title": "Periods",
+      "type": "array"
+    },
+    "playoff_start_period": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "First NFL week of the playoffs",
+      "title": "Playoff Start Period"
+    },
     "schema_version": {
       "const": 1,
       "default": 1,
@@ -214,12 +335,27 @@
     "settings": {
       "$ref": "#/$defs/SeasonSettingsOut"
     },
+    "superlatives": {
+      "items": {
+        "$ref": "#/$defs/SuperlativeOut"
+      },
+      "title": "Superlatives",
+      "type": "array"
+    },
     "teams": {
       "description": "Final standings order once finished, else by seed",
       "items": {
         "$ref": "#/$defs/TeamOut"
       },
       "title": "Teams",
+      "type": "array"
+    },
+    "weekly": {
+      "description": "Same order as teams",
+      "items": {
+        "$ref": "#/$defs/WeeklyOut"
+      },
+      "title": "Weekly",
       "type": "array"
     }
   },
@@ -229,7 +365,11 @@
     "champion",
     "settings",
     "teams",
-    "games"
+    "games",
+    "periods",
+    "playoff_start_period",
+    "weekly",
+    "superlatives"
   ],
   "title": "SeasonFile",
   "type": "object"
