@@ -174,10 +174,25 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
                     opponent_score=m.opponent_score,
                     playoff=m.playoff,
                 )
-                for m in v  # type: ignore[union-attr]
+                for m in v
             ]
-            for k, v in book.items()
-            if not k.endswith("_season")
+            for k, v in book.game.items()
+        },
+        matchup_records={
+            k: [
+                c.MatchupMarkOut(
+                    season=m.season,
+                    week=m.week,
+                    home=m.home_id,
+                    away=m.away_id,
+                    home_score=m.home_score,
+                    away_score=m.away_score,
+                    total=m.total,
+                    playoff=m.playoff,
+                )
+                for m in v
+            ]
+            for k, v in book.matchup.items()
         },
         season_records={
             k: [
@@ -190,10 +205,28 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
                     ties=m.ties,
                     points_for=m.points_for,
                 )
-                for m in v  # type: ignore[union-attr]
+                for m in v
             ]
-            for k, v in book.items()
-            if k.endswith("_season")
+            for k, v in book.season.items()
+        },
+        streak_records={
+            k: [
+                c.StreakMarkOut(
+                    manager=m.manager_id,
+                    length=m.length,
+                    start_season=m.start_season,
+                    start_week=m.start_week,
+                    end_season=m.end_season,
+                    end_week=m.end_week,
+                    active=m.active,
+                )
+                for m in v
+            ]
+            for k, v in book.streak.items()
+        },
+        week_records={
+            k: [c.WeekMarkOut(season=m.season, period=m.period, total=m.total, teams=m.teams) for m in v]
+            for k, v in book.week.items()
         },
     )
 

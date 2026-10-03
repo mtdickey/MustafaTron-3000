@@ -44,6 +44,55 @@
       "title": "GameMarkOut",
       "type": "object"
     },
+    "MatchupMarkOut": {
+      "additionalProperties": false,
+      "properties": {
+        "away": {
+          "title": "Away",
+          "type": "string"
+        },
+        "away_score": {
+          "title": "Away Score",
+          "type": "number"
+        },
+        "home": {
+          "title": "Home",
+          "type": "string"
+        },
+        "home_score": {
+          "title": "Home Score",
+          "type": "number"
+        },
+        "playoff": {
+          "title": "Playoff",
+          "type": "boolean"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "total": {
+          "title": "Total",
+          "type": "number"
+        },
+        "week": {
+          "title": "Week",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "season",
+        "week",
+        "home",
+        "away",
+        "home_score",
+        "away_score",
+        "total",
+        "playoff"
+      ],
+      "title": "MatchupMarkOut",
+      "type": "object"
+    },
     "SeasonMarkOut": {
       "additionalProperties": false,
       "properties": {
@@ -87,10 +136,86 @@
       ],
       "title": "SeasonMarkOut",
       "type": "object"
+    },
+    "StreakMarkOut": {
+      "additionalProperties": false,
+      "properties": {
+        "active": {
+          "description": "Still running: includes the manager's latest regular season game",
+          "title": "Active",
+          "type": "boolean"
+        },
+        "end_season": {
+          "title": "End Season",
+          "type": "integer"
+        },
+        "end_week": {
+          "title": "End Week",
+          "type": "integer"
+        },
+        "length": {
+          "title": "Length",
+          "type": "integer"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "start_season": {
+          "title": "Start Season",
+          "type": "integer"
+        },
+        "start_week": {
+          "title": "Start Week",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "length",
+        "start_season",
+        "start_week",
+        "end_season",
+        "end_week",
+        "active"
+      ],
+      "title": "StreakMarkOut",
+      "type": "object"
+    },
+    "WeekMarkOut": {
+      "additionalProperties": false,
+      "properties": {
+        "period": {
+          "description": "NFL week",
+          "title": "Period",
+          "type": "integer"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "teams": {
+          "title": "Teams",
+          "type": "integer"
+        },
+        "total": {
+          "description": "Every team's points that NFL week",
+          "title": "Total",
+          "type": "number"
+        }
+      },
+      "required": [
+        "season",
+        "period",
+        "total",
+        "teams"
+      ],
+      "title": "WeekMarkOut",
+      "type": "object"
     }
   },
   "additionalProperties": false,
-  "description": "Top 10 of each record. Single-game records count one-week matchups only.",
+  "description": "Top 10 of each record, best first.\n\nGame and matchup records count one-week matchups only; week records are per NFL week, league-wide;\nseason records count finished seasons; streaks are regular season games (see stats/records.py).",
   "properties": {
     "game_records": {
       "additionalProperties": {
@@ -100,6 +225,16 @@
         "type": "array"
       },
       "title": "Game Records",
+      "type": "object"
+    },
+    "matchup_records": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/MatchupMarkOut"
+        },
+        "type": "array"
+      },
+      "title": "Matchup Records",
       "type": "object"
     },
     "schema_version": {
@@ -117,11 +252,34 @@
       },
       "title": "Season Records",
       "type": "object"
+    },
+    "streak_records": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/StreakMarkOut"
+        },
+        "type": "array"
+      },
+      "title": "Streak Records",
+      "type": "object"
+    },
+    "week_records": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/WeekMarkOut"
+        },
+        "type": "array"
+      },
+      "title": "Week Records",
+      "type": "object"
     }
   },
   "required": [
     "game_records",
-    "season_records"
+    "matchup_records",
+    "season_records",
+    "streak_records",
+    "week_records"
   ],
   "title": "RecordsFile",
   "type": "object"
