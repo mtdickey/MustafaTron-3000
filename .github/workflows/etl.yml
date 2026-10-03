@@ -1,0 +1,111 @@
+name: ETL
+
+# The weekly in-season refresh: pull the current season from ESPN, then rebuild and deploy the site.
+#
+# Runs Tuesday 14:00 UTC (10:00 ET) September through January, after Monday night games and ESPN's
+# overnight stat finalization, plus on demand from the Actions tab.
+#
+# Expired cookies fail loudly: the run fails, and an issue titled "ESPN cookies expired" is opened
+# (or commented on) so it reaches everyone watching the repo, not just whoever owns the cron. The
+# next successful run closes it. Because finished seasons are committed in data/raw/, an expired
+# cookie only means the current season stops updating; the deployed site keeps working.
+#
+# When a season finishes, `fetch` writes it to data/raw/. This workflow commits those files to main
+# after the test suite passes on them (Actions can't open PRs in this repo), so finished seasons are
+# never fetched again.
+
+on:
+  schedule:
+    - cron: "0 14 * 9-12,1 2"
+  workflow_dispatch:
+
+concurrency:
+  group: etl
+  cancel-in-progress: false
+
+env:
+  COOKIE_ISSUE_TITLE: ESPN cookies expired
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # commit newly finished seasons
+      issues: write # the expired-cookie alert
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+
+      - name: Fetch from ESPN
+        id: fetch
+        env:
+          ESPN_SWID: ${{ secrets.ESPN_SWID }}
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          MANAGER_ID_KEY: ${{ secrets.MANAGER_ID_KEY }}
+        run: |
+          set +e
+          uv run mustafatron fetch
+          code=$?
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          case $code in
+            0) ;;
+            2) echo "::error title=ESPN secrets missing::Set ESPN_SWID, ESPN_S2 and MANAGER_ID_KEY in the repository's Actions secrets." ;;
+            3) echo "::error title=ESPN cookies expired::ESPN returned 401/403. Copy fresh SWID and espn_s2 cookies into the ESPN_SWID / ESPN_S2 Actions secrets (see .env.example), then re-run this workflow." ;;
+            *) echo "::error title=ESPN fetch failed::mustafatron fetch exited $code; see the log above." ;;
+          esac
+          exit $code
+
+      - name: Raise the expired-cookie alert
+        if: failure() && steps.fetch.outputs.code == '3'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body="The weekly ETL got a 401/403 from ESPN on $(date -u +%Y-%m-%d): the \`espn_s2\` cookie has expired.
+          The site still works, but the current season has stopped updating.
+
+          **To fix:** log in at https://fantasy.espn.com, copy the \`SWID\` and \`espn_s2\` cookies (see \`.env.example\`),
+          update the \`ESPN_SWID\` and \`ESPN_S2\` Actions secrets, then run the **ETL** workflow by hand.
+          This issue closes itself on the next successful run.
+
+          Failed run: $RUN_URL"
+          number=$(gh issue list --state open --search "in:title \"$COOKIE_ISSUE_TITLE\"" --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body "Still expired: $RUN_URL"
+          else
+            gh issue create --title "$COOKIE_ISSUE_TITLE" --body "$body"
+          fi
+
+      - name: Close the expired-cookie alert
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for n in $(gh issue list --state open --search "in:title \"$COOKIE_ISSUE_TITLE\"" --json number --jq '.[].number'); do
+            gh issue close "$n" --comment "ESPN accepted the cookies again: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          done
+
+      - name: Commit newly finished seasons
+        run: |
+          if [ -z "$(git status --porcelain -- data/raw)" ]; then
+            echo "No newly finished seasons."
+            exit 0
+          fi
+          git status --short -- data/raw
+          uv run pytest -q   # includes the no-SWIDs-in-data/raw check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw
+          git commit -m "data: freeze finished seasons in data/raw ($(git diff --cached --name-only | cut -d/ -f3 | sort -u | paste -sd, -))"
+          git push
+
+  deploy:
+    needs: refresh
+    uses: ./.github/workflows/deploy.yml
+    permissions:
+      contents: read
+      pull-requests: write
+      deployments: write
+    secrets: inherit
