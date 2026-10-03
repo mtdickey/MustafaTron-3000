@@ -87,6 +87,28 @@ class PairRecord:
         return "".join(m.result for m in self.meetings)
 
     @property
+    def win_pct(self) -> float:
+        """``a``'s share of the series, ties counting half."""
+        return (self.wins + self.ties / 2) / self.games if self.games else 0.0
+
+    @property
+    def avg_score(self) -> float:
+        return round(self.points_for / self.games, 2) if self.games else 0.0
+
+    @property
+    def avg_opponent_score(self) -> float:
+        return round(self.points_against / self.games, 2) if self.games else 0.0
+
+    @property
+    def avg_margin(self) -> float:
+        """``a``'s average margin per meeting (negative when ``b`` outscores ``a``)."""
+        return round((self.points_for - self.points_against) / self.games, 2) if self.games else 0.0
+
+    def last(self, n: int = 5) -> str:
+        """The last ``n`` results, oldest to newest, from ``a``'s side."""
+        return self.results[-n:]
+
+    @property
     def current_streak(self) -> Streak:
         if not self.meetings:
             return Streak(None, 0)
@@ -182,6 +204,9 @@ def notable_flags(rec: PairRecord, rules: RivalryRules) -> list[Flag]:
 
 
 def rivalries(pairs: dict[tuple[str, str], PairRecord], rules: RivalryRules) -> list[PairRecord]:
-    """Series with enough meetings to count, closest first (then most meetings)."""
+    """The most competitive rivalries: series with enough meetings, closest to .500 first.
+
+    Ranked by ``abs(0.5 - win_pct)`` (``scratch-biggest-rivals.ipynb``), then most meetings.
+    """
     qualifying = [p for p in pairs.values() if p.games >= rules.min_matchups]
-    return sorted(qualifying, key=lambda p: (abs(p.wins - p.losses) / p.games, -p.games, p.a, p.b))
+    return sorted(qualifying, key=lambda p: (round(abs(0.5 - p.win_pct), 6), -p.games, p.a, p.b))

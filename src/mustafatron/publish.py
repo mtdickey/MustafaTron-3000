@@ -16,7 +16,7 @@ from mustafatron import contract as c
 from mustafatron.espn.cache import SeasonCache
 from mustafatron.model import Game, League, Season
 from mustafatron.rules import LeagueRules, load_rules
-from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags
+from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags, rivalries
 from mustafatron.stats.records import records_book
 from mustafatron.stats.seasons import all_play, superlatives, week_scores
 from mustafatron.stats.standings import all_time_standings, championship_ledger
@@ -106,6 +106,11 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
                 playoff_wins=p.playoff_wins,
                 playoff_losses=p.playoff_losses,
                 results=p.results,
+                win_pct=round(p.win_pct, 4),
+                avg_score=p.avg_score,
+                avg_opponent_score=p.avg_opponent_score,
+                avg_margin=p.avg_margin,
+                last_five=p.last(5),
                 current_streak=c.StreakOut(holder=p.current_streak.holder, length=p.current_streak.length),
                 longest_streak_a=p.longest_streak(p.a),
                 longest_streak_b=p.longest_streak(p.b),
@@ -119,7 +124,8 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
                 ],
             )
             for p in pairs.values()
-        ]
+        ],
+        most_competitive=[(p.a, p.b) for p in rivalries(pairs, rules.rivalry)],
     )
 
     out["standings.json"] = c.StandingsFile(

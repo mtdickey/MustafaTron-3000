@@ -35,6 +35,10 @@ export interface GamesFile {
  * via the `definition` "H2HFile".
  */
 export interface H2HFile {
+  /**
+   * Rivalries (a, b), closest to .500 first: abs(0.5 - win_pct), then most meetings
+   */
+  most_competitive: [string, string][];
   pairs: PairOut[];
   schema_version: 1;
 }
@@ -46,12 +50,28 @@ export interface H2HFile {
  */
 export interface PairOut {
   a: string;
+  /**
+   * a's average margin; negative when b outscores a
+   */
+  avg_margin: number;
+  /**
+   * b's average score
+   */
+  avg_opponent_score: number;
+  /**
+   * a's average score
+   */
+  avg_score: number;
   b: string;
   blowout: MeetingOut;
   closest: MeetingOut;
   current_streak: StreakOut;
   flags: FlagOut[];
   games: number;
+  /**
+   * Last five results from a's side, oldest to newest
+   */
+  last_five: string;
   last_meeting: MeetingOut;
   longest_streak_a: number;
   longest_streak_b: number;
@@ -69,6 +89,10 @@ export interface PairOut {
    */
   rivalry: boolean;
   ties: number;
+  /**
+   * a's share of the series, ties counting half
+   */
+  win_pct: number;
   wins: number;
 }
 /**

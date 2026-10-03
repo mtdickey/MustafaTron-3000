@@ -1,0 +1,333 @@
+---
+import * as Plot from "@observablehq/plot";
+import ManagerName from "../../components/ManagerName.astro";
+import PlotFigure from "../../components/PlotFigure.astro";
+import Base from "../../layouts/Base.astro";
+import {
+  TIER_LABELS,
+  gameHref,
+  isPlayoff,
+  manager,
+  meetings,
+  pairs,
+  resultFor,
+  scoreOf,
+  type Pair,
+} from "../../lib/data";
+import { pct, points, record } from "../../lib/format";
+
+export function getStaticPaths() {
+  return pairs().map((p) => ({ params: { pair: `${p.a}-${p.b}` }, props: { p } }));
+}
+
+interface Props {
+  p: Pair;
+}
+
+const { p } = Astro.props;
+const A = manager(p.a);
+const B = manager(p.b);
+const games = meetings(p.a, p.b);
+const leader = p.wins > p.losses ? p.a : p.losses > p.wins ? p.b : null;
+
+const flagText = p.flags.map((f) => {
+  if (f.kind === "streak") return `${manager(f.holder!).short_name} has won ${f.wins} straight`;
+  if (f.kind === "lopsided")
+    return `Lopsided series: ${manager(f.holder!).short_name} leads ${record(f.wins, f.losses)}`;
+  return "Dead-even rivalry";
+});
+
+const streak = p.current_streak;
+// ESPN broke the one tied playoff score (2017, 154-154): say so rather than "by 0.00".
+const by = (margin: number) => (Math.abs(margin) < 0.005 ? "on a tiebreak" : `by ${points(Math.abs(margin), 2)}`);
+const meeting = (m: Pair["last_meeting"]) => {
+  const g = games.find((x) => x.season === m.season && x.week === m.week)!;
+  return { m, g, winner: g.winner };
+};
+const highlights = [
+  { title: "Last meeting", ...meeting(p.last_meeting) },
+  { title: "Closest game", ...meeting(p.closest) },
+  { title: "Biggest blowout", ...meeting(p.blowout) },
+];
+
+// One bar per meeting: a's margin, up when a won.
+const bars = games.map((g, i) => ({
+  i: i + 1,
+  label: `${g.season} wk ${g.week}`,
+  margin: Math.round((scoreOf(g, p.a) - scoreOf(g, p.b)) * 100) / 100,
+  result: resultFor(g, p.a),
+}));
+---
+
+<Base
+  title={`${A.name} vs ${B.name}`}
+  section="/rivalries"
+  description={`${A.name} vs ${B.name}: ${record(p.wins, p.losses, p.ties)} all-time over ${p.games} meetings.`}
+>
+  <p class="crumbs small"><a href="/rivalries">Rivalries</a> · <a href="/h2h">Head-to-head matrix</a></p>
+
+  <header class="versus">
+    <div class:list={["side", { leads: leader === p.a }]}>
+      <span class="name"><ManagerName id={p.a} /></span>
+      <span class="big num">{p.wins}</span>
+    </div>
+    <div class="mid">
+      <span class="muted small">{p.games} meetings</span>
+      {p.ties > 0 && <span class="muted small">{p.ties} tie{p.ties > 1 && "s"}</span>}
+    </div>
+    <div class:list={["side", "right", { leads: leader === p.b }]}>
+      <span class="name"><ManagerName id={p.b} /></span>
+      <span class="big num">{p.losses}</span>
+    </div>
+  </header>
+  <h1 class="visually-hidden">{A.name} vs {B.name}</h1>
+
+  {
+    flagText.length > 0 && (
+      <ul class="flags">
+        {flagText.map((t) => (
+          <li class="badge win">{t}</li>
+        ))}
+      </ul>
+    )
+  }
+
+  <div class="grid stats">
+    <div class="card">
+      <h2 class="h3">Scoring</h2>
+      <dl>
+        <dt>Average score</dt>
+        <dd class="num">{points(p.avg_score)} – {points(p.avg_opponent_score)}</dd>
+        <dt>Average margin</dt>
+        <dd class="num">
+          {p.avg_margin === 0 ? "Even" : `${manager(p.avg_margin > 0 ? p.a : p.b).short_name} by ${points(Math.abs(p.avg_margin))}`}
+        </dd>
+        <dt>{A.short_name}'s share</dt>
+        <dd class="num">{pct(p.win_pct)}</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <h2 class="h3">Streaks</h2>
+      <dl>
+        <dt>Current</dt>
+        <dd>
+          {streak.holder ? `${manager(streak.holder).short_name}, ${streak.length} straight` : "Last meeting was a tie"}
+        </dd>
+        <dt>Longest, {A.short_name}</dt>
+        <dd class="num">{p.longest_streak_a}</dd>
+        <dt>Longest, {B.short_name}</dt>
+        <dd class="num">{p.longest_streak_b}</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <h2 class="h3">Recent form</h2>
+      <p class="muted small">Last {p.last_five.length}, oldest to newest, from {A.short_name}'s side</p>
+      <p class="form">
+        {[...p.last_five].map((r) => <span class:list={["result", r]}>{r}</span>)}
+      </p>
+      <dl>
+        <dt>Postseason</dt>
+        <dd class="num">
+          {p.playoff_wins + p.playoff_losses ? record(p.playoff_wins, p.playoff_losses) : "Never met"}
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="grid">
+    {
+      highlights.map(({ title, m, g, winner }) => (
+        <a class="card highlight" href={gameHref(g)}>
+          <span class="label muted small">{title}</span>
+          <span class="score num">
+            <span class:list={{ won: winner === p.a }}>{points(m.score, 2)}</span>
+            {" – "}
+            <span class:list={{ won: winner === p.b }}>{points(m.opponent_score, 2)}</span>
+          </span>
+          <span class="muted small">
+            {m.season} · week {m.week}
+            {isPlayoff(g) && ` · ${TIER_LABELS[g.tier]}`} · {winner ? manager(winner).short_name : "tie"}
+            {winner && ` ${by(m.score - m.opponent_score)}`}
+          </span>
+        </a>
+      ))
+    }
+  </div>
+
+  <h2>Every meeting</h2>
+  <PlotFigure
+    label={`Margin of each of the ${p.games} meetings, from ${A.name}'s side`}
+    caption={`${A.short_name}'s margin each meeting, oldest first: up is a ${A.short_name} win, down a ${B.short_name} win.`}
+    options={{
+      width: 560,
+      height: 200,
+      marginLeft: 36,
+      marginBottom: 24,
+      x: { type: "band", label: null, tickFormat: () => "", tickSize: 0 },
+      y: { label: null, grid: true, tickFormat: (d: number) => (d > 0 ? `+${d}` : `${d}`) },
+      marks: [
+        // One mark per result so each gets a class, which picks its theme color (PlotFigure).
+        ...(["W", "L", "T"] as const).map((r) =>
+          Plot.barY(
+            bars.filter((b) => b.result === r),
+            { x: "i", y: "margin", className: r === "W" ? "win" : r === "L" ? "loss" : "tie", title: "label" },
+          ),
+        ),
+        Plot.ruleY([0], { stroke: "currentColor" }),
+      ],
+    }}
+  />
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Season</th>
+          <th scope="col">Week</th>
+          <th scope="col" class="text">Game</th>
+          <th scope="col">{A.short_name}</th>
+          <th scope="col">{B.short_name}</th>
+          <th scope="col" class="text">Winner</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          [...games].reverse().map((g) => (
+            <tr>
+              <th scope="row" class="text">
+                <a href={`/seasons/${g.season}`}>{g.season}</a>
+              </th>
+              <td>
+                <a href={gameHref(g)}>{g.week}</a>
+              </td>
+              <td class="text">{TIER_LABELS[g.tier]}</td>
+              <td class:list={{ won: g.winner === p.a }}>{points(scoreOf(g, p.a), 2)}</td>
+              <td class:list={{ won: g.winner === p.b }}>{points(scoreOf(g, p.b), 2)}</td>
+              <td class="text">
+                {g.winner ? (
+                  <>
+                    <ManagerName id={g.winner} short />{" "}
+                    <span class="muted">{by(scoreOf(g, p.a) - scoreOf(g, p.b))}</span>
+                  </>
+                ) : (
+                  "Tie"
+                )}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</Base>
+
+<style>
+  .crumbs {
+    margin-bottom: 0.75rem;
+  }
+  .versus {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .side {
+    display: flex;
+    flex-direction: column;
+  }
+  .side.right {
+    text-align: right;
+    align-items: flex-end;
+  }
+  .name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-1);
+    line-height: 1.15;
+  }
+  .big {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 14vw, 5rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--muted);
+  }
+  .leads .big {
+    color: var(--accent);
+  }
+  .mid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 0.75rem;
+  }
+  .flags {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .flags .badge {
+    font-size: var(--step--1);
+    padding: 0.2rem 0.6rem;
+  }
+  .stats {
+    margin-bottom: 1rem;
+  }
+  .h3 {
+    font-size: var(--step-1);
+    margin: 0 0 0.5rem;
+  }
+  dl {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.3rem 1rem;
+    margin: 0;
+  }
+  dt {
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+    text-align: right;
+    font-weight: 600;
+  }
+  .form {
+    display: flex;
+    gap: 0.3rem;
+  }
+  .form .result {
+    width: 1.8em;
+    height: 1.8em;
+    font-size: var(--step--1);
+  }
+  .highlight {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .highlight:hover {
+    border-color: var(--accent);
+  }
+  .score {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .won {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  td.won {
+    font-weight: 700;
+  }
+  h2 {
+    margin-top: 1.5rem;
+  }
+</style>

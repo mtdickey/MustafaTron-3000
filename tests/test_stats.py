@@ -51,6 +51,9 @@ def test_streaks_and_extremes():
     assert (p.playoff_wins, p.playoff_losses) == (0, 1)
     assert p.before(2016, 2).results == "WWT"
     assert p.flipped().results == "LLTWW"
+    assert p.win_pct == 0.5 and p.last(3) == "TLL" and p.last(9) == "WWTLL"
+    assert (p.avg_score, p.avg_opponent_score, p.avg_margin) == (90.0, 89.0, 1.0)
+    assert p.flipped().avg_margin == -1.0
 
 
 def test_regular_season_series_add_up_to_espn_records():
@@ -73,6 +76,16 @@ def test_notable_flags():
 def test_rivalries_need_enough_meetings():
     rivals = rivalries(PAIRS, RULES.rivalry)
     assert rivals and all(p.games >= RULES.rivalry.min_matchups for p in rivals)
+    assert len(rivals) == sum(p.games >= RULES.rivalry.min_matchups for p in PAIRS.values())
+
+
+def test_most_competitive_rivalries_closest_to_even_first():
+    closeness = [round(abs(0.5 - p.win_pct), 6) for p in rivalries(PAIRS, RULES.rivalry)]
+    assert closeness == sorted(closeness)
+    games = [g(2015 + i, 1, "a", "b", 100, 90 if i % 2 else 110) for i in range(6)]  # 3-3
+    games += [g(2015 + i, 2, "a", "c", 100, 90) for i in range(6)]  # 6-0
+    pairs = all_pairs(games)
+    assert [(p.a, p.b) for p in rivalries(pairs, RULES.rivalry)] == [("a", "b"), ("a", "c")]
 
 
 def test_standings_add_up():

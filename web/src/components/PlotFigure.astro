@@ -1,0 +1,55 @@
+---
+// An Observable Plot chart rendered at build time to static SVG: no client JS, nothing to load.
+//
+// Colors come from CSS, not Plot options, so charts follow the light/dark theme: give a mark a
+// className ("win", "loss", "accent", "muted") and the styles below fill it with the matching token.
+import * as Plot from "@observablehq/plot";
+import { parseHTML } from "linkedom";
+
+interface Props {
+  options: Plot.PlotOptions;
+  caption?: string;
+  /** Text alternative for screen readers: what the chart shows. */
+  label: string;
+}
+
+const { options, caption, label } = Astro.props;
+const { document } = parseHTML("<!doctype html><html><body></body></html>");
+const svg = Plot.plot({ ...options, document, style: { background: "transparent" } } as Plot.PlotOptions);
+svg.setAttribute("role", "img");
+svg.setAttribute("aria-label", label);
+---
+
+<figure class="plot">
+  <Fragment set:html={svg.outerHTML} />
+  {caption && <figcaption class="muted small">{caption}</figcaption>}
+</figure>
+
+<style is:global>
+  figure.plot {
+    margin: 0 0 1rem;
+    color: var(--muted);
+  }
+  figure.plot svg {
+    width: 100%;
+    height: auto;
+    max-height: 16rem;
+    overflow: visible;
+    font-size: 12px;
+  }
+  figure.plot .win {
+    fill: var(--win);
+    stroke: var(--win);
+  }
+  figure.plot .loss {
+    fill: var(--loss);
+    stroke: var(--loss);
+  }
+  figure.plot .accent {
+    fill: var(--accent);
+    stroke: var(--accent);
+  }
+  figure.plot .tie {
+    fill: var(--muted);
+  }
+</style>

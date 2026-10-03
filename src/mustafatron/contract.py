@@ -119,6 +119,11 @@ class PairOut(_Model):
     playoff_wins: int
     playoff_losses: int
     results: str = Field(description="W/L/T from a's side, oldest meeting first")
+    win_pct: float = Field(description="a's share of the series, ties counting half")
+    avg_score: float = Field(description="a's average score")
+    avg_opponent_score: float = Field(description="b's average score")
+    avg_margin: float = Field(description="a's average margin; negative when b outscores a")
+    last_five: str = Field(description="Last five results from a's side, oldest to newest")
     current_streak: StreakOut
     longest_streak_a: int
     longest_streak_b: int
@@ -131,6 +136,9 @@ class PairOut(_Model):
 
 class H2HFile(ContractFile):
     pairs: list[PairOut]
+    most_competitive: list[tuple[str, str]] = Field(
+        description="Rivalries (a, b), closest to .500 first: abs(0.5 - win_pct), then most meetings"
+    )
 
 
 # standings.json ----------------------------------------------------------------------------------
