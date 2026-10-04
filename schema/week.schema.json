@@ -289,6 +289,74 @@
       "title": "MissedStartOut",
       "type": "object"
     },
+    "PickValueOut": {
+      "additionalProperties": false,
+      "properties": {
+        "expected": {
+          "description": "That season's line for this pick",
+          "title": "Expected",
+          "type": "number"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "overall_pick": {
+          "title": "Overall Pick",
+          "type": "integer"
+        },
+        "player": {
+          "title": "Player",
+          "type": "string"
+        },
+        "points": {
+          "description": "The player's season in this league's scoring",
+          "title": "Points",
+          "type": "number"
+        },
+        "points_above_avg": {
+          "description": "Points minus the mean of drafted players at his position",
+          "title": "Points Above Avg",
+          "type": "number"
+        },
+        "position": {
+          "title": "Position",
+          "type": "string"
+        },
+        "round": {
+          "title": "Round",
+          "type": "integer"
+        },
+        "round_pick": {
+          "title": "Round Pick",
+          "type": "integer"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "value": {
+          "description": "points_above_avg - expected: points above what the pick promised",
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "required": [
+        "season",
+        "round",
+        "round_pick",
+        "overall_pick",
+        "manager",
+        "player",
+        "position",
+        "points",
+        "points_above_avg",
+        "expected",
+        "value"
+      ],
+      "title": "PickValueOut",
+      "type": "object"
+    },
     "PlayerPointsOut": {
       "additionalProperties": false,
       "properties": {
@@ -429,6 +497,64 @@
       ],
       "title": "WeekCoachingOut",
       "type": "object"
+    },
+    "WeekDraftOut": {
+      "additionalProperties": false,
+      "description": "The draft graded on points so far (from 2018): the v0 report's Draft panel, plus its regression.",
+      "properties": {
+        "busts": {
+          "description": "Smallest value through round busts_through_round, top 10",
+          "items": {
+            "$ref": "#/$defs/PickValueOut"
+          },
+          "title": "Busts",
+          "type": "array"
+        },
+        "busts_through_round": {
+          "title": "Busts Through Round",
+          "type": "integer"
+        },
+        "intercept": {
+          "description": "The draft's line: expected points_above_avg = intercept + slope * pick",
+          "title": "Intercept",
+          "type": "number"
+        },
+        "picks": {
+          "description": "Every non-keeper pick, by overall pick",
+          "items": {
+            "$ref": "#/$defs/PickValueOut"
+          },
+          "title": "Picks",
+          "type": "array"
+        },
+        "slope": {
+          "title": "Slope",
+          "type": "number"
+        },
+        "steals": {
+          "description": "Biggest value after round steals_after_round, top 10",
+          "items": {
+            "$ref": "#/$defs/PickValueOut"
+          },
+          "title": "Steals",
+          "type": "array"
+        },
+        "steals_after_round": {
+          "title": "Steals After Round",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "steals_after_round",
+        "busts_through_round",
+        "intercept",
+        "slope",
+        "picks",
+        "steals",
+        "busts"
+      ],
+      "title": "WeekDraftOut",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -464,6 +590,17 @@
       },
       "title": "Columns",
       "type": "array"
+    },
+    "draft": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WeekDraftOut"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "null before 2018: ESPN kept no weekly player points"
     },
     "games": {
       "description": "This week's games",
@@ -557,7 +694,8 @@
     "games",
     "standings",
     "all_play",
-    "coaching"
+    "coaching",
+    "draft"
   ],
   "title": "WeekFile",
   "type": "object"

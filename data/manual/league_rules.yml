@@ -32,7 +32,7 @@ keepers:
     value:
       eligible_after_round: 3
 
-# Draft-review charts (visuals.py): a steal is a pick after round 1, a bust a pick in rounds 1-4.
+# Draft review (the weekly report and /draft): a steal is a pick after round 1, a bust a pick in rounds 1-4.
 draft_review:
   steals_after_round: 1
   busts_through_round: 4
@@ -51,7 +51,7 @@ rivalry:
 # This replaces the hand-typed season_start_date, which disagreed with itself in 2025
 # (Sept 4 in one notebook cell, Sept 7 in another). Sept 4 was right: Sept 7 was the first Sunday.
 # Trades no longer use this: since M3 a trade counts from the first week its players were on their
-# new rosters (mustafatron.transform.infer_trades). Kept for the legacy report code.
+# new rosters (mustafatron.transform.infer_trades). Kept as reference: rules.first_week_after.
 nfl_week1_kickoff:
   2015: 2015-09-11T00:30:00Z
   2016: 2016-09-09T00:30:00Z

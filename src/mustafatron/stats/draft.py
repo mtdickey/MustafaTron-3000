@@ -19,7 +19,7 @@ keeper module's job (M5).
 """
 
 from collections import defaultdict
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 
 from mustafatron.model import League, Season
@@ -53,18 +53,36 @@ def _fit(xs: list[float], ys: list[float]) -> tuple[float, float]:
     return my - slope * mx, slope
 
 
-def season_values(season: Season) -> list[PickValue]:
-    """Every non-keeper pick of one draft, valued against that draft's own expectation line."""
+@dataclass(frozen=True)
+class DraftLine:
+    """One draft valued against its own expectation line: ``points_above_avg ~ overall_pick``."""
+
+    intercept: float
+    slope: float
+    picks: list[PickValue]
+
+    def expected(self, overall_pick: float) -> float:
+        return self.intercept + self.slope * overall_pick
+
+
+def draft_line(season: Season, points: Mapping[int, float] | None = None) -> DraftLine | None:
+    """Every non-keeper pick of one draft, valued against that draft's own line.
+
+    ``points`` are the players' points to judge by: their whole season by default, or for the weekly
+    report, their points so far (``stats.weekly.draft_through``). None with fewer than two picks.
+    """
     picks = [p for p in season.draft if not p.keeper and p.player_id in season.players]
-    points = {p.player_id: season.players[p.player_id].season_points or 0.0 for p in picks}
+    if len(picks) < 2:
+        return None
+    if points is None:
+        points = {p.player_id: season.players[p.player_id].season_points or 0.0 for p in picks}
+    pts = {p.player_id: points.get(p.player_id, 0.0) for p in picks}
     position = {p.player_id: season.players[p.player_id].position for p in picks}
     by_position: dict[str, list[float]] = defaultdict(list)
     for p in picks:
-        by_position[position[p.player_id]].append(points[p.player_id])
+        by_position[position[p.player_id]].append(pts[p.player_id])
     mean = {pos: sum(v) / len(v) for pos, v in by_position.items()}
-    above = {p.player_id: points[p.player_id] - mean[position[p.player_id]] for p in picks}
-    if len(picks) < 2:
-        return []
+    above = {p.player_id: pts[p.player_id] - mean[position[p.player_id]] for p in picks}
     intercept, slope = _fit([p.overall_pick for p in picks], [above[p.player_id] for p in picks])
     out = []
     for p in picks:
@@ -79,13 +97,29 @@ def season_values(season: Season) -> list[PickValue]:
                 player_id=p.player_id,
                 player=season.players[p.player_id].name,
                 position=position[p.player_id],
-                points=round(points[p.player_id], 2),
+                points=round(pts[p.player_id], 2),
                 points_above_avg=round(above[p.player_id], 2),
                 expected=round(expected, 2),
                 value=round(above[p.player_id] - expected, 2),
             )
         )
-    return out
+    return DraftLine(intercept, slope, out)
+
+
+def season_values(season: Season) -> list[PickValue]:
+    """Every non-keeper pick of one draft, valued on the whole season against that draft's own line."""
+    line = draft_line(season)
+    return line.picks if line else []
+
+
+def steals_and_busts(
+    picks: Iterable[PickValue], rules: DraftReviewRules, n: int = TOP_N
+) -> tuple[list[PickValue], list[PickValue]]:
+    """The biggest values after the steal cutoff round, and the smallest through the bust cutoff."""
+    picks = list(picks)
+    steals = sorted((p for p in picks if p.round > rules.steals_after_round), key=lambda p: -p.value)[:n]
+    busts = sorted((p for p in picks if p.round <= rules.busts_through_round), key=lambda p: p.value)[:n]
+    return steals, busts
 
 
 @dataclass(frozen=True)
@@ -170,8 +204,7 @@ def drafters(picks: Iterable[PickValue], early_rounds: int) -> list[DrafterLine]
 def draft_book(league: League, rules: DraftReviewRules, n: int = TOP_N) -> DraftBook:
     """Every finished season's draft. A draft in progress is valued only once its season ends."""
     picks = [v for s in league.seasons.values() if s.finished for v in season_values(s)]
-    steals = sorted((p for p in picks if p.round > rules.steals_after_round), key=lambda p: -p.value)[:n]
-    busts = sorted((p for p in picks if p.round <= rules.busts_through_round), key=lambda p: p.value)[:n]
+    steals, busts = steals_and_busts(picks, rules, n)
     by_round: dict[int, list[PickValue]] = defaultdict(list)
     for p in picks:
         by_round[p.round].append(p)

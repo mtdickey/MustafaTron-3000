@@ -13,8 +13,10 @@ from dataclasses import dataclass
 
 from mustafatron.league_settings import LeagueSettings
 from mustafatron.model import Game, Season
+from mustafatron.rules import DraftReviewRules
 from mustafatron.stats.allplay import AllPlay, Luck
 from mustafatron.stats.coaching import counted_weeks
+from mustafatron.stats.draft import DraftLine, PickValue, draft_line, steals_and_busts
 from mustafatron.stats.lineup import TeamWeek
 from mustafatron.stats.weeks import final_periods, regular_season_periods, week_scores
 
@@ -251,3 +253,34 @@ def coaching_through(season: Season, week: int) -> WeekCoaching | None:
         if_only=ranked[:TOP_MISSES],
         by_manager={m: [x for x in ranked if x.manager_id == m][:MISSES_PER_MANAGER] for m in by_manager},
     )
+
+
+# Draft (the v0 report's "Draft" panel) -------------------------------------------------------------
+
+
+@dataclass
+class WeekDraft:
+    line: DraftLine  # every pick, valued on points so far against that line
+    steals: list[PickValue]
+    busts: list[PickValue]
+
+
+def draft_through(season: Season, week: int, rules: DraftReviewRules) -> WeekDraft | None:
+    """The season's draft graded on the players' points through matchup week ``week``.
+
+    The all-time draft page (``stats.draft``) waits for a season to finish; this is the in-season
+    version the v0 report ran every week, with the same model fitted on points so far. None before
+    2018: ESPN kept only season totals then, so there are no points "through week N".
+    """
+    periods = set(periods_through(season, week))
+    if not any(p.weekly_points for p in season.players.values()):
+        return None
+    points = {
+        pid: sum(v for period, v in p.weekly_points.items() if period in periods)
+        for pid, p in season.players.items()
+    }
+    line = draft_line(season, points)
+    if line is None:
+        return None
+    steals, busts = steals_and_busts(line.picks, rules)
+    return WeekDraft(line, steals, busts)

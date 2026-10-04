@@ -18,14 +18,10 @@ dependencies = [
 mustafatron = "mustafatron.cli:main"
 
 [project.optional-dependencies]
-# Only needed by the ported v1 report code in mustafatron.legacy, which is
-# rewritten on raw requests + client-side charts in M1/M4 and then removed.
+# Only needed by the v1 keeper script in mustafatron.legacy, removed with it in M5.
 legacy = [
     "espn-api>=0.39",
-    "matplotlib>=3.9",
     "numpy>=1.26",
-    "scikit-learn>=1.5",
-    "seaborn>=0.13",
 ]
 
 [dependency-groups]
