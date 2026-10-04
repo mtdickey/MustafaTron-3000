@@ -18,6 +18,7 @@ from mustafatron.model import Game, League, Season
 from mustafatron.rules import LeagueRules, load_rules
 from mustafatron.stats.allplay import Luck, career_luck, luckiest_seasons, season_luck
 from mustafatron.stats.coaching import CoachingLine, coaching_book
+from mustafatron.stats.draft import DraftClass, PickValue, draft_book
 from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags, rivalries
 from mustafatron.stats.lineup import TeamWeek
 from mustafatron.stats.profiles import best_and_worst_weeks, career_all_play
@@ -266,6 +267,38 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
         ],
     )
 
+    drafts = draft_book(league, rules.draft_review)
+    out["draft.json"] = c.DraftFile(
+        first_season=drafts.first_season,
+        early_rounds=drafts.early_rounds,
+        steals_after_round=rules.draft_review.steals_after_round,
+        busts_through_round=rules.draft_review.busts_through_round,
+        drafters=[
+            c.DrafterOut(
+                manager=d.manager_id,
+                seasons=d.seasons,
+                picks=d.picks,
+                value=d.value,
+                per_pick=round(d.per_pick, 2),
+                early_picks=d.early_picks,
+                early_per_pick=round(d.early_per_pick, 2),
+                late_picks=d.late_picks,
+                late_per_pick=round(d.late_per_pick, 2),
+            )
+            for d in drafts.drafters
+        ],
+        steals=[_pick(p) for p in drafts.steals],
+        busts=[_pick(p) for p in drafts.busts],
+        best_drafts=[_draft_class(d) for d in drafts.best_drafts],
+        worst_drafts=[_draft_class(d) for d in drafts.worst_drafts],
+        rounds=[
+            c.RoundOut(
+                round=r.round, picks=r.picks, avg_points=r.avg_points, by_manager=r.avg_value_by_manager
+            )
+            for r in drafts.rounds
+        ],
+    )
+
     out["profiles.json"] = c.ProfilesFile(
         profiles=[_profile(league, m.id) for m in league.managers_with_games()]
     )
@@ -305,6 +338,28 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
             **_season_detail(s),
         )
     return out
+
+
+def _pick(p: PickValue) -> c.PickValueOut:
+    return c.PickValueOut(
+        season=p.season,
+        round=p.round,
+        round_pick=p.round_pick,
+        overall_pick=p.overall_pick,
+        manager=p.manager_id,
+        player=p.player,
+        position=p.position,
+        points=p.points,
+        points_above_avg=p.points_above_avg,
+        expected=p.expected,
+        value=p.value,
+    )
+
+
+def _draft_class(d: DraftClass) -> c.DraftClassOut:
+    return c.DraftClassOut(
+        season=d.season, manager=d.manager_id, picks=d.picks, value=d.value, best=_pick(d.best)
+    )
 
 
 def _coaching(x: CoachingLine) -> dict:

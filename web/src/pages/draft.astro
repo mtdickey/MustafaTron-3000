@@ -1,0 +1,208 @@
+---
+import * as Plot from "@observablehq/plot";
+import ManagerName from "../components/ManagerName.astro";
+import PlotFigure from "../components/PlotFigure.astro";
+import SortableTables from "../components/SortableTables.astro";
+import Base from "../layouts/Base.astro";
+import { currentManagers, draft, manager, meta } from "../lib/data";
+import { points, shade, signed } from "../lib/format";
+
+const m = meta();
+const book = draft();
+const active = new Set(currentManagers().map((x) => x.id));
+type Pick = (typeof book.steals)[number];
+const label = (p: Pick) => `${p.player} · ${manager(p.manager).short_name} · ${p.season} #${p.overall_pick}`;
+// +/- 30 points a pick is about as far as an average strays: full color there.
+const valueShade = (v: number) => shade(0.5 + v / 120);
+
+// One pick per cell is noise: the heatmap shows managers with at least three drafts.
+const MIN_DRAFTS = 3;
+const managerIds = book.drafters.filter((d) => d.seasons >= MIN_DRAFTS).map((d) => d.manager);
+const cells = book.rounds.flatMap((r) =>
+  Object.entries(r.by_manager)
+    .filter(([id]) => managerIds.includes(id))
+    .map(([id, value]) => ({ round: r.round, manager: id, value })),
+);
+const charts = [
+  { id: "steals", title: `Biggest steals after round ${book.steals_after_round}`, rows: book.steals, className: "win" },
+  { id: "busts", title: `Biggest busts, rounds 1–${book.busts_through_round}`, rows: book.busts, className: "loss" },
+];
+---
+
+<Base
+  title="Draft"
+  section="/draft"
+  description="Who drafts best, the biggest steals and busts in league history, and draft value round by round."
+>
+  <h1>Draft</h1>
+  <p class="lede">
+    Every pick since {book.first_season ?? m.seasons[0]}, graded by how many points it scored above what that slot in that
+    draft usually returns.
+  </p>
+  <details class="small method">
+    <summary>How picks are graded</summary>
+    <p>
+      A player's season points minus the average for drafted players at his position that season gives points above
+      average. A straight line through every pick of the draft, points above average by overall pick, is what each slot
+      should return. A pick's value is how far it landed above or below that line. Each season is its own line, so
+      half-PPR seasons (2023 on) aren't compared with standard ones. Keepers (2024 on) are left out: they weren't draft-day
+      choices. Seasons still being played are graded once they finish.
+    </p>
+  </details>
+
+  <h2 id="drafters">Drafters</h2>
+  <div class="table-scroll">
+    <table class="sticky-first" data-sortable>
+      <caption>Sorted by average value per pick. Early is rounds 1–{book.early_rounds}.</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Manager</th>
+          <th scope="col">Drafts</th>
+          <th scope="col">Picks</th>
+          <th scope="col" title="Average points above the pick's expectation">Per pick</th>
+          <th scope="col">Total</th>
+          <th scope="col" title={`Rounds 1–${book.early_rounds}, per pick`}>Early</th>
+          <th scope="col" title={`Round ${book.early_rounds + 1} on, per pick`}>Late</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          book.drafters.map((d) => (
+            <tr class:list={{ former: !active.has(d.manager) }}>
+              <th scope="row" data-sort={d.manager}>
+                <ManagerName id={d.manager} link />
+              </th>
+              <td>{d.seasons}</td>
+              <td>{d.picks}</td>
+              <td class="shade" style={valueShade(d.per_pick)} data-sort={d.per_pick}>
+                {signed(d.per_pick)}
+              </td>
+              <td data-sort={d.value}>{signed(d.value, 0)}</td>
+              <td data-sort={d.early_per_pick}>{signed(d.early_per_pick)}</td>
+              <td data-sort={d.late_per_pick}>{signed(d.late_per_pick)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid charts">
+    {
+      charts.map((c) => (
+        <section id={c.id}>
+          <h2>{c.title}</h2>
+          <PlotFigure
+            label={`${c.title}: points above the pick's expectation`}
+            options={{
+              height: 30 * c.rows.length + 40,
+              marginLeft: 230,
+              x: { label: "Points above pick →", grid: true },
+              y: { label: null, domain: c.rows.map(label) },
+              marks: [
+                Plot.barX(c.rows, { x: "value", y: label, className: c.className, title: (p: Pick) => `${p.player} (${p.position}): ${points(p.points)} pts` }),
+                Plot.ruleX([0]),
+              ],
+            }}
+          />
+        </section>
+      ))
+    }
+  </div>
+
+  <h2 id="by-round">Value by round</h2>
+  <p class="muted small">
+    Average points above pick, by manager (at least {MIN_DRAFTS} drafts) and round 1–{book.rounds.length}: who wins early
+    and who wins late. Darker orange is better, purple worse.
+  </p>
+  <PlotFigure
+    label="Heatmap of average draft value by manager and round"
+    options={{
+      height: 26 * managerIds.length + 50,
+      marginLeft: 90,
+      padding: 0.04,
+      x: { label: null, tickSize: 0, axis: "top" },
+      y: { label: null, domain: managerIds, tickFormat: (id: string) => manager(id).short_name, tickSize: 0 },
+      color: { type: "diverging", scheme: "PuOr", reverse: true, domain: [-60, 60], clamp: true },
+      marks: [
+        Plot.cell(cells, {
+          x: "round",
+          y: "manager",
+          fill: "value",
+          title: (d: (typeof cells)[number]) => `${manager(d.manager).short_name}, round ${d.round}: ${signed(d.value)} per pick`,
+        }),
+      ],
+    }}
+  />
+
+  <div class="grid charts">
+    {
+      [
+        { id: "best-drafts", title: "Best drafts", rows: book.best_drafts },
+        { id: "worst-drafts", title: "Worst drafts", rows: book.worst_drafts },
+      ].map((t) => (
+        <section id={t.id}>
+          <h2>{t.title}</h2>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col" class="text">Season</th>
+                  <th scope="col" class="text">Manager</th>
+                  <th scope="col">Value</th>
+                  <th scope="col" class="text">Best pick</th>
+                </tr>
+              </thead>
+              <tbody>
+                {t.rows.map((d) => (
+                  <tr>
+                    <th scope="row" class="text">
+                      <a href={`/seasons/${d.season}`}>{d.season}</a>
+                    </th>
+                    <td class="text">
+                      <ManagerName id={d.manager} short link />
+                    </td>
+                    <td class="shade" style={valueShade(d.value / d.picks)}>
+                      {signed(d.value, 0)}
+                    </td>
+                    <td class="text small">
+                      {d.best.player} <span class="muted">(rd {d.best.round}, {signed(d.best.value, 0)})</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ))
+    }
+  </div>
+  <SortableTables />
+</Base>
+
+<style>
+  .method {
+    margin-bottom: 1.25rem;
+    color: var(--muted);
+  }
+  .method summary {
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .charts {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+    align-items: start;
+  }
+  .charts :global(figure.plot svg) {
+    max-height: none;
+  }
+  :global(figure.plot svg) {
+    max-height: 28rem;
+  }
+  tr.former > * {
+    color: var(--muted);
+  }
+  th.text {
+    text-align: left;
+  }
+</style>

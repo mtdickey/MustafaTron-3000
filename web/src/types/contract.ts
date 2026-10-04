@@ -6,6 +6,7 @@
  */
 export interface ContractFiles {
   coaching: CoachingFile;
+  draft: DraftFile;
   games: GamesFile;
   h2h: H2HFile;
   luck: LuckFile;
@@ -180,6 +181,104 @@ export interface SeasonCoachingOut {
    * NFL weeks counted: regular season, championship bracket, 3rd place game
    */
   weeks: number;
+}
+/**
+ * Draft value, every finished season, keepers excluded. Each draft is valued against its own line.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "DraftFile".
+ */
+export interface DraftFile {
+  best_drafts: DraftClassOut[];
+  busts: PickValueOut[];
+  busts_through_round: number;
+  /**
+   * Best average value per pick first
+   */
+  drafters: DrafterOut[];
+  /**
+   * Rounds 1 through this are 'early' (the bust cutoff)
+   */
+  early_rounds: number;
+  first_season: number | null;
+  rounds: RoundOut[];
+  schema_version: 1;
+  steals: PickValueOut[];
+  steals_after_round: number;
+  worst_drafts: DraftClassOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "DraftClassOut".
+ */
+export interface DraftClassOut {
+  best: PickValueOut;
+  manager: string;
+  picks: number;
+  season: number;
+  value: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "PickValueOut".
+ */
+export interface PickValueOut {
+  /**
+   * That season's line for this pick
+   */
+  expected: number;
+  manager: string;
+  overall_pick: number;
+  player: string;
+  /**
+   * The player's season in this league's scoring
+   */
+  points: number;
+  /**
+   * Points minus the mean of drafted players at his position
+   */
+  points_above_avg: number;
+  position: string;
+  round: number;
+  round_pick: number;
+  season: number;
+  /**
+   * points_above_avg - expected: points above what the pick promised
+   */
+  value: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "DrafterOut".
+ */
+export interface DrafterOut {
+  /**
+   * Rounds 1 through DraftFile.early_rounds
+   */
+  early_per_pick: number;
+  early_picks: number;
+  late_per_pick: number;
+  late_picks: number;
+  manager: string;
+  per_pick: number;
+  picks: number;
+  seasons: number;
+  value: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "RoundOut".
+ */
+export interface RoundOut {
+  avg_points: number;
+  /**
+   * Average value per pick in this round, by manager
+   */
+  by_manager: {
+    [k: string]: number;
+  };
+  picks: number;
+  round: number;
 }
 /**
  * Every final game, all seasons, plus the current season's unplayed schedule.
