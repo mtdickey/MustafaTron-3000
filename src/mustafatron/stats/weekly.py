@@ -14,6 +14,8 @@ from dataclasses import dataclass
 from mustafatron.league_settings import LeagueSettings
 from mustafatron.model import Game, Season
 from mustafatron.stats.allplay import AllPlay, Luck
+from mustafatron.stats.coaching import counted_weeks
+from mustafatron.stats.lineup import TeamWeek
 from mustafatron.stats.weeks import final_periods, regular_season_periods, week_scores
 
 
@@ -177,3 +179,75 @@ def all_play_through(season: Season, week: int) -> tuple[list[int], list[AllPlay
         rows.append(AllPlayRow(mid, cs, Luck(mid, r.wins, r.losses, r.ties, ap)))
     rows.sort(key=lambda r: (-r.all_play.win_pct, -sum(c.points for c in r.cells.values())))
     return sorted(by_period), rows
+
+
+# Coaching (the v0 report's "Coaching" panel) -------------------------------------------------------
+
+TOP_MISSES = 10  # the "If only..." list
+MISSES_PER_MANAGER = 3
+
+
+@dataclass(frozen=True)
+class MissedStart:
+    """A player a manager should have started, summed over every week he should have."""
+
+    manager_id: str
+    player_id: int
+    weeks: int
+    gain: float  # points his starts would have added, over the starters they'd have replaced
+
+
+@dataclass(frozen=True)
+class BenchLine:
+    manager_id: str
+    weeks: list[TeamWeek]  # counted weeks through the report's week
+
+    @property
+    def left_on_bench(self) -> float:
+        return round(sum(w.left_on_bench for w in self.weeks), 2)
+
+    @property
+    def substitutions(self) -> int:
+        return sum(w.substitutions for w in self.weeks)
+
+    @property
+    def perfect_weeks(self) -> int:
+        return sum(w.perfect for w in self.weeks)
+
+
+@dataclass
+class WeekCoaching:
+    bench: list[BenchLine]  # most points left first
+    if_only: list[MissedStart]  # the league's biggest misses
+    by_manager: dict[str, list[MissedStart]]  # each manager's biggest misses
+
+
+def coaching_through(season: Season, week: int) -> WeekCoaching | None:
+    """Lineup decisions through matchup week ``week``; None before 2018 (no bench data).
+
+    Every number comes from the one cached solve (``stats.lineup.team_weeks``): bench totals sum the
+    team-weeks, and the misses sum their swaps, so the panel's charts always agree with each other.
+    Weeks count as on the coaching page: regular season, championship bracket and 3rd place game.
+    """
+    if not season.has_lineups:
+        return None
+    periods = set(periods_through(season, week))
+    by_manager: dict[str, list[TeamWeek]] = {t.manager_id: [] for t in season.teams}
+    for w in counted_weeks(season):
+        if w.period in periods:
+            by_manager[w.manager_id].append(w)
+    misses: dict[tuple[str, int], list[float]] = {}
+    for mid, weeks in by_manager.items():
+        for w in weeks:
+            for x in w.swaps:
+                if x.player_in is not None:
+                    misses.setdefault((mid, x.player_in), []).append(x.gain)
+    ranked = sorted(
+        (MissedStart(m, p, len(g), round(sum(g), 2)) for (m, p), g in misses.items()),
+        key=lambda x: (-x.gain, -x.weeks, x.manager_id, x.player_id),
+    )
+    return WeekCoaching(
+        bench=sorted((BenchLine(m, ws) for m, ws in by_manager.items()), key=lambda b: -b.left_on_bench),
+        if_only=ranked[:TOP_MISSES],
+        by_manager={m: [x for x in ranked if x.manager_id == m][:MISSES_PER_MANAGER] for m in by_manager},
+    )

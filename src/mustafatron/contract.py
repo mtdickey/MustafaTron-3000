@@ -648,6 +648,47 @@ class AllPlayGridOut(_Model):
     rows: list[AllPlayRowOut] = Field(description="Best all-play pct first")
 
 
+class SwapOut(_Model):
+    player_in: PlayerPointsOut | None = Field(description="Benched player who should have started")
+    player_out: PlayerPointsOut | None = Field(description="Starter he'd have replaced (null: an empty slot)")
+    gain: float
+
+
+class BenchWeekOut(_Model):
+    period: int = Field(description="NFL week")
+    actual: float
+    optimal: float
+    left_on_bench: float
+    swaps: list[SwapOut] = Field(
+        description="The lineup changes that would have made it optimal, biggest first"
+    )
+
+
+class BenchLineOut(_Model):
+    manager: str
+    weeks: int = Field(description="NFL weeks counted through this week")
+    left_on_bench: float
+    substitutions: int
+    perfect_weeks: int
+    detail: list[BenchWeekOut] = Field(description="Weeks with points left on the bench, most first")
+
+
+class MissedStartOut(_Model):
+    manager: str
+    player: str
+    position: str
+    weeks: int = Field(description="Weeks he should have started and didn't")
+    gain: float = Field(description="Points those starts would have added")
+
+
+class WeekCoachingOut(_Model):
+    """Lineup decisions through the week (from 2018): the v0 report's Coaching panel."""
+
+    bench: list[BenchLineOut] = Field(description="Most points left on the bench first")
+    if_only: list[MissedStartOut] = Field(description="The league's biggest missed starts, top 10")
+    by_manager: dict[str, list[MissedStartOut]] = Field(description="Each manager's biggest missed starts")
+
+
 class WeekFile(ContractFile):
     """One weekly report, everything as it stood when the week ended ("through week N")."""
 
@@ -662,6 +703,7 @@ class WeekFile(ContractFile):
         description="Regular season through this week, best record first; seed order in the playoffs"
     )
     all_play: AllPlayGridOut
+    coaching: WeekCoachingOut | None = Field(description="null before 2018: ESPN kept no bench data")
 
 
 # Published path → model. seasons/{year}.json all use SeasonFile, weeks/{year}/{week}.json WeekFile.

@@ -4,6 +4,7 @@
 import type { WeekFile } from "../../types/contract";
 import ManagerName from "../ManagerName.astro";
 import AllPlayPanel from "./AllPlayPanel.astro";
+import CoachingPanel from "./CoachingPanel.astro";
 import { decodeGame, rivalryHref, TIER_LABELS, weekHref, weekNeighbors } from "../../lib/data";
 import { points, record } from "../../lib/format";
 
@@ -105,6 +106,7 @@ const nflWeeks = w.periods.length > 1 ? `NFL weeks ${w.periods.join("–")}` : `
     </p>
   </section>
   <AllPlayPanel grid={w.all_play} label={through} />
+  <CoachingPanel coaching={w.coaching} label={through.replace("of the regular season", "this season")} season={w.season} />
 </article>
 
 <style>

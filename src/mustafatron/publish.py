@@ -27,7 +27,15 @@ from mustafatron.stats.records import records_book
 from mustafatron.stats.seasons import all_play, superlatives, week_scores
 from mustafatron.stats.standings import all_time_standings, championship_ledger
 from mustafatron.stats.trades import Trade, trade_book
-from mustafatron.stats.weekly import ReportWeek, all_play_through, games_in, report_weeks, standings_through
+from mustafatron.stats.weekly import (
+    MissedStart,
+    ReportWeek,
+    all_play_through,
+    coaching_through,
+    games_in,
+    report_weeks,
+    standings_through,
+)
 from mustafatron.transform import load_league
 
 REPO = Path(__file__).resolve().parents[2]
@@ -415,6 +423,57 @@ def week_file(league: League, w: ReportWeek) -> c.WeekFile:
             for x in standings_through(s, w.week)
         ],
         all_play=_all_play_grid(s, w.week),
+        coaching=_week_coaching(league, s, w.week),
+    )
+
+
+def _week_coaching(league: League, s: Season, week: int) -> c.WeekCoachingOut | None:
+    book = coaching_through(s, week)
+    if book is None:
+        return None
+
+    def ref(pid: int | None, w: TeamWeek) -> c.PlayerPointsOut | None:
+        return None if pid is None else _player_points(league, s.season, pid, w.points[pid])
+
+    def miss(x: MissedStart) -> c.MissedStartOut:
+        p = s.players.get(x.player_id)
+        return c.MissedStartOut(
+            manager=x.manager_id,
+            player=p.name if p else str(x.player_id),
+            position=p.position if p else "?",
+            weeks=x.weeks,
+            gain=x.gain,
+        )
+
+    return c.WeekCoachingOut(
+        bench=[
+            c.BenchLineOut(
+                manager=b.manager_id,
+                weeks=len(b.weeks),
+                left_on_bench=b.left_on_bench,
+                substitutions=b.substitutions,
+                perfect_weeks=b.perfect_weeks,
+                detail=[
+                    c.BenchWeekOut(
+                        period=w.period,
+                        actual=w.actual,
+                        optimal=w.optimal,
+                        left_on_bench=w.left_on_bench,
+                        swaps=[
+                            c.SwapOut(
+                                player_in=ref(x.player_in, w), player_out=ref(x.player_out, w), gain=x.gain
+                            )
+                            for x in w.swaps
+                        ],
+                    )
+                    for w in sorted(b.weeks, key=lambda w: (-w.left_on_bench, w.period))
+                    if not w.perfect
+                ],
+            )
+            for b in book.bench
+        ],
+        if_only=[miss(x) for x in book.if_only],
+        by_manager={m: [miss(x) for x in xs] for m, xs in book.by_manager.items()},
     )
 
 
