@@ -16,13 +16,18 @@ can fill (no kicker on the roster) stays empty, as it did in the real lineup, an
 only candidate scored below zero: leaving it empty was the better call. Bye-week players score
 0 and simply never make the optimal lineup.
 
-:func:`team_weeks` computes this once per team-week, for the coaching leaderboard (#29), the trade
-valuations (#31) and, later, the weekly coaching report (M4).
+:func:`team_weeks` computes this once per team-week and caches it per season, so the coaching
+leaderboard, the trade valuations, the awards and every weekly coaching report (bench points, the
+"if only" list, each manager's misses) share one solve instead of each re-running it.
+
+:attr:`TeamWeek.swaps` breaks a week's bench points down into individual lineup changes, which is
+what the v0 report's "would've started" charts counted. The v0 code that did this,
+``get_optimal_subs``, has been deleted.
 """
 
 from collections import defaultdict
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cache
 
 from mustafatron.model import PlayerWeek, Season
@@ -101,6 +106,20 @@ def _contenders(ranked: list[Candidate], starter_slots: Mapping[str, int]) -> li
 
 
 @dataclass(frozen=True)
+class Swap:
+    """One lineup change that would have made a week optimal, and the points it was worth.
+
+    Usually a benched player in for a starter. ``player_out`` is None when the benched player would
+    have filled a slot left empty, and ``player_in`` is None when the change is benching a starter
+    who scored below zero with nobody to replace him.
+    """
+
+    player_in: int | None
+    player_out: int | None
+    gain: float
+
+
+@dataclass(frozen=True)
 class TeamWeek:
     """One team's lineup decisions in one NFL week."""
 
@@ -113,6 +132,9 @@ class TeamWeek:
     best: frozenset[int]  # the optimal lineup's players
     points: Mapping[int, float]  # every rostered player's points that week
     injured: frozenset[int] = frozenset()  # on injured reserve: not available to start
+    # The slot each rostered player was in, and the starting slots each may fill (``eligibility``)
+    slot: Mapping[int, str] = field(default_factory=dict, compare=False, hash=False)
+    eligible: Mapping[int, frozenset[str]] = field(default_factory=dict, compare=False, hash=False)
 
     @property
     def left_on_bench(self) -> float:
@@ -144,6 +166,39 @@ class TeamWeek:
     @property
     def perfect(self) -> bool:
         return self.left_on_bench < 0.005
+
+    @property
+    def swaps(self) -> list[Swap]:
+        """The bench points as individual lineup changes, biggest first. Their gains sum to ``left_on_bench``.
+
+        Each player who should have started is paired with a starter who should have sat: first one
+        sitting in a slot he could fill directly (a benched WR for the started WR), then one who
+        shares any slot with him (through the flex), then any left over, worst first each time. The
+        last pass covers chains: in 2020 Taysom Hill started at QB, and the best lineup moves him to
+        TE, so the benched QB really replaces the started TE. A one-for-one pairing is not unique
+        when players move, but the gains always add up exactly and there are ``substitutions`` of them.
+        """
+        ins, outs = self.should_have_started, self.should_have_sat
+        pairs: dict[int, int] = {}
+        tests = (
+            lambda mine, o: self.slot.get(o) in mine,  # he could take that starter's slot
+            lambda mine, o: bool(mine & self.eligible.get(o, frozenset())),  # they share a slot
+            lambda mine, o: True,  # someone else in the lineup moves to make room
+        )
+        for fits in tests:
+            for p in ins:
+                if p in pairs:
+                    continue
+                mine = self.eligible.get(p, frozenset())
+                match = next((o for o in outs if o not in pairs.values() and fits(mine, o)), None)
+                if match is not None:
+                    pairs[p] = match
+        swaps = []
+        for p in ins:
+            o = pairs.get(p)
+            swaps.append(Swap(p, o, round(self.points[p] - (self.points[o] if o is not None else 0.0), 2)))
+        swaps += [Swap(None, o, round(-self.points[o], 2)) for o in outs if o not in pairs.values()]
+        return sorted(swaps, key=lambda x: -x.gain)
 
 
 def eligibility(season: Season) -> dict[int, frozenset[str]]:
@@ -203,6 +258,8 @@ def _solve(season: Season) -> list[TeamWeek]:
                 best=best.player_ids,
                 points={w.player_id: w.points for w in rows},
                 injured=frozenset(w.player_id for w in rows if w.slot == INJURED_RESERVE),
+                slot={w.player_id: w.slot for w in rows},
+                eligible={w.player_id: eligible.get(w.player_id, frozenset()) for w in rows},
             )
         )
     return out
