@@ -24,6 +24,35 @@ More views (`mBoxscore`, `mRoster`, `mDraftDetail`, `mTransactions2`) arrive in 
 Seasons before 2018 come from the `leagueHistory/{league_id}?seasonId=` endpoint; 2018 onward from
 `seasons/{year}/segments/0/leagues/{league_id}`. Both are on `lm-api-reads.fantasy.espn.com`.
 
+### Player-level data by era
+
+ESPN keeps far less player-level detail for the `leagueHistory` seasons. Probed in October 2026
+(issue #26) with [`scripts/probe_player_views.py`](../scripts/probe_player_views.py), which can be
+rerun to check whether that has changed:
+
+| What | 2015–2017 (`leagueHistory`) | 2018 on |
+|---|---|---|
+| Draft (`mDraftDetail`) | ✅ all 160 picks, round and pick, `teamId` | ✅ same |
+| Keeper flag on draft picks | `keeper: false` everywhere (no keepers then) | ✅ `keeper` / `reservedForKeeper`, set from 2024 (21 picks in 2024, 26 in 2025) |
+| Player season totals (`kona_player_info`) | ✅ league-scored season total for any player | ✅ plus a line per NFL week |
+| Weekly box scores (`mBoxscore`) | ⚠️ starters only (`rosterForMatchupPeriod`), no lineup slot, no bench; in 2015–2016 a few sides are missing a starter (8/10 and 6/10 sides add up to the team's score in week 3) | ✅ the whole roster (`rosterForCurrentScoringPeriod`): lineup slot, bench, IR, points |
+| Weekly rosters (`mRoster`) | ❌ the requested week is ignored: always the final roster, season totals only | ✅ that week's roster |
+| Transactions (`mTransactions2`) | ❌ nothing returned for any week | ✅ per NFL week (`scoringPeriodId` is required; without it nothing comes back) |
+
+What that means for the hub:
+
+- **Draft value covers all 11 seasons**, from draft picks plus season totals.
+- **Bench points, optimal lineups and coaching stats start in 2018.** Without the bench there is
+  nothing to optimize, and the pre-2018 starter lists are not complete enough to rely on. Pages
+  that use them say "player-level stats available from 2018" rather than implying 11 seasons.
+- **Trades, trade valuations and acquisition history start in 2018.** For 2015–2017 only ESPN's
+  per-team counts survive (`transactionCounter` in `matchups.json`).
+- **The keeper flag works,** which makes the keeper history backfill (M5) automatic from 2024 on.
+
+Two traps the probe turned up: `mDraftDetail`'s `memberId` is a SWID *without* braces, which the
+SWID scrubber's pattern does not match, so committed draft files keep only the fields the hub uses
+(picks are attributed by `teamId` anyway); and transactions must be requested one NFL week at a time.
+
 ### What is changed from the ESPN response
 
 Files are written by `mustafatron.pseudonymize.scrub_season`, which:
