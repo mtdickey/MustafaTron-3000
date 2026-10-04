@@ -13,6 +13,8 @@ from dataclasses import dataclass
 
 from mustafatron.league_settings import LeagueSettings
 from mustafatron.model import Game, Season
+from mustafatron.stats.allplay import AllPlay, Luck
+from mustafatron.stats.weeks import final_periods, regular_season_periods, week_scores
 
 
 @dataclass(frozen=True)
@@ -93,3 +95,85 @@ def standings_through(season: Season, week: int) -> list[StandingLine]:
         seed = {t.manager_id: t.playoff_seed for t in season.teams}
         return sorted(lines, key=lambda x: seed[x.manager_id])
     return sorted(lines, key=lambda x: (-x.win_pct, -x.points_for))
+
+
+# All-play and luck (the v0 report's "Records" panel) ---------------------------------------------
+
+
+@dataclass(frozen=True)
+class AllPlayCell:
+    """One team's NFL week: its score, its real game, and how it ranked against the whole league."""
+
+    period: int
+    points: float
+    opponent_id: str
+    opponent_points: float
+    result: str  # W/L/T in the real game
+    rank: int  # 1 = the week's high score (tied scores share a rank)
+    all_play: AllPlay  # that week alone: a game against every other team
+
+    @property
+    def pct(self) -> float:
+        return self.all_play.win_pct
+
+
+@dataclass(frozen=True)
+class AllPlayRow:
+    manager_id: str
+    cells: dict[int, AllPlayCell]  # by NFL week
+    luck: Luck  # the actual record through the week next to the all-play one
+
+    @property
+    def all_play(self) -> AllPlay:
+        return self.luck.all_play
+
+
+def all_play_through(season: Season, week: int) -> tuple[list[int], list[AllPlayRow]]:
+    """(NFL weeks, rows) of the all-play grid through matchup week ``week``: best all-play pct first.
+
+    Regular season only, as everywhere all-play is counted (``stats.allplay``); a playoff report
+    shows the final regular season grid.
+    """
+    allowed = set(periods_through(season, week)) & set(regular_season_periods(season)) & final_periods(season)
+    games = {}
+    for g in season.games:
+        if g.final and not g.is_playoff and g.week <= week:
+            for period, *_ in g.period_scores:
+                games[(g.home_id, period)] = games[(g.away_id, period)] = g
+    by_period: dict[int, dict[str, float]] = {}
+    for w in week_scores(season):
+        if w.period in allowed:
+            by_period.setdefault(w.period, {})[w.manager_id] = w.points
+    cells: dict[str, dict[int, AllPlayCell]] = {t.manager_id: {} for t in season.teams}
+    for period, scores in sorted(by_period.items()):
+        for mid, pts in scores.items():
+            others = [v for m, v in scores.items() if m != mid]
+            g = games[(mid, period)]
+            opp = g.opponent_of(mid)
+            cells[mid][period] = AllPlayCell(
+                period=period,
+                points=pts,
+                opponent_id=opp,
+                opponent_points=scores[opp],
+                result=g.result_for(mid),
+                rank=1 + sum(v > pts for v in others),
+                all_play=AllPlay(
+                    mid,
+                    sum(pts > v for v in others),
+                    sum(pts < v for v in others),
+                    sum(pts == v for v in others),
+                ),
+            )
+    record = {x.manager_id: x for x in standings_through(season, week)}
+    rows = []
+    for mid, cs in cells.items():
+        ap = AllPlay(
+            mid,
+            sum(c.all_play.wins for c in cs.values()),
+            sum(c.all_play.losses for c in cs.values()),
+            sum(c.all_play.ties for c in cs.values()),
+        )
+        r = record[mid]
+        rows.append(AllPlayRow(mid, cs, Luck(mid, r.wins, r.losses, r.ties, ap)))
+    rows.sort(key=lambda r: (-r.all_play.win_pct, -sum(c.points for c in r.cells.values())))
+    return sorted(by_period), rows

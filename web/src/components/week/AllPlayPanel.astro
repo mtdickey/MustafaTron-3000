@@ -1,0 +1,187 @@
+---
+// The weekly report's Records panel (v0: "Records vs. Entire League by Week" and "Luckiest Records"):
+// the all-play grid through the week, and luck as diverging bars.
+//
+// The grid is an HTML table rather than a chart so it stays legible on a phone: it scrolls sideways
+// with the team column pinned, the all-play total sits next to the name so it's visible without
+// scrolling, and tapping a cell shows its detail under the table (hovering shows it as a tooltip).
+import * as Plot from "@observablehq/plot";
+import type { AllPlayGridOut } from "../../types/contract";
+import ManagerName from "../ManagerName.astro";
+import PlotFigure from "../PlotFigure.astro";
+import { manager } from "../../lib/data";
+import { ordinal, pct, points, record, shade, signed } from "../../lib/format";
+
+interface Props {
+  grid: AllPlayGridOut;
+  label: string;
+}
+
+const { grid, label } = Astro.props;
+const teams = grid.rows.length;
+const others = teams - 1;
+const name = (id: string) => manager(id).short_name;
+const signedPct = (v: number) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${pct(Math.abs(v))}`;
+type Cell = NonNullable<AllPlayGridOut["rows"][number]["cells"][number]>;
+const detail = (id: string, period: number, c: Cell) =>
+  `${name(id)}, week ${period}: ${points(c.points, 2)} vs ${name(c.opponent)} ${points(c.opponent_points, 2)} (${c.result}). ` +
+  `${ordinal(c.rank)} of ${teams} that week, ${record(c.wins, c.losses, c.ties)} against the league.`;
+const byLuck = [...grid.rows].sort((a, b) => b.luck - a.luck);
+---
+
+{
+  grid.periods.length > 0 && (
+    <section id="records" class="allplay">
+      <h2>Records</h2>
+      <h3>All-play by week</h3>
+      <p class="muted small">
+        Each week as a game against every other team: darker orange for a week near the top of the league, lavender near
+        the bottom. W/L is the real result. Tap or hover a week for the score.
+      </p>
+      <div class="table-scroll">
+        <table class="sticky-first ap-grid">
+          <thead>
+            <tr>
+              <th scope="col" class="text">Team</th>
+              <th scope="col" title="All-play record through this week">All-play</th>
+              {grid.periods.map((p) => (
+                <th scope="col">{p}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {grid.rows.map((r) => (
+              <tr>
+                <th scope="row">
+                  <ManagerName id={r.manager} short link />{" "}
+                  <span class="muted">{record(r.wins, r.losses, r.ties)}</span>
+                </th>
+                <td class="shade total" style={shade(r.all_play_pct)}>
+                  {record(r.all_play_wins, r.all_play_losses, r.all_play_ties)}
+                </td>
+                {r.cells.map((c, i) =>
+                  c ? (
+                    <td
+                      class="shade cell"
+                      style={shade((c.wins + c.ties / 2) / others)}
+                      title={detail(r.manager, grid.periods[i]!, c)}
+                      data-detail={detail(r.manager, grid.periods[i]!, c)}
+                    >
+                      {c.result}
+                    </td>
+                  ) : (
+                    <td class="muted">–</td>
+                  ),
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <output class="cell-detail small" aria-live="polite" />
+
+      <h3>Luckiest records {label}</h3>
+      <div class="luck">
+      <PlotFigure
+        label={`Luck ${label}: each team's actual win percentage minus its all-play win percentage`}
+        caption="Actual win pct minus all-play win pct. Orange: the record is better than the scoring (lucky); lavender: worse. The number is the same gap in wins."
+        options={{
+          width: 520,
+          height: 26 * teams + 40,
+          marginLeft: 110,
+          marginRight: 50,
+          x: { label: "Win pct above all-play →", grid: true, tickFormat: signedPct },
+          y: {
+            label: null,
+            domain: byLuck.map((r) => r.manager),
+            tickFormat: (id: string) => {
+              const r = grid.rows.find((x) => x.manager === id)!;
+              return `${name(id)} ${record(r.wins, r.losses, r.ties)}`;
+            },
+          },
+          marks: [
+            Plot.barX(byLuck.filter((r) => r.luck >= 0), {
+              x: "luck",
+              y: "manager",
+              className: "win",
+              title: (r) => `${name(r.manager)}: ${pct(r.win_pct)} actual vs ${pct(r.all_play_pct)} all-play`,
+            }),
+            Plot.barX(byLuck.filter((r) => r.luck < 0), {
+              x: "luck",
+              y: "manager",
+              className: "loss",
+              title: (r) => `${name(r.manager)}: ${pct(r.win_pct)} actual vs ${pct(r.all_play_pct)} all-play`,
+            }),
+            Plot.ruleX([0]),
+            Plot.text(byLuck, {
+              x: "luck",
+              y: "manager",
+              text: (r) => `${signed(r.luck_wins)} W`,
+              textAnchor: "start",
+              dx: 4,
+              filter: (r) => r.luck >= 0,
+              fill: "currentColor",
+            }),
+            // Unlucky bars run left into the names, so their numbers sit just right of zero.
+            Plot.text(byLuck, {
+              x: 0,
+              y: "manager",
+              text: (r) => `${signed(r.luck_wins)} W`,
+              textAnchor: "start",
+              dx: 4,
+              filter: (r) => r.luck < 0,
+              fill: "currentColor",
+            }),
+          ],
+        }}
+      />
+      </div>
+    </section>
+  )
+}
+
+<script>
+  // Tap a week to read its detail: title tooltips don't show on touch screens.
+  for (const panel of document.querySelectorAll<HTMLElement>(".allplay")) {
+    const out = panel.querySelector("output");
+    panel.addEventListener("click", (e) => {
+      const cell = (e.target as Element).closest<HTMLElement>("td[data-detail]");
+      if (!cell || !out) return;
+      panel.querySelectorAll(".cell.selected").forEach((c) => c.classList.remove("selected"));
+      cell.classList.add("selected");
+      out.textContent = cell.dataset.detail ?? "";
+    });
+  }
+</script>
+
+<style>
+  .ap-grid td.cell {
+    min-width: 2rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: var(--step--2);
+    padding-inline: 0.3rem;
+    cursor: pointer;
+  }
+  .ap-grid td.cell.selected {
+    outline: 2px solid var(--ink);
+    outline-offset: -2px;
+  }
+  .ap-grid td.total {
+    font-weight: 600;
+    border-right: 2px solid var(--line);
+  }
+  .cell-detail {
+    display: block;
+    min-height: 1.5em;
+    margin: -0.5rem 0 1rem;
+    color: var(--muted);
+  }
+  h3 {
+    margin-top: 1.25rem;
+  }
+  .luck :global(figure.plot svg) {
+    max-height: none;
+    max-width: 44rem;
+  }
+</style>

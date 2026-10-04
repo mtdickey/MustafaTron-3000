@@ -27,7 +27,7 @@ from mustafatron.stats.records import records_book
 from mustafatron.stats.seasons import all_play, superlatives, week_scores
 from mustafatron.stats.standings import all_time_standings, championship_ledger
 from mustafatron.stats.trades import Trade, trade_book
-from mustafatron.stats.weekly import ReportWeek, games_in, report_weeks, standings_through
+from mustafatron.stats.weekly import ReportWeek, all_play_through, games_in, report_weeks, standings_through
 from mustafatron.transform import load_league
 
 REPO = Path(__file__).resolve().parents[2]
@@ -413,6 +413,35 @@ def week_file(league: League, w: ReportWeek) -> c.WeekFile:
                 points_against=x.points_against,
             )
             for x in standings_through(s, w.week)
+        ],
+        all_play=_all_play_grid(s, w.week),
+    )
+
+
+def _all_play_grid(s: Season, week: int) -> c.AllPlayGridOut:
+    periods, rows = all_play_through(s, week)
+    return c.AllPlayGridOut(
+        periods=periods,
+        rows=[
+            c.AllPlayRowOut(
+                **_luck(r.luck),
+                cells=[
+                    c.AllPlayCellOut(
+                        points=x.points,
+                        opponent=x.opponent_id,
+                        opponent_points=x.opponent_points,
+                        result=x.result,  # type: ignore[arg-type]
+                        rank=x.rank,
+                        wins=x.all_play.wins,
+                        losses=x.all_play.losses,
+                        ties=x.all_play.ties,
+                    )
+                    if (x := r.cells.get(p))
+                    else None
+                    for p in periods
+                ],
+            )
+            for r in rows
         ],
     )
 

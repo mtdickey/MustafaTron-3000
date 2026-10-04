@@ -2,7 +2,9 @@
 
 import pytest
 
-from mustafatron.stats.weekly import games_in, report_weeks, standings_through, week_label
+from mustafatron.stats.allplay import all_play
+from mustafatron.stats.weekly import all_play_through, games_in, report_weeks, standings_through, week_label
+from mustafatron.stats.weeks import regular_season_periods
 from mustafatron.transform import load_league
 
 
@@ -48,3 +50,52 @@ def test_playoff_standings_are_in_seed_order(league):
     last = report_weeks(s)[-1]
     seeds = {t.manager_id: t.playoff_seed for t in s.teams}
     assert [seeds[x.manager_id] for x in standings_through(s, last.week)] == sorted(seeds.values())
+
+
+# All-play and luck ---------------------------------------------------------------------------------
+
+
+def test_the_v0_2022_week_12_report(league):
+    # The left panel of img/example-report.png: all-play records through week 12 of 2022, best first.
+    _, rows = all_play_through(league.seasons[2022], 12)
+    ap = [(r.all_play.wins, r.all_play.losses) for r in rows]
+    assert ap == [
+        (82, 26),
+        (77, 31),
+        (67, 41),
+        (63, 45),
+        (59, 49),
+        (51, 57),
+        (49, 59),
+        (43, 65),
+        (27, 81),
+        (22, 86),
+    ]
+
+
+def test_all_play_through_the_regular_season_matches_the_season_totals(league):
+    for s in league.seasons.values():
+        periods, rows = all_play_through(s, report_weeks(s)[-1].week)  # a playoff week: the regular season
+        assert periods == regular_season_periods(s)
+        full = all_play(s)
+        assert all(r.all_play == full[r.manager_id] for r in rows)
+
+
+def test_each_week_is_one_game_against_every_other_team(league):
+    s = league.seasons[2019]
+    periods, rows = all_play_through(s, 6)
+    assert periods == [1, 2, 3, 4, 5, 6]
+    for r in rows:
+        for c in r.cells.values():
+            assert c.all_play.games == s.settings.team_count - 1
+            assert c.rank == 1 + c.all_play.losses
+            assert c.result in "WLT"
+        assert r.luck.games == 6
+
+
+def test_luck_through_a_week_uses_only_that_weeks_record(league):
+    s = league.seasons[2022]
+    _, rows = all_play_through(s, 12)
+    albert = next(r for r in rows if r.manager_id == "albert")
+    assert (albert.luck.wins, albert.luck.losses) == (7, 5)
+    assert albert.luck.luck == pytest.approx(7 / 12 - 43 / 108)
