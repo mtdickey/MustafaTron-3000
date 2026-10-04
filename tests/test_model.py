@@ -7,7 +7,15 @@ import pytest
 
 from mustafatron.identity import load_managers
 from mustafatron.model import Game, to_frame
-from mustafatron.transform import draft_picks, games, load_league, team_name, team_seasons, transactions
+from mustafatron.transform import (
+    draft_picks,
+    games,
+    infer_trades,
+    load_league,
+    team_name,
+    team_seasons,
+    transactions,
+)
 
 SEASONS = range(2015, 2026)
 LEAGUE = load_league(SEASONS)
@@ -135,27 +143,72 @@ def test_draft_picks_are_attributed_by_team_not_member():
     ]
 
 
-def test_transactions_keep_executed_moves_and_split_trades_by_team():
+def test_transactions_are_executed_adds_and_drops():
     ms = 1759334413859
     raw = [
         {"type": "WAIVER", "status": "EXECUTED", "teamId": 5, "bidAmount": 6, "scoringPeriodId": 5,
-         "processDate": ms,
+         "processDate": ms, "id": "w",
          "items": [{"type": "ADD", "playerId": 1, "fromTeamId": 0, "toTeamId": 5},
                    {"type": "DROP", "playerId": 2, "fromTeamId": 5, "toTeamId": 0}]},
+        # 2018 marks free agency -1 and has ESPN's own waiver run as team -2147483648
+        {"type": "WAIVER", "status": "EXECUTED", "teamId": -2147483648, "scoringPeriodId": 6,
+         "processDate": ms + 1, "items": [{"type": "ADD", "playerId": 3, "fromTeamId": -1, "toTeamId": 2}]},
         {"type": "WAIVER", "status": "FAILED_ROSTERLIMIT", "teamId": 5, "proposedDate": ms, "items": []},
-        {"type": "TRADE_PROPOSAL", "status": "EXECUTED", "teamId": 1, "proposedDate": ms, "items": []},
-        {"type": "TRADE_ACCEPT", "status": "EXECUTED", "teamId": 2, "scoringPeriodId": 6,
-         "processDate": ms + 1,
-         "items": [{"type": "TRADE", "playerId": 3, "fromTeamId": 1, "toTeamId": 2},
-                   {"type": "TRADE", "playerId": 4, "fromTeamId": 2, "toTeamId": 1}]},
+        {"type": "TRADE_ACCEPT", "status": "EXECUTED", "teamId": 2, "scoringPeriodId": 6, "processDate": ms,
+         "items": [{"type": "TRADE", "playerId": 3, "fromTeamId": 1, "toTeamId": 2}]},
     ]  # fmt: skip
     tx = transactions(raw, 2025, {1: "dickey", 2: "albert", 5: "joyce"})
-    assert [(t.type, t.manager_id, t.players_in, t.players_out, t.bid) for t in tx] == [
-        ("WAIVER", "joyce", (1,), (2,), 6),
-        ("TRADE", "albert", (3,), (4,), 0),
-        ("TRADE", "dickey", (4,), (3,), 0),
+    assert [(t.type, t.manager_id, t.players_in, t.players_out, t.bid, t.id) for t in tx] == [
+        ("WAIVER", "joyce", (1,), (2,), 6, "w"),
+        ("WAIVER", "albert", (3,), (), 0, ""),
     ]
     assert tx[0].date == datetime.fromtimestamp(ms / 1000, tz=UTC)
+
+
+def roster_weeks(*weeks: dict[int, list[int]]) -> list[dict]:
+    """boxscores.json periods from {team: [player, ...]} per week, starting at week 1."""
+    return [
+        {"scoringPeriodId": i + 1,
+         "teams": [{"teamId": t, "entries": [{"playerId": p, "lineupSlotId": 20, "points": 0} for p in ps]}
+                   for t, ps in w.items()]}
+        for i, w in enumerate(weeks)
+    ]  # fmt: skip
+
+
+def test_trades_are_found_by_following_players_between_rosters():
+    picks = [{"playerId": p, "teamId": t} for p, t in ((10, 1), (11, 1), (20, 2), (30, 3))]
+    periods = roster_weeks(
+        {1: [10, 11], 2: [20], 3: [30]},
+        {1: [11, 20], 2: [10], 3: [30, 40]},  # week 2: 1 and 2 swap 10 for 20; 3 adds 40
+        {1: [11, 20], 2: [10, 40], 3: [30]},  # week 3: 3 adds 40 ... and trades him to 2 the same week
+    )
+    tx = [
+        {"type": "FREEAGENT", "status": "EXECUTED", "teamId": 3, "scoringPeriodId": 2, "processDate": 5,
+         "items": [{"type": "ADD", "playerId": 40, "fromTeamId": 0, "toTeamId": 3}]},
+        {"type": "TRADE_ACCEPT", "status": None, "teamId": 2, "scoringPeriodId": 2, "proposedDate": 7_000,
+         "relatedTransactionId": "p"},
+    ]  # fmt: skip
+    trades = infer_trades(picks, periods, tx, 2025, {1: "dickey", 2: "albert", 3: "joyce"})
+    assert [(t.id, t.scoring_period, t.manager_id, t.players_in, t.players_out) for t in trades] == [
+        ("2025-w2-t1-t2", 2, "albert", (10,), (20,)),
+        ("2025-w2-t1-t2", 2, "dickey", (20,), (10,)),
+        ("2025-w3-t2-t3", 3, "albert", (40,), ()),
+        ("2025-w3-t2-t3", 3, "joyce", (), (40,)),
+    ]
+    assert trades[0].date == datetime.fromtimestamp(7, tz=UTC)  # the one acceptance that fits
+    assert trades[2].date is None  # no acceptance record by 2 or 3 that week
+
+
+def test_a_player_added_after_being_dropped_is_not_a_trade():
+    picks = [{"playerId": 10, "teamId": 1}]
+    periods = roster_weeks({1: [10]}, {2: [10]})
+    tx = [
+        {"type": "FREEAGENT", "status": "EXECUTED", "teamId": 1, "scoringPeriodId": 2, "processDate": 1,
+         "items": [{"type": "DROP", "playerId": 10, "fromTeamId": 1, "toTeamId": 0}]},
+        {"type": "WAIVER", "status": "EXECUTED", "teamId": 2, "scoringPeriodId": 2, "processDate": 2,
+         "items": [{"type": "ADD", "playerId": 10, "fromTeamId": 0, "toTeamId": 2}]},
+    ]  # fmt: skip
+    assert infer_trades(picks, periods, tx, 2025, {1: "dickey", 2: "albert"}) == []
 
 
 def test_to_frame():

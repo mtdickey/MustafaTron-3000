@@ -1,0 +1,2692 @@
+{
+ "players": [
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 138.0
+   },
+   "defaultPositionId": 16,
+   "eligibleSlots": [
+    16,
+    20,
+    21
+   ],
+   "fullName": "Texans D/ST",
+   "id": -16034,
+   "proTeamId": 34
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 155.0
+   },
+   "defaultPositionId": 16,
+   "eligibleSlots": [
+    16,
+    20,
+    21
+   ],
+   "fullName": "Panthers D/ST",
+   "id": -16029,
+   "proTeamId": 29
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 140.0
+   },
+   "defaultPositionId": 16,
+   "eligibleSlots": [
+    16,
+    20,
+    21
+   ],
+   "fullName": "Seahawks D/ST",
+   "id": -16026,
+   "proTeamId": 26
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 111.0
+   },
+   "defaultPositionId": 16,
+   "eligibleSlots": [
+    16,
+    20,
+    21
+   ],
+   "fullName": "Jets D/ST",
+   "id": -16020,
+   "proTeamId": 20
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 69.0
+   },
+   "defaultPositionId": 16,
+   "eligibleSlots": [
+    16,
+    20,
+    21
+   ],
+   "fullName": "Dolphins D/ST",
+   "id": -16015,
+   "proTeamId": 15
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 110.0
+   },
+   "defaultPositionId": 16,
+   "eligibleSlots": [
+    16,
+    20,
+    21
+   ],
+   "fullName": "Rams D/ST",
+   "id": -16014,
+   "proTeamId": 14
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 162.0
+   },
+   "defaultPositionId": 16,
+   "eligibleSlots": [
+    16,
+    20,
+    21
+   ],
+   "fullName": "Chiefs D/ST",
+   "id": -16012,
+   "proTeamId": 12
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 99.0
+   },
+   "defaultPositionId": 16,
+   "eligibleSlots": [
+    16,
+    20,
+    21
+   ],
+   "fullName": "Packers D/ST",
+   "id": -16009,
+   "proTeamId": 9
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 84.0
+   },
+   "defaultPositionId": 16,
+   "eligibleSlots": [
+    16,
+    20,
+    21
+   ],
+   "fullName": "Lions D/ST",
+   "id": -16008,
+   "proTeamId": 8
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 182.0
+   },
+   "defaultPositionId": 16,
+   "eligibleSlots": [
+    16,
+    20,
+    21
+   ],
+   "fullName": "Broncos D/ST",
+   "id": -16007,
+   "proTeamId": 7
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 79.0
+   },
+   "defaultPositionId": 16,
+   "eligibleSlots": [
+    16,
+    20,
+    21
+   ],
+   "fullName": "Bills D/ST",
+   "id": -16002,
+   "proTeamId": 2
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 121.0
+   },
+   "defaultPositionId": 5,
+   "eligibleSlots": [
+    17,
+    20,
+    21
+   ],
+   "fullName": "Adam Vinatieri",
+   "id": 1097,
+   "proTeamId": 11
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 87.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Peyton Manning",
+   "id": 1428,
+   "proTeamId": 7
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 335.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Tom Brady",
+   "id": 2330,
+   "proTeamId": 17
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 299.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Drew Brees",
+   "id": 2580,
+   "proTeamId": 18
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 82.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Steve Smith Sr.",
+   "id": 2622,
+   "proTeamId": 33
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 70.0
+   },
+   "defaultPositionId": 5,
+   "eligibleSlots": [
+    17,
+    20,
+    21
+   ],
+   "fullName": "Matt Bryant",
+   "id": 4333,
+   "proTeamId": 1
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 68.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Andre Johnson",
+   "id": 4461,
+   "proTeamId": 11
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 95.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Anquan Boldin",
+   "id": 4512,
+   "proTeamId": 25
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 80.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Jason Witten",
+   "id": 4527,
+   "proTeamId": 6
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 39.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Tony Romo",
+   "id": 5209,
+   "proTeamId": 6
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 164.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Larry Fitzgerald",
+   "id": 5528,
+   "proTeamId": 22
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 277.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Philip Rivers",
+   "id": 5529,
+   "proTeamId": 24
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 222.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Ben Roethlisberger",
+   "id": 5536,
+   "proTeamId": 23
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 286.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Aaron Rodgers",
+   "id": 8439,
+   "proTeamId": 9
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 51.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Roddy White",
+   "id": 8442,
+   "proTeamId": 1
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 70.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Vincent Jackson",
+   "id": 8475,
+   "proTeamId": 27
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 147.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Frank Gore",
+   "id": 8479,
+   "proTeamId": 11
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 179.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "DeAngelo Williams",
+   "id": 9613,
+   "proTeamId": 23
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 62.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Owen Daniels",
+   "id": 9684,
+   "proTeamId": 7
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 168.0
+   },
+   "defaultPositionId": 5,
+   "eligibleSlots": [
+    17,
+    20,
+    21
+   ],
+   "fullName": "Stephen Gostkowski",
+   "id": 9704,
+   "proTeamId": 17
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 223.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Brandon Marshall",
+   "id": 9705,
+   "proTeamId": 20
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 143.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Delanie Walker",
+   "id": 9761,
+   "proTeamId": 10
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 68.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Marques Colston",
+   "id": 9838,
+   "proTeamId": 18
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 164.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Calvin Johnson",
+   "id": 10447,
+   "proTeamId": 8
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 217.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Adrian Peterson",
+   "id": 10452,
+   "proTeamId": 16
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 66.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Marshawn Lynch",
+   "id": 10456,
+   "proTeamId": 26
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 144.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Greg Olsen",
+   "id": 10475,
+   "proTeamId": 29
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 133.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "James Jones",
+   "id": 10522,
+   "proTeamId": 9
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 62.0
+   },
+   "defaultPositionId": 5,
+   "eligibleSlots": [
+    17,
+    20,
+    21
+   ],
+   "fullName": "Nick Folk",
+   "id": 10621,
+   "proTeamId": 20
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 116.0
+   },
+   "defaultPositionId": 5,
+   "eligibleSlots": [
+    17,
+    20,
+    21
+   ],
+   "fullName": "Matt Prater",
+   "id": 11122,
+   "proTeamId": 8
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 224.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Matt Ryan",
+   "id": 11237,
+   "proTeamId": 1
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 145.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Darren McFadden",
+   "id": 11238,
+   "proTeamId": 6
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 139.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Jonathan Stewart",
+   "id": 11247,
+   "proTeamId": 29
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 26.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Eddie Royal",
+   "id": 11276,
+   "proTeamId": 3
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 159.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Matt Forte",
+   "id": 11278,
+   "proTeamId": 20
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 72.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "DeSean Jackson",
+   "id": 11283,
+   "proTeamId": 28
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 56.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Martellus Bennett",
+   "id": 11295,
+   "proTeamId": 17
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 75.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Jamaal Charles",
+   "id": 11307,
+   "proTeamId": 12
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 108.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Pierre Garcon",
+   "id": 11439,
+   "proTeamId": 28
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 83.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Justin Forsett",
+   "id": 11467,
+   "proTeamId": 33
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 149.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Danny Woodhead",
+   "id": 11788,
+   "proTeamId": 24
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 144.0
+   },
+   "defaultPositionId": 5,
+   "eligibleSlots": [
+    17,
+    20,
+    21
+   ],
+   "fullName": "Steven Hauschka",
+   "id": 11923,
+   "proTeamId": 26
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 280.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Matthew Stafford",
+   "id": 12483,
+   "proTeamId": 8
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 51.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Arian Foster",
+   "id": 12497,
+   "proTeamId": 34
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 125.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Rashad Jennings",
+   "id": 12503,
+   "proTeamId": 19
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 137.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "LeSean McCoy",
+   "id": 12514,
+   "proTeamId": 2
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 139.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Michael Crabtree",
+   "id": 12563,
+   "proTeamId": 13
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 26.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Percy Harvin",
+   "id": 12569,
+   "proTeamId": 2
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 148.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Jeremy Maclin",
+   "id": 12579,
+   "proTeamId": 12
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 54.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Mike Wallace",
+   "id": 12601,
+   "proTeamId": 33
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 107.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Julian Edelman",
+   "id": 12649,
+   "proTeamId": 17
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 184.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Sam Bradford",
+   "id": 13197,
+   "proTeamId": 21
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 39.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "C.J. Spiller",
+   "id": 13203,
+   "proTeamId": 18
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 95.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Ryan Mathews",
+   "id": 13204,
+   "proTeamId": 21
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 110.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "LeGarrette Blount",
+   "id": 13213,
+   "proTeamId": 17
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 54.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Dez Bryant",
+   "id": 13215,
+   "proTeamId": 6
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 156.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Demaryius Thomas",
+   "id": 13216,
+   "proTeamId": 7
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 111.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Golden Tate",
+   "id": 13217,
+   "proTeamId": 8
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 176.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Rob Gronkowski",
+   "id": 13229,
+   "proTeamId": 17
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 69.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Jimmy Graham",
+   "id": 13232,
+   "proTeamId": 26
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 166.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Eric Decker",
+   "id": 13271,
+   "proTeamId": 20
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 140.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Emmanuel Sanders",
+   "id": 13295,
+   "proTeamId": 7
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 72.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Joique Bell",
+   "id": 13536,
+   "proTeamId": 8
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 0.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Victor Cruz",
+   "id": 13553,
+   "proTeamId": 19
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 159.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Chris Ivory",
+   "id": 13587,
+   "proTeamId": 30
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 243.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Antonio Brown",
+   "id": 13934,
+   "proTeamId": 23
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 143.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Mark Ingram",
+   "id": 13981,
+   "proTeamId": 18
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 231.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Julio Jones",
+   "id": 13982,
+   "proTeamId": 1
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 179.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "A.J. Green",
+   "id": 13983,
+   "proTeamId": 4
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 373.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Cam Newton",
+   "id": 13994,
+   "proTeamId": 29
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 129.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "DeMarco Murray",
+   "id": 14005,
+   "proTeamId": 10
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 88.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Shane Vereen",
+   "id": 14017,
+   "proTeamId": 19
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 87.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Torrey Smith",
+   "id": 14032,
+   "proTeamId": 25
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 120.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Randall Cobb",
+   "id": 14053,
+   "proTeamId": 9
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 50.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Jordan Cameron",
+   "id": 14189,
+   "proTeamId": 15
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 184.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Doug Baldwin",
+   "id": 14221,
+   "proTeamId": 26
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 129.0
+   },
+   "defaultPositionId": 5,
+   "eligibleSlots": [
+    17,
+    20,
+    21
+   ],
+   "fullName": "Dan Bailey",
+   "id": 14322,
+   "proTeamId": 6
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 126.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Andrew Luck",
+   "id": 14874,
+   "proTeamId": 11
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 245.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Ryan Tannehill",
+   "id": 14876,
+   "proTeamId": 15
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 322.0
+   },
+   "defaultPositionId": 1,
+   "eligibleSlots": [
+    0,
+    7,
+    20,
+    21
+   ],
+   "fullName": "Russell Wilson",
+   "id": 14881,
+   "proTeamId": 26
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 187.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Doug Martin",
+   "id": 14885,
+   "proTeamId": 27
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 173.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Lamar Miller",
+   "id": 14886,
+   "proTeamId": 34
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 129.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Ronnie Hillman",
+   "id": 14895,
+   "proTeamId": 7
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 13.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Dwayne Allen",
+   "id": 14901,
+   "proTeamId": 11
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 115.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Michael Floyd",
+   "id": 14908,
+   "proTeamId": 22
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 54.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Kendall Wright",
+   "id": 14909,
+   "proTeamId": 10
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 101.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Alshon Jeffery",
+   "id": 14912,
+   "proTeamId": 3
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 135.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "T.Y. Hilton",
+   "id": 14924,
+   "proTeamId": 11
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 79.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Alfred Morris",
+   "id": 15009,
+   "proTeamId": 6
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 6.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Daniel Herron",
+   "id": 15041,
+   "proTeamId": 11
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 101.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Marvin Jones",
+   "id": 15072,
+   "proTeamId": 8
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 139.0
+   },
+   "defaultPositionId": 5,
+   "eligibleSlots": [
+    17,
+    20,
+    21
+   ],
+   "fullName": "Justin Tucker",
+   "id": 15683,
+   "proTeamId": 33
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 30.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Larry Donnell",
+   "id": 15707,
+   "proTeamId": 19
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 211.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "DeAndre Hopkins",
+   "id": 15795,
+   "proTeamId": 34
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 10.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Cordarrelle Patterson",
+   "id": 15807,
+   "proTeamId": 16
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 90.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Keenan Allen",
+   "id": 15818,
+   "proTeamId": 24
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 83.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Le'Veon Bell",
+   "id": 15825,
+   "proTeamId": 23
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 119.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Giovani Bernard",
+   "id": 15826,
+   "proTeamId": 4
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 11.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Knile Davis",
+   "id": 15832,
+   "proTeamId": 12
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 89.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Zach Ertz",
+   "id": 15835,
+   "proTeamId": 21
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 109.0
+   },
+   "defaultPositionId": 4,
+   "eligibleSlots": [
+    5,
+    6,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Travis Kelce",
+   "id": 15847,
+   "proTeamId": 12
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 109.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Eddie Lacy",
+   "id": 15848,
+   "proTeamId": 9
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 100.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Markus Wheaton",
+   "id": 15873,
+   "proTeamId": 23
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 96.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Terrance Williams",
+   "id": 15878,
+   "proTeamId": 6
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 10.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Charles Johnson",
+   "id": 15885,
+   "proTeamId": 16
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 52.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Andre Ellington",
+   "id": 15893,
+   "proTeamId": 22
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 148.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Latavius Murray",
+   "id": 15920,
+   "proTeamId": 13
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 38.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Denard Robinson",
+   "id": 15951,
+   "proTeamId": 30
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 60.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Joseph Randle",
+   "id": 16013,
+   "proTeamId": 0
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 103.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "C.J. Anderson",
+   "id": 16040,
+   "proTeamId": 7
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 135.0
+   },
+   "defaultPositionId": 5,
+   "eligibleSlots": [
+    17,
+    20,
+    21
+   ],
+   "fullName": "Brandon McManus",
+   "id": 16339,
+   "proTeamId": 7
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 152.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Sammy Watkins",
+   "id": 16725,
+   "proTeamId": 2
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 162.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Brandin Cooks",
+   "id": 16731,
+   "proTeamId": 18
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 216.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Odell Beckham Jr.",
+   "id": 16733,
+   "proTeamId": 19
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 131.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Mike Evans",
+   "id": 16737,
+   "proTeamId": 27
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 117.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Charles Sims",
+   "id": 16749,
+   "proTeamId": 27
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 139.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Jordan Matthews",
+   "id": 16763,
+   "proTeamId": 21
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 66.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Carlos Hyde",
+   "id": 16777,
+   "proTeamId": 25
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 51.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Jerick McKinnon",
+   "id": 16782,
+   "proTeamId": 16
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 17.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Terrance West",
+   "id": 16783,
+   "proTeamId": 33
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 26.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Tre Mason",
+   "id": 16784,
+   "proTeamId": 14
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 154.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Jarvis Landry",
+   "id": 16790,
+   "proTeamId": 15
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 104.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Donte Moncrief",
+   "id": 16791,
+   "proTeamId": 11
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 11.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Cody Latimer",
+   "id": 16793,
+   "proTeamId": 7
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 39.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Bishop Sankey",
+   "id": 16794,
+   "proTeamId": 10
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 217.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Allen Robinson",
+   "id": 16799,
+   "proTeamId": 30
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 51.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Davante Adams",
+   "id": 16800,
+   "proTeamId": 9
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 145.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Jeremy Hill",
+   "id": 16803,
+   "proTeamId": 4
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 134.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "John Brown",
+   "id": 16804,
+   "proTeamId": 22
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 112.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Martavis Bryant",
+   "id": 16886,
+   "proTeamId": 23
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 28.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Andre Williams",
+   "id": 16889,
+   "proTeamId": 19
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 85.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Alfred Blue",
+   "id": 16921,
+   "proTeamId": 34
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 230.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Devonta Freeman",
+   "id": 16944,
+   "proTeamId": 1
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 12.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Lorenzo Taliaferro",
+   "id": 16950,
+   "proTeamId": 33
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 16.0
+   },
+   "defaultPositionId": 5,
+   "eligibleSlots": [
+    17,
+    20,
+    21
+   ],
+   "fullName": "Cody Parkey",
+   "id": 17082,
+   "proTeamId": 21
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 107.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Isaiah Crowell",
+   "id": 17133,
+   "proTeamId": 5
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 18.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "David Cobb",
+   "id": 2576303,
+   "proTeamId": 10
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 78.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Ameer Abdullah",
+   "id": 2576336,
+   "proTeamId": 8
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 64.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Melvin Gordon",
+   "id": 2576434,
+   "proTeamId": 24
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 64.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "DeVante Parker",
+   "id": 2576623,
+   "proTeamId": 15
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 90.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Duke Johnson Jr.",
+   "id": 2969962,
+   "proTeamId": 5
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 77.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Dorial Green-Beckham",
+   "id": 2971433,
+   "proTeamId": 10
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 29.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Nelson Agholor",
+   "id": 2971618,
+   "proTeamId": 21
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 0.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Breshad Perriman",
+   "id": 2972460,
+   "proTeamId": 33
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 133.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Amari Cooper",
+   "id": 2976499,
+   "proTeamId": 13
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 109.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "T.J. Yeldon",
+   "id": 2976516,
+   "proTeamId": 30
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 70.0
+   },
+   "defaultPositionId": 3,
+   "eligibleSlots": [
+    3,
+    4,
+    5,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Devin Funchess",
+   "id": 2977609,
+   "proTeamId": 29
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 176.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Todd Gurley",
+   "id": 2977644,
+   "proTeamId": 14
+  },
+  {
+   "appliedTotalByScoringPeriod": {
+    "0": 37.0
+   },
+   "defaultPositionId": 2,
+   "eligibleSlots": [
+    2,
+    3,
+    7,
+    20,
+    21,
+    23
+   ],
+   "fullName": "Tevin Coleman",
+   "id": 2979477,
+   "proTeamId": 1
+  }
+ ]
+}

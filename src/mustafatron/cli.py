@@ -3,6 +3,7 @@
 mustafatron fetch                       # backfill missing finished seasons, load the current one
 mustafatron fetch --seasons 2019-2021   # just these
 mustafatron fetch --refresh 2019        # ESPN corrected 2019: refetch and overwrite it
+mustafatron fetch --dataset draft       # just one dataset (repeatable)
 mustafatron publish [--offline]         # write the site JSON to web/public/data/
 mustafatron publish --offline --check   # CI: build, validate against the contract, schema current
 mustafatron schema                      # regenerate schema/*.schema.json from mustafatron.contract
@@ -45,9 +46,10 @@ def cmd_fetch(args: argparse.Namespace) -> int:
         "cached": "cached (finished, from data/raw)",
         "fetched": "fetched and written",
         "live": "live (in progress, not written)",
+        "unavailable": "not served by ESPN for this season",
     }
     for season, dataset, outcome in report:
-        print(f"{season} {dataset:<9} {labels.get(outcome, outcome)}")
+        print(f"{season} {dataset:<12} {labels.get(outcome, outcome)}")
     return 1 if any(o.startswith("error") for *_, o in report) else 0
 
 

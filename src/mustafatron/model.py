@@ -4,10 +4,16 @@ Built from ``data/raw/`` by ``mustafatron.transform``. Every manager reference i
 manager id from ``data/manual/managers.yml`` (see ``mustafatron.identity``), never an ESPN ID.
 
 Deliberately not a database: ~850 games is small enough that plain objects, or pandas over them
-(:func:`to_frame`), are the right tool.
+(:func:`to_frame`), are the right tool. The player level is bigger (~23k player-weeks across
+2018-2025) but still fits the same way: ``to_frame(league.player_weeks)`` is the wide table.
+
+Player-level fields (``Season.draft``, ``players``, ``player_weeks``, ``transactions``) are filled
+only when the league is loaded with ``load_league(player_data=True)``. What ESPN serves differs by
+era: drafts and player season totals exist for every season, weekly rosters and transactions only
+from 2018 (``Season.has_lineups``; see ``data/README.md``).
 """
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from typing import Literal
@@ -15,13 +21,15 @@ from typing import Literal
 import pandas as pd
 
 from mustafatron.identity import Manager, Managers
-from mustafatron.league_settings import LeagueSettings
+from mustafatron.league_settings import NON_STARTING_SLOTS, LeagueSettings
 
 __all__ = [
     "DraftPick",
     "Game",
     "League",
     "Manager",
+    "Player",
+    "PlayerWeek",
     "Result",
     "Season",
     "TeamSeason",
@@ -128,16 +136,55 @@ class DraftPick:
 
 @dataclass(frozen=True)
 class Transaction:
-    """One manager's side of an executed roster move. A trade yields one per team involved."""
+    """One manager's side of a roster move. A trade yields one per team involved, sharing ``id``.
+
+    Adds and drops are ESPN's executed records. Trades are found by following players from roster to
+    roster (``transform.infer_trades``), because ESPN no longer returns the executed record of most
+    past trades: their ``scoring_period`` is the first NFL week the players were on their new rosters,
+    and ``date`` comes from ESPN's acceptance record when one can be matched (else None).
+    """
 
     season: int
     scoring_period: int
-    date: datetime
+    date: datetime | None
     type: str  # TRADE, WAIVER, FREEAGENT
     manager_id: str
     players_in: tuple[int, ...]
     players_out: tuple[int, ...]
     bid: int = 0
+    id: str = ""
+
+
+@dataclass(frozen=True)
+class Player:
+    """An NFL player (or team defense) in one season, with his points under this league's scoring."""
+
+    id: int
+    name: str
+    position: str  # QB, RB, WR, TE, K, D/ST
+    eligible_slots: tuple[str, ...]
+    season_points: float | None  # None when ESPN has no stat line
+    # NFL week -> points, 2018 on (empty before: ESPN kept only season totals)
+    weekly_points: Mapping[int, float] = field(default_factory=dict, compare=False, hash=False)
+
+    def points_in(self, period: int) -> float:
+        return self.weekly_points.get(period, 0.0)
+
+
+@dataclass(frozen=True)
+class PlayerWeek:
+    """One player on one team's roster in one NFL week: the lineup slot he was in and his points."""
+
+    season: int
+    period: int  # NFL week
+    manager_id: str
+    player_id: int
+    slot: str  # a LeagueSettings lineup slot: QB, RB, ..., RB/WR/TE, BE, IR
+    points: float
+
+    @property
+    def starter(self) -> bool:
+        return self.slot not in NON_STARTING_SLOTS
 
 
 @dataclass
@@ -146,10 +193,24 @@ class Season:
     settings: LeagueSettings
     teams: list[TeamSeason]
     games: list[Game]  # every scheduled game, final or not, in week order
+    # Player level, filled by load_league(player_data=True)
+    draft: list[DraftPick] = field(default_factory=list)
+    players: dict[int, Player] = field(default_factory=dict)
+    player_weeks: list[PlayerWeek] = field(default_factory=list)  # 2018 on
+    transactions: list[Transaction] = field(default_factory=list)  # 2018 on
 
     @property
     def finished(self) -> bool:
         return bool(self.games) and all(g.final for g in self.games)
+
+    @property
+    def has_lineups(self) -> bool:
+        """Weekly rosters with lineup slots and bench points: ESPN serves these from 2018."""
+        return bool(self.player_weeks)
+
+    @property
+    def trades(self) -> list[Transaction]:
+        return [t for t in self.transactions if t.type == "TRADE"]
 
     def team_of(self, manager_id: str) -> TeamSeason:
         return next(t for t in self.teams if t.manager_id == manager_id)
@@ -172,6 +233,10 @@ class League:
     @property
     def team_seasons(self) -> list[TeamSeason]:
         return [t for s in self.seasons.values() for t in s.teams]
+
+    @property
+    def player_weeks(self) -> list[PlayerWeek]:
+        return [w for s in self.seasons.values() for w in s.player_weeks]
 
     def manager(self, manager_id: str) -> Manager:
         return self.managers[manager_id]

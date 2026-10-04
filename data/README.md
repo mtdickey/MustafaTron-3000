@@ -14,12 +14,21 @@ never written. `uv run mustafatron fetch` backfills whatever is missing, resumin
 interrupted run stopped; `--refresh 2019` refetches and overwrites a finished season if ESPN
 corrects it.
 
-| File | ESPN views | Seasons |
-|---|---|---|
-| `matchups.json` | `mTeam` + `mMatchupScore` | 2015–2025 |
-| `settings.json` | `mSettings` (`settings`, `status`) | 2015–2025 |
+| File | ESPN views | Seasons | Size (all seasons) |
+|---|---|---|---|
+| `matchups.json` | `mTeam` + `mMatchupScore` | 2015–2025 | 0.8 MB |
+| `settings.json` | `mSettings` (`settings`, `status`) | 2015–2025 | 0.15 MB |
+| `draft.json` | `mDraftDetail`, trimmed | 2015–2025 | 0.4 MB |
+| `players.json` | `kona_player_info`, trimmed | 2015–2025 | 1.1 MB |
+| `boxscores.json` | `mBoxscore` one NFL week at a time, trimmed | 2018–2025 | 2.1 MB |
+| `transactions.json` | `mTransactions2` one NFL week at a time, trimmed | 2018–2025 | 1.1 MB |
 
-More views (`mBoxscore`, `mRoster`, `mDraftDetail`, `mTransactions2`) arrive in M3 as sibling files.
+The player-level files (the last four, ~4.6 MB) are **trimmed to the fields the hub uses**, keeping
+ESPN's field names: the raw responses repeat every player's ownership trends, news and projections
+in every week. The trimming lives in `mustafatron.espn.player_data`. There is no `mRoster` file: each
+week's box score already lists the whole roster, bench and IR included, with each player's slot.
+Loading every season including the ~22k player-weeks takes about a quarter of a second, so there
+are no Parquet intermediates; `to_frame(league.player_weeks)` builds the wide table on demand.
 
 Seasons before 2018 come from the `leagueHistory/{league_id}?seasonId=` endpoint; 2018 onward from
 `seasons/{year}/segments/0/leagues/{league_id}`. Both are on `lm-api-reads.fantasy.espn.com`.
@@ -88,6 +97,48 @@ Top-level keys: `settings` (`size`, `scheduleSettings`, `rosterSettings`, `scori
 format and scoring. Across 2015–2025: 10 teams, QB/2RB/2WR/TE/FLEX/D-ST/K + 7 bench, 4-team
 playoffs of two-week matchups; 13 regular season matchups (14 in 2021), so the last matchup period
 is 15 (16 in 2021); standard scoring through 2022, half-PPR from 2023.
+
+### `draft.json`
+
+`draftDetail`: `drafted`, `completeDate`, and `picks[]` with `overallPickNumber`, `roundId`,
+`roundPickNumber`, `teamId`, `playerId`, `keeper` / `reservedForKeeper` (set from 2024) and
+`autoDraftTypeId`. 160 picks a season. `memberId` is dropped (a brace-less SWID; picks are
+attributed by `teamId`).
+
+### `players.json`
+
+`players[]`: every player the season's draft, box scores or transactions mention, with `id`,
+`fullName`, `defaultPositionId` (1 QB, 2 RB, 3 WR, 4 TE, 5 K, 16 D/ST), `eligibleSlots`, `proTeamId`
+and `appliedTotalByScoringPeriod`: actual points in this league's scoring, `"0"` the season total,
+`"1"`… each NFL week (2018 on; earlier seasons have the total only).
+
+### `boxscores.json`
+
+`periods[]`, one per NFL week: `scoringPeriodId` and `teams[]` (`teamId`, `entries[]` of `playerId`,
+`lineupSlotId`, `points`). Lineup slot ids are ESPN's (20 bench, 21 IR; the rest in
+`mustafatron.league_settings.SLOT_NAMES`). Every week the starters' points add up to the team's score
+in `matchups.json`, and every entry matches the player's line in `players.json` (both are tested).
+
+### `transactions.json`
+
+`transactions[]`: executed `WAIVER` and `FREEAGENT` moves (with `items[]` of `ADD` / `DROP`:
+`playerId`, `fromTeamId`, `toTeamId`), plus every trade record ESPN still has. Week 0 holds moves
+made between the draft and week 1.
+
+**Trades are not read from here directly.** For most past trades ESPN no longer returns the executed
+record, only the bookkeeping around it: the acceptance (`TRADE_ACCEPT`, by the team receiving the
+offer), league votes (`TRADE_UPHOLD`), vetoes (`TRADE_VETO`) and sometimes the proposal. So
+`mustafatron.transform.infer_trades` follows every player's ownership through the draft, adds, drops
+and weekly rosters: a player who turns up on a team's roster while another team still holds him was
+traded there. The acceptance records only date the trades. The result matches ESPN's per-team trade
+counts (`transactionCounter.trades`) in every season but one. In 2022, two trades passed a player
+through a third team inside one week (Tyler Lockett went Carpenter → Edwards → Richardson in
+week 10). Weekly rosters can't see the middle hop, so the move shows as direct. Each team's net
+players that week are still right.
+
+Free agency is team `0`, or `-1` in 2018. Waivers ESPN processes itself carry `teamId` -2147483648.
+From 2023, ESPN's `transactionCounter.acquisitions` runs 1–3 below the executed adds for a few
+teams, with no pattern found yet. Counts on the site use ESPN's counter.
 
 ### Quirks
 
