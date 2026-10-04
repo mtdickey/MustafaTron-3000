@@ -175,6 +175,13 @@ export function gameHref(g: Pick<Game, "season" | "week" | "tier">): string {
   return `/seasons/${g.season}#${g.tier === REGULAR_SEASON ? `week-${g.week}` : "playoffs"}`;
 }
 
+/** A series' notable flag (league_rules.yml thresholds) as a short headline. */
+export function flagText(f: Pair["flags"][number]): string {
+  if (f.kind === "streak") return `${manager(f.holder!).short_name} has won ${f.wins} straight`;
+  if (f.kind === "lopsided") return `Lopsided series: ${manager(f.holder!).short_name} leads ${f.wins}–${f.losses}`;
+  return "Dead-even rivalry";
+}
+
 export const TIER_LABELS: Record<string, string> = {
   NONE: "Regular season",
   WINNERS_BRACKET: "Playoffs",

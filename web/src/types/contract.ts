@@ -1053,12 +1053,20 @@ export interface WeekFile {
    * This week's games
    */
   games: [number, number, number, string, string, number, number, string | null][];
+  /**
+   * High and low score, closest game, biggest blowout (@[id] tokens)
+   */
+  headlines: string[];
   label: string;
   /**
    * The NFL weeks this matchup week covers
    */
   periods: number[];
   playoff: boolean;
+  /**
+   * The week's games retold, same order as games
+   */
+  recaps: RecapOut[];
   schema_version: 1;
   season: number;
   /**
@@ -1259,6 +1267,46 @@ export interface WeekDraftOut {
    */
   steals: PickValueOut[];
   steals_after_round: number;
+}
+/**
+ * One game of the week retold in rivalry context (stats/narrative.py).
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "RecapOut".
+ */
+export interface RecapOut {
+  away: string;
+  first_meeting: boolean;
+  /**
+   * Notable flags on the series after the game (league_rules.yml)
+   */
+  flags: FlagOut[];
+  home: string;
+  losses: number;
+  /**
+   * The side the record and streak are from: the winner (home on a tie)
+   */
+  manager: string;
+  streak: StreakOut1;
+  /**
+   * Prose; managers appear as @[id] tokens for the site to link
+   */
+  text: string;
+  ties: number;
+  /**
+   * The series after the game, from manager's side
+   */
+  wins: number;
+}
+/**
+ * The series' current streak after the game
+ */
+export interface StreakOut1 {
+  /**
+   * null when the last meeting was a tie
+   */
+  holder: string | null;
+  length: number;
 }
 /**
  * This interface was referenced by `ContractFiles`'s JSON-Schema

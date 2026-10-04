@@ -1,0 +1,20 @@
+---
+// Generated prose from the Python narrative (stats/narrative.py), whose managers arrive as @[id]
+// tokens: each becomes the manager's name, linked to their profile.
+import ManagerName from "./ManagerName.astro";
+import { manager } from "../lib/data";
+
+interface Props {
+  text: string;
+  short?: boolean;
+}
+
+const { text, short = false } = Astro.props;
+// split() with a capture group alternates plain text and manager ids
+const parts = text.split(/@\[([^\]]+)\]/);
+const name = (id: string) => (short ? manager(id).short_name : manager(id).name);
+// A short name like "Matt C." can end a sentence: don't print "Matt C.."
+const plain = (i: number) => (i > 0 && name(parts[i - 1]!).endsWith(".") ? parts[i]!.replace(/^\./, "") : parts[i]!);
+---
+
+{parts.map((part, i) => (i % 2 ? <ManagerName id={part} short={short} link /> : plain(i)))}

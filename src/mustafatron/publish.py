@@ -22,6 +22,7 @@ from mustafatron.stats.coaching import CoachingLine, coaching_book
 from mustafatron.stats.draft import DraftClass, PickValue, draft_book
 from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags, rivalries
 from mustafatron.stats.lineup import TeamWeek
+from mustafatron.stats.narrative import Recap, headlines, recap
 from mustafatron.stats.profiles import best_and_worst_weeks, career_all_play
 from mustafatron.stats.records import records_book
 from mustafatron.stats.seasons import all_play, superlatives, week_scores
@@ -412,6 +413,8 @@ def week_file(league: League, w: ReportWeek, rules: LeagueRules) -> c.WeekFile:
         playoff=w.playoff,
         periods=list(w.periods),
         games=[game_row(g) for g in games_in(s, w.week)],
+        recaps=[_recap(recap(league.games, g, rules.rivalry, w.label)) for g in games_in(s, w.week)],
+        headlines=[h.text for h in headlines(games_in(s, w.week))],
         standings=[
             c.StandingLineOut(
                 manager=x.manager_id,
@@ -426,6 +429,22 @@ def week_file(league: League, w: ReportWeek, rules: LeagueRules) -> c.WeekFile:
         all_play=_all_play_grid(s, w.week),
         coaching=_week_coaching(league, s, w.week),
         draft=_week_draft(s, w.week, rules),
+    )
+
+
+def _recap(r: Recap) -> c.RecapOut:
+    streak = r.after.current_streak
+    return c.RecapOut(
+        home=r.game.home_id,
+        away=r.game.away_id,
+        text=r.text,
+        first_meeting=r.first_meeting,
+        manager=r.after.a,
+        wins=r.after.wins,
+        losses=r.after.losses,
+        ties=r.after.ties,
+        streak=c.StreakOut(holder=streak.holder, length=streak.length),
+        flags=[c.FlagOut(kind=f.kind, holder=f.holder, wins=f.wins, losses=f.losses) for f in r.flags],  # type: ignore[arg-type]
     )
 
 
