@@ -294,6 +294,90 @@
       "title": "FlagOut",
       "type": "object"
     },
+    "FormOut": {
+      "additionalProperties": false,
+      "description": "A team's season entering the previewed week.",
+      "properties": {
+        "all_play_pct": {
+          "title": "All Play Pct",
+          "type": "number"
+        },
+        "last": {
+          "description": "Last three results, oldest first",
+          "title": "Last",
+          "type": "string"
+        },
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "points_for": {
+          "title": "Points For",
+          "type": "number"
+        },
+        "rank": {
+          "description": "Standings position through the report's week (seed in the playoffs)",
+          "title": "Rank",
+          "type": "integer"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "wins": {
+          "description": "Regular season",
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "rank",
+        "wins",
+        "losses",
+        "ties",
+        "points_for",
+        "last",
+        "all_play_pct"
+      ],
+      "title": "FormOut",
+      "type": "object"
+    },
+    "MeetingOut": {
+      "additionalProperties": false,
+      "properties": {
+        "opponent_score": {
+          "description": "Manager b's score",
+          "title": "Opponent Score",
+          "type": "number"
+        },
+        "score": {
+          "description": "Manager a's score",
+          "title": "Score",
+          "type": "number"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "week": {
+          "title": "Week",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "season",
+        "week",
+        "score",
+        "opponent_score"
+      ],
+      "title": "MeetingOut",
+      "type": "object"
+    },
     "MissedStartOut": {
       "additionalProperties": false,
       "properties": {
@@ -420,6 +504,107 @@
         "points"
       ],
       "title": "PlayerPointsOut",
+      "type": "object"
+    },
+    "PreviewOut": {
+      "additionalProperties": false,
+      "description": "One matchup of the following week, as it looked when the report's week ended.",
+      "properties": {
+        "away": {
+          "title": "Away",
+          "type": "string"
+        },
+        "away_form": {
+          "$ref": "#/$defs/FormOut"
+        },
+        "blowout": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MeetingOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "closest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MeetingOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "flags": {
+          "items": {
+            "$ref": "#/$defs/FlagOut"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "games": {
+          "description": "All-time meetings before this one",
+          "title": "Games",
+          "type": "integer"
+        },
+        "home": {
+          "title": "Home",
+          "type": "string"
+        },
+        "home_form": {
+          "$ref": "#/$defs/FormOut"
+        },
+        "last_meeting": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MeetingOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "From home's side; null for a first meeting"
+        },
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "streak": {
+          "$ref": "#/$defs/StreakOut"
+        },
+        "tier": {
+          "title": "Tier",
+          "type": "string"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "wins": {
+          "description": "The series from home's side",
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "home",
+        "away",
+        "tier",
+        "games",
+        "wins",
+        "losses",
+        "ties",
+        "streak",
+        "last_meeting",
+        "closest",
+        "blowout",
+        "flags",
+        "home_form",
+        "away_form"
+      ],
+      "title": "PreviewOut",
       "type": "object"
     },
     "RecapOut": {
@@ -804,6 +989,36 @@
       "title": "Playoff",
       "type": "boolean"
     },
+    "preview_label": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Preview Label"
+    },
+    "preview_week": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The matchup week after this one, which previews cover (null after the final week). This report is always for the week just played; previews look one week ahead.",
+      "title": "Preview Week"
+    },
+    "previews": {
+      "items": {
+        "$ref": "#/$defs/PreviewOut"
+      },
+      "title": "Previews",
+      "type": "array"
+    },
     "recaps": {
       "description": "The week's games retold, same order as games",
       "items": {
@@ -848,7 +1063,10 @@
     "standings",
     "all_play",
     "coaching",
-    "draft"
+    "draft",
+    "preview_week",
+    "preview_label",
+    "previews"
   ],
   "title": "WeekFile",
   "type": "object"

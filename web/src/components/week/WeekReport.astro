@@ -7,6 +7,7 @@ import Prose from "../Prose.astro";
 import AllPlayPanel from "./AllPlayPanel.astro";
 import CoachingPanel from "./CoachingPanel.astro";
 import DraftPanel from "./DraftPanel.astro";
+import PreviewPanel from "./PreviewPanel.astro";
 import { decodeGame, flagText, rivalryHref, TIER_LABELS, weekHref, weekNeighbors } from "../../lib/data";
 import { points, record } from "../../lib/format";
 
@@ -140,6 +141,7 @@ const nflWeeks = w.periods.length > 1 ? `NFL weeks ${w.periods.join("–")}` : `
       <a href={`/seasons/${w.season}`}>The {w.season} season</a>
     </p>
   </section>
+  <PreviewPanel w={w} />
   <AllPlayPanel grid={w.all_play} label={through} />
   <CoachingPanel coaching={w.coaching} label={sofar} season={w.season} />
   <DraftPanel draft={w.draft} label={sofar} season={w.season} />

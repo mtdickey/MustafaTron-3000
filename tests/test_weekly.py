@@ -5,12 +5,15 @@ import pytest
 from mustafatron.rules import load_rules
 from mustafatron.stats.allplay import all_play
 from mustafatron.stats.coaching import coaching_book
+from mustafatron.stats.h2h import pair_record
 from mustafatron.stats.weekly import (
     MISSES_PER_MANAGER,
     all_play_through,
     coaching_through,
     draft_through,
     games_in,
+    preview_week,
+    previews,
     report_weeks,
     standings_through,
     week_label,
@@ -202,3 +205,39 @@ def test_points_so_far_never_include_a_later_week(players):
         assert p.points == pytest.approx(
             sum(s.players[p.player_id].points_in(w) for w in (1, 2, 3)), abs=0.01
         )
+
+
+# Previews ------------------------------------------------------------------------------------------
+
+
+def test_a_report_previews_the_week_after_it(league):
+    for s in league.seasons.values():
+        last = s.settings.final_matchup_period
+        assert [preview_week(s, w) for w in (1, 12, last - 1, last)] == [2, 13, last, None]
+
+
+def test_previews_stop_at_the_report_week(league):
+    s = league.seasons[2022]
+    for p in previews(league, s, 12, RULES.rivalry):
+        assert p.game.week == 13
+        assert all((m.season, m.week) < (2022, 13) for m in p.series.meetings)  # its own result unused
+        full = pair_record(league.games, p.game.home_id, p.game.away_id)
+        assert p.series.games == full.games - sum((m.season, m.week) >= (2022, 13) for m in full.meetings)
+        for f in (p.home, p.away):
+            assert f.line.wins + f.line.losses + f.line.ties == 12
+            assert len(f.last) == 3
+
+
+def test_preview_form_and_flags(league):
+    s = league.seasons[2022]
+    by_home = {p.game.home_id: p for p in previews(league, s, 12, RULES.rivalry)}
+    p = by_home["edwards"]  # vs Matt A., who had won the last five
+    assert (p.series.losses, p.series.wins) == (10, 4)
+    assert p.series.current_streak.holder == "albert" and p.series.current_streak.length == 5
+    assert [f.kind for f in p.flags] == ["streak", "lopsided"]
+    assert by_home["joyce"].home.rank == 1  # 10-2 through week 12
+
+
+def test_no_previews_after_the_final_week(league):
+    s = league.seasons[2025]
+    assert previews(league, s, report_weeks(s)[-1].week, RULES.rivalry) == []

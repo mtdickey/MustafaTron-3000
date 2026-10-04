@@ -29,14 +29,19 @@ from mustafatron.stats.seasons import all_play, superlatives, week_scores
 from mustafatron.stats.standings import all_time_standings, championship_ledger
 from mustafatron.stats.trades import Trade, trade_book
 from mustafatron.stats.weekly import (
+    Form,
     MissedStart,
+    Preview,
     ReportWeek,
     all_play_through,
     coaching_through,
     draft_through,
     games_in,
+    preview_week,
+    previews,
     report_weeks,
     standings_through,
+    week_label,
 )
 from mustafatron.transform import load_league
 
@@ -429,6 +434,43 @@ def week_file(league: League, w: ReportWeek, rules: LeagueRules) -> c.WeekFile:
         all_play=_all_play_grid(s, w.week),
         coaching=_week_coaching(league, s, w.week),
         draft=_week_draft(s, w.week, rules),
+        preview_week=(nxt := preview_week(s, w.week)),
+        preview_label=week_label(s.settings, nxt) if nxt else None,
+        previews=[_preview(x) for x in previews(league, s, w.week, rules.rivalry)],
+    )
+
+
+def _form(f: Form) -> c.FormOut:
+    return c.FormOut(
+        manager=f.manager_id,
+        rank=f.rank,
+        wins=f.line.wins,
+        losses=f.line.losses,
+        ties=f.line.ties,
+        points_for=f.line.points_for,
+        last=f.last,
+        all_play_pct=round(f.all_play.win_pct, 4),
+    )
+
+
+def _preview(p: Preview) -> c.PreviewOut:
+    s = p.series
+    met = bool(s.meetings)
+    return c.PreviewOut(
+        home=p.game.home_id,
+        away=p.game.away_id,
+        tier=p.game.tier,
+        games=s.games,
+        wins=s.wins,
+        losses=s.losses,
+        ties=s.ties,
+        streak=c.StreakOut(holder=s.current_streak.holder, length=s.current_streak.length),
+        last_meeting=_meeting(s.meetings[-1]) if met else None,
+        closest=_meeting(s.closest) if met else None,
+        blowout=_meeting(s.blowout) if met else None,
+        flags=[c.FlagOut(kind=f.kind, holder=f.holder, wins=f.wins, losses=f.losses) for f in p.flags],  # type: ignore[arg-type]
+        home_form=_form(p.home),
+        away_form=_form(p.away),
     )
 
 

@@ -12,11 +12,12 @@ weeks of its matchup (``ReportWeek.periods``).
 from dataclasses import dataclass
 
 from mustafatron.league_settings import LeagueSettings
-from mustafatron.model import Game, Season
-from mustafatron.rules import DraftReviewRules
+from mustafatron.model import Game, League, Season
+from mustafatron.rules import DraftReviewRules, RivalryRules
 from mustafatron.stats.allplay import AllPlay, Luck
 from mustafatron.stats.coaching import counted_weeks
 from mustafatron.stats.draft import DraftLine, PickValue, draft_line, steals_and_busts
+from mustafatron.stats.h2h import Flag, PairRecord, notable_flags, pair_record
 from mustafatron.stats.lineup import TeamWeek
 from mustafatron.stats.weeks import final_periods, regular_season_periods, week_scores
 
@@ -284,3 +285,67 @@ def draft_through(season: Season, week: int, rules: DraftReviewRules) -> WeekDra
         return None
     steals, busts = steals_and_busts(line.picks, rules)
     return WeekDraft(line, steals, busts)
+
+
+# Previews of the next week (the forward-looking half of scratch_h2h.py) ----------------------------
+
+
+def preview_week(season: Season, week: int) -> int | None:
+    """The matchup week that follows ``week``: the one a report for ``week`` previews.
+
+    Explicit on purpose. ``scratch_h2h.py --week N`` took N as the *upcoming* week and derived the
+    week just played as ``N - 1``; here a report is always for the week just played, and this names
+    the week after it (None after the final week).
+    """
+    later = [mp for mp in season.settings.matchup_periods if mp > week and games_in(season, mp)]
+    return min(later) if later else None
+
+
+@dataclass(frozen=True)
+class Form:
+    """A team's season so far, entering the previewed week."""
+
+    manager_id: str
+    rank: int  # in the standings through the week (seed order in the playoffs)
+    line: StandingLine
+    last: str  # the last few results, oldest first
+    all_play: AllPlay
+
+
+@dataclass(frozen=True)
+class Preview:
+    game: Game  # scheduled: its result, if any, is never read
+    series: PairRecord  # from the home side, as it stood entering the game
+    flags: list[Flag]
+    home: Form
+    away: Form
+
+
+FORM_GAMES = 3
+
+
+def previews(league: League, season: Season, week: int, rules: RivalryRules) -> list[Preview]:
+    """Every matchup of the week after ``week``, as it looked once ``week`` was over.
+
+    For a past week that is what the preview would have said at the time: the series and form stop
+    at ``week``, and the previewed game's own result is never used.
+    """
+    upcoming = preview_week(season, week)
+    if upcoming is None:
+        return []
+    table = standings_through(season, week)
+    rank = {x.manager_id: i + 1 for i, x in enumerate(table)}
+    line = {x.manager_id: x for x in table}
+    _, rows = all_play_through(season, week)
+    ap = {r.manager_id: r.all_play for r in rows}
+    played = [g for g in season.games if g.final and g.week <= week]
+
+    def form(mid: str) -> Form:
+        last = "".join(g.result_for(mid) for g in played if g.involves(mid))[-FORM_GAMES:]
+        return Form(mid, rank[mid], line[mid], last, ap.get(mid, AllPlay(mid, 0, 0, 0)))
+
+    out = []
+    for g in games_in(season, upcoming):
+        series = pair_record(league.games, g.home_id, g.away_id).before(season.season, upcoming)
+        out.append(Preview(g, series, notable_flags(series, rules), form(g.home_id), form(g.away_id)))
+    return out

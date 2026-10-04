@@ -15,7 +15,10 @@ const current = weeksFile().current;
 const report = current ? week(current.season, current.week) : null;
 
 // This week's matchups with each series' all-time record, the scratch script's "upcoming" view.
-const upcoming = gamesFile().upcoming.map(([, , home, away]) => ({ home, away, ...series(home, away) }));
+// The current report previews these itself; the hub lists them only before a report exists.
+const upcoming = report
+  ? []
+  : gamesFile().upcoming.map(([, , home, away]) => ({ home, away, ...series(home, away) }));
 const lastWeek = report || m.current_season_finished
   ? []
   : all.filter((g) => g.season === m.current_season && g.week === m.last_completed_week);
