@@ -1,0 +1,243 @@
+---
+import ManagerName from "../components/ManagerName.astro";
+import SortableTables from "../components/SortableTables.astro";
+import Base from "../layouts/Base.astro";
+import { managers, meta, trades } from "../lib/data";
+import { points, signed } from "../lib/format";
+
+const m = meta();
+const book = trades();
+const byId = new Map(book.trades.map((t) => [t.id, t]));
+type Trade = (typeof book.trades)[number];
+type Side = Trade["sides"][number];
+const sideOf = (t: Trade, manager: string) => t.sides.find((s) => s.manager === manager)!;
+const names = (ps: Side["received"]) => ps.map((p) => `${p.name} (${p.position})`).join(", ") || "nothing";
+const tradeSeasons = [...new Set(book.trades.map((t) => t.season))].sort((a, b) => b - a);
+const top = book.lopsided[0] ? byId.get(book.lopsided[0]) : undefined;
+
+const countSeasons = [...new Set(book.counts.map((x) => x.season))].sort((a, b) => a - b);
+const count = new Map(book.counts.map((x) => [`${x.manager}|${x.season}`, x]));
+const traders = managers()
+  .map((mg) => ({ id: mg.id, total: book.counts.filter((x) => x.manager === mg.id).reduce((n, x) => n + x.trades, 0) }))
+  .filter((x) => book.counts.some((c) => c.manager === x.id))
+  .sort((a, b) => b.total - a.total);
+
+const lists = [
+  { id: "best", title: "Best trades", note: "The sides that gained the most", refs: book.best },
+  { id: "worst", title: "Worst trades", note: "The sides that lost the most", refs: book.worst },
+];
+---
+
+<Base
+  title="Trades"
+  section="/trades"
+  description="Every trade in league history with its retrospective verdict, the best and worst deals, and who trades the most."
+>
+  <h1>Trades</h1>
+  <p class="lede">
+    Every trade since {book.first_season ?? 2018}, judged with hindsight: for each week after the trade, the team's best
+    possible lineup with the players it got against the best one with the players it gave up.
+  </p>
+  <p class="note small">
+    Trade details are available from {book.first_season ?? 2018}, the first season ESPN kept weekly rosters. Trade and add
+    counts go back to {m.seasons[0]}.
+  </p>
+
+  {
+    top && (
+      <div class="card headline">
+        <span class="label muted small">Most lopsided trade ever</span>
+        <p>
+          <strong>
+            <ManagerName id={top.winner} link />
+          </strong>{" "}
+          got {names(sideOf(top, top.winner).received)} for {names(sideOf(top, top.winner).sent)}, {top.season} week{" "}
+          {top.period}: <span class="num win-text">{signed(sideOf(top, top.winner).value)}</span> points for them,{" "}
+          <span class="num loss-text">{signed(top.sides.find((s) => s.manager !== top.winner)!.value)}</span> for{" "}
+          <ManagerName id={top.sides.find((s) => s.manager !== top.winner)!.manager} link />.
+        </p>
+      </div>
+    )
+  }
+
+  <div class="grid lists">
+    {
+      lists.map((l) => (
+        <section id={l.id}>
+          <h2>{l.title}</h2>
+          <p class="muted small">{l.note}: points added to their best lineups for the rest of the season.</p>
+          <ol class="ranked">
+            {l.refs.map((r) => {
+              const t = byId.get(r.trade)!;
+              const s = sideOf(t, r.manager);
+              return (
+                <li>
+                  <span class:list={["num", "v", s.value >= 0 ? "win-text" : "loss-text"]}>{signed(s.value)}</span>
+                  <span>
+                    <ManagerName id={s.manager} short link /> got {names(s.received)} for {names(s.sent)}
+                    <a class="muted small" href={`#${t.id}`}>
+                      {" "}
+                      {t.season} wk {t.period}
+                    </a>
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ))
+    }
+  </div>
+
+  <h2 id="ledger">The ledger</h2>
+  <p class="muted small">
+    Every trade, newest first. The week is the first one the players were on their new rosters. Value is points added to
+    each team's best lineups from then to its last game that mattered (consolation games don't count). A trade can help
+    both sides.
+  </p>
+  {
+    tradeSeasons.map((y) => (
+      <section class="season">
+        <h3>
+          <a href={`/seasons/${y}`}>{y}</a> <span class="muted small">{book.trades.filter((t) => t.season === y).length} trades</span>
+        </h3>
+        <div class="grid ledger">
+          {book.trades
+            .filter((t) => t.season === y)
+            .reverse()
+            .map((t) => (
+              <article class="card trade" id={t.id}>
+                <p class="muted small when">
+                  Week {t.period}
+                  {t.date && ` · accepted ${t.date}`}
+                </p>
+                {t.sides.map((s) => (
+                  <div class:list={["side", { won: s.manager === t.winner }]}>
+                    <p>
+                      <strong>
+                        <ManagerName id={s.manager} link />
+                      </strong>{" "}
+                      <span class:list={["num", s.value >= 0 ? "win-text" : "loss-text"]}>{signed(s.value)}</span>
+                    </p>
+                    <p class="small">
+                      Got <span>{names(s.received)}</span>
+                    </p>
+                  </div>
+                ))}
+                <p class="small verdict">
+                  {t.margin < 10 ? (
+                    "About even."
+                  ) : (
+                    <>
+                      <ManagerName id={t.winner} short /> won it by {points(t.margin)}.
+                    </>
+                  )}
+                </p>
+              </article>
+            ))}
+        </div>
+      </section>
+    ))
+  }
+
+  <h2 id="counts">Trades by season</h2>
+  <p class="muted small">ESPN's count of each manager's trades every season, and adds in the tooltip. Sorted by career trades.</p>
+  <div class="table-scroll">
+    <table class="sticky-first" data-sortable>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Manager</th>
+          {countSeasons.map((y) => <th scope="col">{String(y).slice(2)}</th>)}
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          traders.map((x) => (
+            <tr>
+              <th scope="row" data-sort={x.id}>
+                <ManagerName id={x.id} link />
+              </th>
+              {countSeasons.map((y) => {
+                const cnt = count.get(`${x.id}|${y}`);
+                return cnt ? (
+                  <td title={`${cnt.acquisitions} adds`} class:list={{ zero: cnt.trades === 0 }}>
+                    {cnt.trades}
+                  </td>
+                ) : (
+                  <td class="zero" data-sort="-1">
+                    ·
+                  </td>
+                );
+              })}
+              <td>
+                <strong>{x.total}</strong>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <SortableTables />
+</Base>
+
+<style>
+  .note {
+    border-left: 3px solid var(--accent);
+    padding: 0.4rem 0.75rem;
+    background: var(--panel);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .headline {
+    margin-bottom: 1.5rem;
+  }
+  .headline p {
+    margin: 0.25rem 0 0;
+  }
+  .lists {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    align-items: start;
+  }
+  .ranked {
+    padding-left: 1.4rem;
+    font-size: var(--step--1);
+  }
+  .ranked li {
+    margin-bottom: 0.35rem;
+  }
+  .ranked .v {
+    display: inline-block;
+    min-width: 3.5rem;
+    font-weight: 700;
+  }
+  .ledger {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    align-items: start;
+    margin-bottom: 1rem;
+  }
+  .trade p {
+    margin-bottom: 0.2rem;
+  }
+  .trade .side {
+    padding: 0.35rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .trade .side.won strong {
+    color: var(--ink);
+  }
+  .verdict {
+    color: var(--muted);
+  }
+  .win-text {
+    color: var(--win);
+    font-weight: 600;
+  }
+  .loss-text {
+    color: var(--loss);
+    font-weight: 600;
+  }
+  td.zero {
+    color: var(--muted);
+  }
+</style>

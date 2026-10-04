@@ -519,6 +519,55 @@ class DraftFile(ContractFile):
     rounds: list[RoundOut]
 
 
+# trades.json -------------------------------------------------------------------------------------
+
+
+class PlayerRefOut(_Model):
+    name: str
+    position: str
+
+
+class TradeSideOut(_Model):
+    manager: str
+    received: list[PlayerRefOut]
+    sent: list[PlayerRefOut]
+    value: float = Field(description="Points the trade added to this team's best lineups, rest of season")
+    weeks: int = Field(description="Weeks valued: from the trade to the team's last game that mattered")
+
+
+class TradeOut(_Model):
+    id: str
+    season: int
+    period: int = Field(description="First NFL week the players were on their new rosters")
+    date: str | None = Field(description="ISO date ESPN recorded the acceptance, when it could be matched")
+    sides: list[TradeSideOut] = Field(description="Two sides, by manager id")
+    winner: str
+    margin: float = Field(description="Winner's value minus loser's")
+
+
+class TradeSideRefOut(_Model):
+    trade: str = Field(description="TradeOut.id")
+    manager: str
+
+
+class TradeCountOut(_Model):
+    season: int
+    manager: str
+    trades: int = Field(description="ESPN's count")
+    acquisitions: int = Field(description="Adds, ESPN's count")
+
+
+class TradesFile(ContractFile):
+    """Every trade with its retrospective verdict (from 2018), and trade and add counts (every season)."""
+
+    first_season: int | None = Field(description="First season with trade detail")
+    trades: list[TradeOut] = Field(description="Finished seasons, oldest first")
+    best: list[TradeSideRefOut] = Field(description="Sides that gained the most, top 10")
+    worst: list[TradeSideRefOut] = Field(description="Sides that lost the most, top 10")
+    lopsided: list[str] = Field(description="Trade ids, biggest margin first, top 10")
+    counts: list[TradeCountOut]
+
+
 # Published path → model. seasons/{year}.json all use SeasonFile.
 FILES: dict[str, type[ContractFile]] = {
     "meta.json": Meta,
@@ -531,6 +580,7 @@ FILES: dict[str, type[ContractFile]] = {
     "luck.json": LuckFile,
     "coaching.json": CoachingFile,
     "draft.json": DraftFile,
+    "trades.json": TradesFile,
 }
 SEASON_FILE = SeasonFile
 

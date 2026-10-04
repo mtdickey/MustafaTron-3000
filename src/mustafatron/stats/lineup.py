@@ -112,6 +112,7 @@ class TeamWeek:
     started: frozenset[int]
     best: frozenset[int]  # the optimal lineup's players
     points: Mapping[int, float]  # every rostered player's points that week
+    injured: frozenset[int] = frozenset()  # on injured reserve: not available to start
 
     @property
     def left_on_bench(self) -> float:
@@ -201,6 +202,7 @@ def _solve(season: Season) -> list[TeamWeek]:
                 started=started,
                 best=best.player_ids,
                 points={w.player_id: w.points for w in rows},
+                injured=frozenset(w.player_id for w in rows if w.slot == INJURED_RESERVE),
             )
         )
     return out

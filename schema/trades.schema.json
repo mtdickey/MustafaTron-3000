@@ -1,0 +1,245 @@
+{
+  "$defs": {
+    "PlayerRefOut": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "position": {
+          "title": "Position",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "position"
+      ],
+      "title": "PlayerRefOut",
+      "type": "object"
+    },
+    "TradeCountOut": {
+      "additionalProperties": false,
+      "properties": {
+        "acquisitions": {
+          "description": "Adds, ESPN's count",
+          "title": "Acquisitions",
+          "type": "integer"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "trades": {
+          "description": "ESPN's count",
+          "title": "Trades",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "season",
+        "manager",
+        "trades",
+        "acquisitions"
+      ],
+      "title": "TradeCountOut",
+      "type": "object"
+    },
+    "TradeOut": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "ISO date ESPN recorded the acceptance, when it could be matched",
+          "title": "Date"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "margin": {
+          "description": "Winner's value minus loser's",
+          "title": "Margin",
+          "type": "number"
+        },
+        "period": {
+          "description": "First NFL week the players were on their new rosters",
+          "title": "Period",
+          "type": "integer"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "sides": {
+          "description": "Two sides, by manager id",
+          "items": {
+            "$ref": "#/$defs/TradeSideOut"
+          },
+          "title": "Sides",
+          "type": "array"
+        },
+        "winner": {
+          "title": "Winner",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "season",
+        "period",
+        "date",
+        "sides",
+        "winner",
+        "margin"
+      ],
+      "title": "TradeOut",
+      "type": "object"
+    },
+    "TradeSideOut": {
+      "additionalProperties": false,
+      "properties": {
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "received": {
+          "items": {
+            "$ref": "#/$defs/PlayerRefOut"
+          },
+          "title": "Received",
+          "type": "array"
+        },
+        "sent": {
+          "items": {
+            "$ref": "#/$defs/PlayerRefOut"
+          },
+          "title": "Sent",
+          "type": "array"
+        },
+        "value": {
+          "description": "Points the trade added to this team's best lineups, rest of season",
+          "title": "Value",
+          "type": "number"
+        },
+        "weeks": {
+          "description": "Weeks valued: from the trade to the team's last game that mattered",
+          "title": "Weeks",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "received",
+        "sent",
+        "value",
+        "weeks"
+      ],
+      "title": "TradeSideOut",
+      "type": "object"
+    },
+    "TradeSideRefOut": {
+      "additionalProperties": false,
+      "properties": {
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "trade": {
+          "description": "TradeOut.id",
+          "title": "Trade",
+          "type": "string"
+        }
+      },
+      "required": [
+        "trade",
+        "manager"
+      ],
+      "title": "TradeSideRefOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Every trade with its retrospective verdict (from 2018), and trade and add counts (every season).",
+  "properties": {
+    "best": {
+      "description": "Sides that gained the most, top 10",
+      "items": {
+        "$ref": "#/$defs/TradeSideRefOut"
+      },
+      "title": "Best",
+      "type": "array"
+    },
+    "counts": {
+      "items": {
+        "$ref": "#/$defs/TradeCountOut"
+      },
+      "title": "Counts",
+      "type": "array"
+    },
+    "first_season": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "First season with trade detail",
+      "title": "First Season"
+    },
+    "lopsided": {
+      "description": "Trade ids, biggest margin first, top 10",
+      "items": {
+        "type": "string"
+      },
+      "title": "Lopsided",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "trades": {
+      "description": "Finished seasons, oldest first",
+      "items": {
+        "$ref": "#/$defs/TradeOut"
+      },
+      "title": "Trades",
+      "type": "array"
+    },
+    "worst": {
+      "description": "Sides that lost the most, top 10",
+      "items": {
+        "$ref": "#/$defs/TradeSideRefOut"
+      },
+      "title": "Worst",
+      "type": "array"
+    }
+  },
+  "required": [
+    "first_season",
+    "trades",
+    "best",
+    "worst",
+    "lopsided",
+    "counts"
+  ],
+  "title": "TradesFile",
+  "type": "object"
+}

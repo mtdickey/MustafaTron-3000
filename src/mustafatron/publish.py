@@ -25,6 +25,7 @@ from mustafatron.stats.profiles import best_and_worst_weeks, career_all_play
 from mustafatron.stats.records import records_book
 from mustafatron.stats.seasons import all_play, superlatives, week_scores
 from mustafatron.stats.standings import all_time_standings, championship_ledger
+from mustafatron.stats.trades import Trade, trade_book
 from mustafatron.transform import load_league
 
 REPO = Path(__file__).resolve().parents[2]
@@ -299,6 +300,21 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
         ],
     )
 
+    tb = trade_book(league)
+    out["trades.json"] = c.TradesFile(
+        first_season=tb.first_season,
+        trades=[_trade(league, t) for t in tb.trades],
+        best=[c.TradeSideRefOut(trade=t.id, manager=side.manager_id) for t, side in tb.best],
+        worst=[c.TradeSideRefOut(trade=t.id, manager=side.manager_id) for t, side in tb.worst],
+        lopsided=[t.id for t in tb.lopsided],
+        counts=[
+            c.TradeCountOut(
+                season=x.season, manager=x.manager_id, trades=x.trades, acquisitions=x.acquisitions
+            )
+            for x in tb.counts
+        ],
+    )
+
     out["profiles.json"] = c.ProfilesFile(
         profiles=[_profile(league, m.id) for m in league.managers_with_games()]
     )
@@ -353,6 +369,37 @@ def _pick(p: PickValue) -> c.PickValueOut:
         points_above_avg=p.points_above_avg,
         expected=p.expected,
         value=p.value,
+    )
+
+
+def _trade(league: League, t: Trade) -> c.TradeOut:
+    players = league.seasons[t.season].players
+
+    def refs(ids: tuple[int, ...]) -> list[c.PlayerRefOut]:
+        return [
+            c.PlayerRefOut(name=players[p].name, position=players[p].position)
+            if p in players
+            else c.PlayerRefOut(name=str(p), position="?")
+            for p in ids
+        ]
+
+    return c.TradeOut(
+        id=t.id,
+        season=t.season,
+        period=t.period,
+        date=t.date,
+        sides=[
+            c.TradeSideOut(
+                manager=s.manager_id,
+                received=refs(s.players_in),
+                sent=refs(s.players_out),
+                value=s.value,
+                weeks=s.weeks,
+            )
+            for s in t.sides
+        ],
+        winner=t.winner.manager_id,
+        margin=t.margin,
     )
 
 

@@ -21,6 +21,7 @@ import type {
   RecordsFile,
   SeasonFile,
   StandingsFile,
+  TradesFile,
 } from "../types/contract";
 
 // Astro always runs from web/, and publicDir is the default public/.
@@ -52,6 +53,7 @@ export const profiles = (): ProfilesFile => load("profiles.json");
 export const luck = (): LuckFile => load("luck.json");
 export const coaching = (): CoachingFile => load("coaching.json");
 export const draft = (): DraftFile => load("draft.json");
+export const trades = (): TradesFile => load("trades.json");
 
 export const managerHref = (id: string) => `/managers/${id}`;
 

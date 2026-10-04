@@ -50,7 +50,8 @@ rivalry:
 # (N - 1) * 7 days after this, and a roster move counts from the first week that starts after it.
 # This replaces the hand-typed season_start_date, which disagreed with itself in 2025
 # (Sept 4 in one notebook cell, Sept 7 in another). Sept 4 was right: Sept 7 was the first Sunday.
-# Once transactions are fetched (M3), their own scoringPeriodId supersedes this for them.
+# Trades no longer use this: since M3 a trade counts from the first week its players were on their
+# new rosters (mustafatron.transform.infer_trades). Kept for the legacy report code.
 nfl_week1_kickoff:
   2015: 2015-09-11T00:30:00Z
   2016: 2016-09-09T00:30:00Z
