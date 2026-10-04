@@ -4,7 +4,6 @@ import pytest
 
 from mustafatron.stats.coaching import COUNTED_TIERS, coaching_book
 from mustafatron.stats.lineup import Candidate, optimal_lineup, team_weeks
-from mustafatron.transform import load_league
 
 SLOTS = {"QB": 1, "RB": 2, "WR": 2, "TE": 1, "RB/WR/TE": 1, "D/ST": 1, "K": 1}
 RB, WR, TE = {"RB", "RB/WR/TE"}, {"WR", "RB/WR/TE"}, {"TE", "RB/WR/TE"}
@@ -57,8 +56,8 @@ def test_ties_keep_the_player_who_actually_started():
 
 
 @pytest.fixture(scope="module")
-def league():
-    return load_league(range(2015, 2026), player_data=True)
+def league(player_league):
+    return player_league
 
 
 @pytest.fixture(scope="module")

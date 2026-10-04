@@ -5,6 +5,7 @@
  * Published files by schema name (seasons/{year}.json all share `season`).
  */
 export interface ContractFiles {
+  awards: AwardsFile;
   coaching: CoachingFile;
   draft: DraftFile;
   games: GamesFile;
@@ -17,6 +18,51 @@ export interface ContractFiles {
   season: SeasonFile;
   standings: StandingsFile;
   trades: TradesFile;
+}
+/**
+ * The league's awards and every season's winner (league_rules.yml says what decides each).
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "AwardsFile".
+ */
+export interface AwardsFile {
+  awards: AwardOut[];
+  schema_version: 1;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "AwardOut".
+ */
+export interface AwardOut {
+  description: string;
+  id: string;
+  name: string;
+  /**
+   * First season the data can decide it
+   */
+  since: number;
+  status: "official" | "proposed";
+  /**
+   * Every finished season, newest first
+   */
+  winners: AwardWinnerOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "AwardWinnerOut".
+ */
+export interface AwardWinnerOut {
+  detail: string;
+  manager: string | null;
+  season: number;
+  /**
+   * computed from the data, recorded by hand (data/manual/awards.yml), or not recorded
+   */
+  source: "computed" | "manual" | "unrecorded";
+  /**
+   * The metric: trade value, bench points, or luck in wins
+   */
+  value: number | null;
 }
 /**
  * Lineup decisions, from the first season ESPN kept weekly rosters (2018).

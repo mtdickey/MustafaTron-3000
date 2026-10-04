@@ -4,12 +4,11 @@ import pytest
 
 from mustafatron.stats.coaching import counted_weeks
 from mustafatron.stats.trades import trade_book
-from mustafatron.transform import load_league
 
 
 @pytest.fixture(scope="module")
-def league():
-    return load_league(range(2015, 2026), player_data=True)
+def league(player_league):
+    return player_league
 
 
 @pytest.fixture(scope="module")

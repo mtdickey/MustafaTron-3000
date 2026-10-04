@@ -15,3 +15,11 @@ def _no_network(monkeypatch):
 
     monkeypatch.setattr(socket.socket, "connect", blocked)
     monkeypatch.setattr(socket, "create_connection", blocked)
+
+
+@pytest.fixture(scope="session")
+def player_league():
+    """Every committed season with player data, loaded once: lineups and trade values are cached on it."""
+    from mustafatron.transform import load_league
+
+    return load_league(range(2015, 2026), player_data=True)

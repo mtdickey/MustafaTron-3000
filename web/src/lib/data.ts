@@ -9,6 +9,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type {
+  AwardsFile,
   CoachingFile,
   DraftFile,
   GamesFile,
@@ -54,6 +55,7 @@ export const luck = (): LuckFile => load("luck.json");
 export const coaching = (): CoachingFile => load("coaching.json");
 export const draft = (): DraftFile => load("draft.json");
 export const trades = (): TradesFile => load("trades.json");
+export const awards = (): AwardsFile => load("awards.json");
 
 export const managerHref = (id: string) => `/managers/${id}`;
 

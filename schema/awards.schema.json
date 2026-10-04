@@ -1,0 +1,129 @@
+{
+  "$defs": {
+    "AwardOut": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "since": {
+          "description": "First season the data can decide it",
+          "title": "Since",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "official",
+            "proposed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "winners": {
+          "description": "Every finished season, newest first",
+          "items": {
+            "$ref": "#/$defs/AwardWinnerOut"
+          },
+          "title": "Winners",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "status",
+        "since",
+        "winners"
+      ],
+      "title": "AwardOut",
+      "type": "object"
+    },
+    "AwardWinnerOut": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "title": "Detail",
+          "type": "string"
+        },
+        "manager": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Manager"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "source": {
+          "description": "computed from the data, recorded by hand (data/manual/awards.yml), or not recorded",
+          "enum": [
+            "computed",
+            "manual",
+            "unrecorded"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The metric: trade value, bench points, or luck in wins",
+          "title": "Value"
+        }
+      },
+      "required": [
+        "season",
+        "source",
+        "manager",
+        "value",
+        "detail"
+      ],
+      "title": "AwardWinnerOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The league's awards and every season's winner (league_rules.yml says what decides each).",
+  "properties": {
+    "awards": {
+      "items": {
+        "$ref": "#/$defs/AwardOut"
+      },
+      "title": "Awards",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "awards"
+  ],
+  "title": "AwardsFile",
+  "type": "object"
+}

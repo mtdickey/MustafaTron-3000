@@ -17,6 +17,7 @@ from mustafatron.espn.cache import SeasonCache
 from mustafatron.model import Game, League, Season
 from mustafatron.rules import LeagueRules, load_rules
 from mustafatron.stats.allplay import Luck, career_luck, luckiest_seasons, season_luck
+from mustafatron.stats.awards import award_history
 from mustafatron.stats.coaching import CoachingLine, coaching_book
 from mustafatron.stats.draft import DraftClass, PickValue, draft_book
 from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags, rivalries
@@ -313,6 +314,29 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
             )
             for x in tb.counts
         ],
+    )
+
+    out["awards.json"] = c.AwardsFile(
+        awards=[
+            c.AwardOut(
+                id=a.id,
+                name=a.name,
+                description=a.description,
+                status=a.status,  # type: ignore[arg-type]
+                since=a.since,
+                winners=[
+                    c.AwardWinnerOut(
+                        season=r.season,
+                        source=r.source,
+                        manager=r.winner.manager_id if r.winner else None,
+                        value=r.winner.value if r.winner else None,
+                        detail=r.winner.detail if r.winner else "",
+                    )
+                    for r in award_history(league, a)
+                ],
+            )
+            for a in rules.awards
+        ]
     )
 
     out["profiles.json"] = c.ProfilesFile(

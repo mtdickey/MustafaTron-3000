@@ -4,14 +4,13 @@ import pytest
 
 from mustafatron.rules import load_rules
 from mustafatron.stats.draft import _fit, draft_book, season_values
-from mustafatron.transform import load_league
 
 RULES = load_rules().draft_review
 
 
 @pytest.fixture(scope="module")
-def league():
-    return load_league(range(2015, 2026), player_data=True)
+def league(player_league):
+    return player_league
 
 
 @pytest.fixture(scope="module")

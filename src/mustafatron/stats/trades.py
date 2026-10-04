@@ -94,7 +94,22 @@ def side_value(season: Season, side: Transaction, eligible: dict[int, frozenset[
     return round(total, 2), len(weeks)
 
 
+# Valued seasons, by object identity, as stats.lineup caches team-weeks: awards and the trade
+# book both need them, and valuing a season's trades solves a few thousand lineups.
+_valued: dict[int, tuple[Season, list[Trade]]] = {}
+
+
 def season_trades(season: Season) -> list[Trade]:
+    """Every trade of a season, each side valued."""
+    hit = _valued.get(id(season))
+    if hit is None or hit[0] is not season:
+        if len(_valued) > 64:
+            _valued.clear()
+        hit = _valued[id(season)] = (season, _value_trades(season))
+    return list(hit[1])
+
+
+def _value_trades(season: Season) -> list[Trade]:
     eligible = eligibility(season)
     by_id: dict[str, list[Transaction]] = defaultdict(list)
     for t in season.trades:

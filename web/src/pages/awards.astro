@@ -1,0 +1,152 @@
+---
+import ManagerName from "../components/ManagerName.astro";
+import Base from "../layouts/Base.astro";
+import { awards, managers } from "../lib/data";
+import { signed } from "../lib/format";
+
+const all = awards().awards;
+const official = all.filter((a) => a.status === "official");
+const proposed = all.filter((a) => a.status === "proposed");
+
+// Trophy cabinet: each manager's wins of the official awards.
+const cabinet = managers()
+  .map((m) => ({
+    id: m.id,
+    wins: official.map((a) => a.winners.filter((w) => w.manager === m.id).map((w) => w.season)),
+  }))
+  .filter((x) => x.wins.some((w) => w.length))
+  .sort((a, b) => b.wins.flat().length - a.wins.flat().length);
+
+const unit = (id: string) => (id === "coach" ? " pts left" : id === "kariuki" || id === "grudee" ? " pts" : " W");
+const value = (award: string, v: number | null) => (v === null ? "" : award === "coach" ? `${v.toFixed(1)}${unit(award)}` : `${signed(v)}${unit(award)}`);
+---
+
+<Base
+  title="Awards"
+  section="/awards"
+  description="The league's named awards, the Richard Kariuki Award, the Jon Grudee Award and Coach of the Year, and every season's winner."
+>
+  <h1>Awards</h1>
+  <p class="lede">
+    The awards that used to live only in GroupMe captions, now with a written-down rule and a winner for every season the
+    data can decide.
+  </p>
+  <p class="note small">
+    The rules here are the hub's reading of how the awards have been given, still to be confirmed with the league.
+    Trades and benches are only on record from 2018, so earlier winners show as not recorded until someone fills them in
+    by hand.
+  </p>
+
+  <div class="grid awards">
+    {
+      [...official, ...proposed].map((a) => (
+        <section class="card award" id={a.id}>
+          <h2>
+            <a href={`#${a.id}`}>{a.name}</a>
+            {a.status === "proposed" && <span class="badge">Proposed</span>}
+          </h2>
+          <p class="muted small">{a.description}</p>
+          <ol class="winners">
+            {a.winners.map((w) => (
+              <li class:list={{ unrecorded: w.source === "unrecorded" }}>
+                <a class="season" href={`/seasons/${w.season}`}>
+                  {w.season}
+                </a>
+                {w.manager ? (
+                  <span class="who">
+                    <strong>
+                      <ManagerName id={w.manager} link />
+                    </strong>
+                    {w.source === "manual" && <span class="muted small"> (recorded by hand)</span>}
+                    <span class="num small v">{value(a.id, w.value)}</span>
+                    {w.detail && <span class="small muted detail">{w.detail}</span>}
+                  </span>
+                ) : (
+                  <span class="who muted small">Not recorded{w.season < a.since && ` (the data starts in ${a.since})`}</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+  </div>
+
+  <h2 id="cabinet">Trophy cabinet</h2>
+  <div class="table-scroll">
+    <table class="sticky-first">
+      <thead>
+        <tr>
+          <th scope="col" class="text">Manager</th>
+          {official.map((a) => <th scope="col" class="text">{a.name.replace("The ", "")}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {
+          cabinet.map((x) => (
+            <tr>
+              <th scope="row">
+                <ManagerName id={x.id} link />
+              </th>
+              {x.wins.map((seasons) => (
+                <td class="text">{seasons.length ? `${seasons.length} · ${[...seasons].sort().join(", ")}` : "–"}</td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</Base>
+
+<style>
+  .note {
+    border-left: 3px solid var(--accent);
+    padding: 0.4rem 0.75rem;
+    background: var(--panel);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .awards {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    align-items: start;
+    margin-bottom: 1.5rem;
+  }
+  .award h2 {
+    font-size: var(--step-1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .winners {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .winners li {
+    display: grid;
+    grid-template-columns: 3.2rem 1fr;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.5rem;
+  }
+  .v {
+    margin-left: auto;
+    font-weight: 600;
+  }
+  .detail {
+    flex-basis: 100%;
+  }
+  .unrecorded .season {
+    color: var(--muted);
+  }
+  td.text,
+  th.text {
+    text-align: left;
+  }
+</style>

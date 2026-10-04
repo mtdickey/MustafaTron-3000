@@ -65,3 +65,41 @@ nfl_week1_kickoff:
   2024: 2024-09-06T00:40:00Z
   2025: 2025-09-05T00:20:00Z
   2026: 2026-09-10T00:20:00Z  # a Wednesday night opener
+
+# The league's awards. Each names a metric computed in src/mustafatron/stats/awards.py, from the
+# first season the data supports it (`since`); data/manual/awards.yml records winners by hand for
+# seasons before that, or overrides a computed one. Until now these lived only in GroupMe captions,
+# so the criteria below are this file's reading of them, to be confirmed with the league:
+#   status: official  - an award the league already gives
+#   status: proposed  - suggested here, shown on the site as proposed until the league adopts it
+awards:
+  - id: kariuki
+    name: The Richard Kariuki Award
+    description: The biggest fleece of the season. Goes to the manager on the wrong end of the season's worst trade, by rest-of-season value to their best lineups.
+    metric: worst_trade
+    status: official
+    since: 2018
+  - id: grudee
+    name: The Jon Grudee Award
+    description: The trade of the year. Goes to the manager whose trade added the most rest-of-season value to their best lineups.
+    metric: best_trade
+    status: official
+    since: 2018
+  - id: coach
+    name: Coach of the Year
+    description: Fewest points left on the bench over the regular season, against the best lineup each week.
+    metric: fewest_bench_points
+    status: official
+    since: 2018
+  - id: horseshoe
+    name: The Golden Horseshoe
+    description: The luckiest record of the season. The regular season record furthest above the team's all-play rate (ranked by win pct, so a 14-game season has no edge).
+    metric: luckiest
+    status: proposed
+    since: 2015
+  - id: snakebit
+    name: Snakebit
+    description: The unluckiest record of the season. The regular season record furthest below the team's all-play rate (ranked by win pct).
+    metric: unluckiest
+    status: proposed
+    since: 2015
