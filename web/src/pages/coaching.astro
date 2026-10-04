@@ -1,0 +1,276 @@
+---
+import * as Plot from "@observablehq/plot";
+import ManagerName from "../components/ManagerName.astro";
+import PlotFigure from "../components/PlotFigure.astro";
+import SortableTables from "../components/SortableTables.astro";
+import Base from "../layouts/Base.astro";
+import { coaching, currentManagers, manager, meta, TIER_LABELS } from "../lib/data";
+import { points } from "../lib/format";
+
+const m = meta();
+const book = coaching();
+const active = new Set(currentManagers().map((x) => x.id));
+const pct1 = (v: number) => `${(v * 100).toFixed(1)}%`;
+const seasons = [...new Set(book.seasons.map((s) => s.season))].sort((a, b) => b - a);
+const latest = seasons[0];
+const latestLines = book.seasons.filter((s) => s.season === latest).sort((a, b) => b.left_on_bench - a.left_on_bench);
+
+type Week = (typeof book.worst_weeks)[number];
+type P = Week["should_have_started"][number];
+const who = (ps: P[]) => ps.map((p) => `${p.name} (${points(p.points)})`).join(", ");
+const weekHref = (season: number, period: number) => `/seasons/${season}#week-${period}`;
+---
+
+<Base
+  title="Coaching"
+  section="/coaching"
+  description="Points left on the bench, lineup efficiency and the most painful bench decisions in league history."
+>
+  <h1>Coaching</h1>
+  <p class="lede">
+    Every lineup against the best one the manager could have started from their own roster that week: points left
+    on the bench, how often the lineup was perfect, and the losses the bench would have won.
+  </p>
+  <p class="note small">
+    Player-level stats available from {book.first_season ?? 2018}. For {m.seasons[0]}–{(book.first_season ?? 2018) - 1}
+    ESPN kept only the starters, not the bench.
+  </p>
+
+  <h2 id="careers">Careers</h2>
+  <p class="muted small">
+    Weeks counted: the regular season, the championship bracket and the 3rd place game (not the losers' consolation
+    ladder). Sorted by points left per week, since totals favor whoever played the most weeks. Subs: lineup changes
+    that would have made every one of those weeks perfect.
+  </p>
+  <div class="table-scroll">
+    <table class="sticky-first" data-sortable>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Manager</th>
+          <th scope="col">Yrs</th>
+          <th scope="col">Weeks</th>
+          <th scope="col" title="Points left on the bench per week">Left / wk</th>
+          <th scope="col" title="Total points left on the bench">Left</th>
+          <th scope="col" title="Points scored as a share of the best possible">Efficiency</th>
+          <th scope="col" title="Weeks with the best possible lineup">Perfect</th>
+          <th scope="col">Subs</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          book.careers.map((c) => (
+            <tr class:list={{ former: !active.has(c.manager) }}>
+              <th scope="row" data-sort={c.manager}>
+                <ManagerName id={c.manager} link />
+              </th>
+              <td>{c.seasons}</td>
+              <td>{c.weeks}</td>
+              <td data-sort={c.per_week}>{points(c.per_week, 2)}</td>
+              <td data-sort={c.left_on_bench}>{points(c.left_on_bench, 0)}</td>
+              <td data-sort={c.efficiency}>{pct1(c.efficiency)}</td>
+              <td>{c.perfect_weeks}</td>
+              <td>{c.substitutions}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  {
+    latest && (
+      <PlotFigure
+        label={`Points left on the bench in ${latest}, by manager, with the number of lineup changes that would have fixed it`}
+        caption={`${latest}: points left on the bench, with the substitutions that would have recovered them in parentheses.`}
+        options={{
+          height: 28 * latestLines.length + 40,
+          marginLeft: 120,
+          x: { label: "Points left on the bench →", grid: true },
+          y: { label: null, domain: latestLines.map((s) => s.manager), tickFormat: (id: string) => `${manager(id).short_name} (${latestLines.find((s) => s.manager === id)!.substitutions})` },
+          marks: [Plot.barX(latestLines, { x: "left_on_bench", y: "manager", className: "loss" }), Plot.ruleX([0])],
+        }}
+      />
+    )
+  }
+
+  <h2 id="if-only">If only</h2>
+  <p class="muted small">
+    Losses the manager's own bench would have won, with the opponent's score as it was. Most points left first.
+  </p>
+  <ol class="if-only">
+    {
+      book.if_only.map((x) => (
+        <li class="card">
+          <p class="head">
+            <strong>
+              <ManagerName id={x.manager} link />
+            </strong>{" "}
+            lost {points(x.score, 2)}–{points(x.opponent_score, 2)} to <ManagerName id={x.opponent} link />
+            <span class="muted small">
+              {" "}
+              · <a href={`/seasons/${x.season}#${x.tier === "NONE" ? `week-${x.week}` : "playoffs"}`}>{x.season} {x.tier === "NONE" ? `week ${x.week}` : TIER_LABELS[x.tier]?.toLowerCase()}</a>
+            </span>
+          </p>
+          <p>
+            The best lineup would have scored <strong class="num">{points(x.optimal, 2)}</strong>,{" "}
+            {points(x.left_on_bench, 1)} more.
+          </p>
+          {x.weeks.map((w) =>
+            w.should_have_started.length ? (
+              <p class="small">
+                {x.weeks.length > 1 && <span class="muted">NFL week {w.period}: </span>}
+                Benched <span class="win-text">{who(w.should_have_started)}</span>; started{" "}
+                <span class="loss-text">{who(w.should_have_sat)}</span>.
+              </p>
+            ) : null,
+          )}
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="grid weeks">
+    <section id="worst-weeks">
+      <h2>Worst-managed weeks</h2>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" class="text">Week</th>
+              <th scope="col" class="text">Manager</th>
+              <th scope="col">Scored</th>
+              <th scope="col">Best</th>
+              <th scope="col">Left</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              book.worst_weeks.map((w) => (
+                <tr title={`Benched ${who(w.should_have_started)}`}>
+                  <th scope="row" class="text">
+                    <a href={weekHref(w.season, w.period)}>
+                      {w.season} wk {w.period}
+                    </a>
+                  </th>
+                  <td class="text">
+                    <ManagerName id={w.manager} short link />
+                  </td>
+                  <td>{points(w.actual)}</td>
+                  <td>{points(w.optimal)}</td>
+                  <td>
+                    {points(w.left_on_bench)} <span class="muted">({w.substitutions})</span>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="best-weeks">
+      <h2>Best perfect lineups</h2>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" class="text">Week</th>
+              <th scope="col" class="text">Manager</th>
+              <th scope="col">Scored</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              book.best_weeks.map((w) => (
+                <tr>
+                  <th scope="row" class="text">
+                    <a href={weekHref(w.season, w.period)}>
+                      {w.season} wk {w.period}
+                    </a>
+                  </th>
+                  <td class="text">
+                    <ManagerName id={w.manager} short link />
+                  </td>
+                  <td>{points(w.actual, 2)}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="muted small">Weeks where the lineup started was the best possible, highest-scoring first.</p>
+    </section>
+  </div>
+
+  <h2 id="seasons">By season</h2>
+  <div class="table-scroll">
+    <table class="sticky-first">
+      <thead>
+        <tr>
+          <th scope="col" class="text">Season</th>
+          <th scope="col" class="text">Fewest left / wk</th>
+          <th scope="col" class="text">Most left / wk</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          seasons.map((y) => {
+            const lines = book.seasons.filter((s) => s.season === y);
+            const best = lines[0]!;
+            const worst = lines.at(-1)!;
+            return (
+              <tr>
+                <th scope="row" class="text">
+                  <a href={`/seasons/${y}`}>{y}</a>
+                </th>
+                <td class="text">
+                  <ManagerName id={best.manager} link /> <span class="muted">{points(best.per_week, 2)}</span>
+                </td>
+                <td class="text">
+                  <ManagerName id={worst.manager} link /> <span class="muted">{points(worst.per_week, 2)}</span>
+                </td>
+              </tr>
+            );
+          })
+        }
+      </tbody>
+    </table>
+  </div>
+  <SortableTables />
+</Base>
+
+<style>
+  .note {
+    border-left: 3px solid var(--accent);
+    padding: 0.4rem 0.75rem;
+    background: var(--panel);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  .if-only {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  }
+  .if-only p {
+    margin-bottom: 0.35rem;
+  }
+  .win-text {
+    color: var(--win);
+    font-weight: 600;
+  }
+  .loss-text {
+    color: var(--loss);
+    font-weight: 600;
+  }
+  .weeks {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    align-items: start;
+  }
+  tr.former > * {
+    color: var(--muted);
+  }
+  th.text {
+    text-align: left;
+  }
+</style>

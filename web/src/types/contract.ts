@@ -5,6 +5,7 @@
  * Published files by schema name (seasons/{year}.json all share `season`).
  */
 export interface ContractFiles {
+  coaching: CoachingFile;
   games: GamesFile;
   h2h: H2HFile;
   luck: LuckFile;
@@ -14,6 +15,171 @@ export interface ContractFiles {
   records: RecordsFile;
   season: SeasonFile;
   standings: StandingsFile;
+}
+/**
+ * Lineup decisions, from the first season ESPN kept weekly rosters (2018).
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "CoachingFile".
+ */
+export interface CoachingFile {
+  /**
+   * Perfect lineups, highest-scoring first, top 10
+   */
+  best_weeks: CoachingWeekOut[];
+  /**
+   * Fewest points left per week first
+   */
+  careers: CareerCoachingOut[];
+  /**
+   * First season with player-level lineups
+   */
+  first_season: number | null;
+  /**
+   * Losses the bench would have won, most points left first
+   */
+  if_only: IfOnlyOut[];
+  schema_version: 1;
+  /**
+   * By season, fewest points left per week first
+   */
+  seasons: SeasonCoachingOut[];
+  /**
+   * Most points left on the bench, top 10
+   */
+  worst_weeks: CoachingWeekOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "CoachingWeekOut".
+ */
+export interface CoachingWeekOut {
+  actual: number;
+  left_on_bench: number;
+  manager: string;
+  optimal: number;
+  /**
+   * NFL week
+   */
+  period: number;
+  season: number;
+  /**
+   * Starters the best lineup benches
+   */
+  should_have_sat: PlayerPointsOut[];
+  /**
+   * Benched players the best lineup starts
+   */
+  should_have_started: PlayerPointsOut[];
+  substitutions: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "PlayerPointsOut".
+ */
+export interface PlayerPointsOut {
+  name: string;
+  points: number;
+  position: string;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "CareerCoachingOut".
+ */
+export interface CareerCoachingOut {
+  /**
+   * Points the starters scored
+   */
+  actual: number;
+  /**
+   * actual / optimal
+   */
+  efficiency: number;
+  /**
+   * optimal - actual
+   */
+  left_on_bench: number;
+  manager: string;
+  /**
+   * Points the best possible lineups would have scored
+   */
+  optimal: number;
+  /**
+   * left_on_bench per week counted
+   */
+  per_week: number;
+  perfect_weeks: number;
+  seasons: number;
+  /**
+   * Lineup changes that would have made every week optimal
+   */
+  substitutions: number;
+  /**
+   * NFL weeks counted: regular season, championship bracket, 3rd place game
+   */
+  weeks: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "IfOnlyOut".
+ */
+export interface IfOnlyOut {
+  left_on_bench: number;
+  manager: string;
+  opponent: string;
+  opponent_score: number;
+  /**
+   * What the manager's best lineup would have scored
+   */
+  optimal: number;
+  score: number;
+  season: number;
+  tier: string;
+  /**
+   * Matchup period
+   */
+  week: number;
+  /**
+   * One per NFL week of the matchup
+   */
+  weeks: CoachingWeekOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "SeasonCoachingOut".
+ */
+export interface SeasonCoachingOut {
+  /**
+   * Points the starters scored
+   */
+  actual: number;
+  /**
+   * actual / optimal
+   */
+  efficiency: number;
+  /**
+   * optimal - actual
+   */
+  left_on_bench: number;
+  manager: string;
+  /**
+   * Points the best possible lineups would have scored
+   */
+  optimal: number;
+  /**
+   * left_on_bench per week counted
+   */
+  per_week: number;
+  perfect_weeks: number;
+  season: number;
+  /**
+   * Lineup changes that would have made every week optimal
+   */
+  substitutions: number;
+  /**
+   * NFL weeks counted: regular season, championship bracket, 3rd place game
+   */
+  weeks: number;
 }
 /**
  * Every final game, all seasons, plus the current season's unplayed schedule.

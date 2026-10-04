@@ -395,6 +395,71 @@ class LuckFile(ContractFile):
     unluckiest: list[SeasonLuckOut] = Field(description="Finished seasons, by luck, bottom 10")
 
 
+# coaching.json -----------------------------------------------------------------------------------
+
+
+class PlayerPointsOut(_Model):
+    name: str
+    position: str
+    points: float
+
+
+class CoachingLineOut(_Model):
+    manager: str
+    weeks: int = Field(description="NFL weeks counted: regular season, championship bracket, 3rd place game")
+    actual: float = Field(description="Points the starters scored")
+    optimal: float = Field(description="Points the best possible lineups would have scored")
+    left_on_bench: float = Field(description="optimal - actual")
+    per_week: float = Field(description="left_on_bench per week counted")
+    efficiency: float = Field(description="actual / optimal")
+    perfect_weeks: int
+    substitutions: int = Field(description="Lineup changes that would have made every week optimal")
+
+
+class SeasonCoachingOut(CoachingLineOut):
+    season: int
+
+
+class CareerCoachingOut(CoachingLineOut):
+    seasons: int
+
+
+class CoachingWeekOut(_Model):
+    season: int
+    period: int = Field(description="NFL week")
+    manager: str
+    actual: float
+    optimal: float
+    left_on_bench: float
+    substitutions: int
+    should_have_started: list[PlayerPointsOut] = Field(description="Benched players the best lineup starts")
+    should_have_sat: list[PlayerPointsOut] = Field(description="Starters the best lineup benches")
+
+
+class IfOnlyOut(_Model):
+    season: int
+    week: int = Field(description="Matchup period")
+    tier: str
+    manager: str
+    opponent: str
+    score: float
+    opponent_score: float
+    optimal: float = Field(description="What the manager's best lineup would have scored")
+    left_on_bench: float
+    weeks: list[CoachingWeekOut] = Field(description="One per NFL week of the matchup")
+
+
+class CoachingFile(ContractFile):
+    """Lineup decisions, from the first season ESPN kept weekly rosters (2018)."""
+
+    first_season: int | None = Field(description="First season with player-level lineups")
+    careers: list[CareerCoachingOut] = Field(description="Fewest points left per week first")
+    seasons: list[SeasonCoachingOut] = Field(description="By season, fewest points left per week first")
+    worst_weeks: list[CoachingWeekOut] = Field(description="Most points left on the bench, top 10")
+    best_weeks: list[CoachingWeekOut] = Field(description="Perfect lineups, highest-scoring first, top 10")
+    if_only: list[IfOnlyOut] = Field(description="Losses the bench would have won, most points left first")
+
+
 # Published path → model. seasons/{year}.json all use SeasonFile.
 FILES: dict[str, type[ContractFile]] = {
     "meta.json": Meta,
@@ -405,6 +470,7 @@ FILES: dict[str, type[ContractFile]] = {
     "records.json": RecordsFile,
     "profiles.json": ProfilesFile,
     "luck.json": LuckFile,
+    "coaching.json": CoachingFile,
 }
 SEASON_FILE = SeasonFile
 

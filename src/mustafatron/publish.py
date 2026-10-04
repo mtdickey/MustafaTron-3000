@@ -17,7 +17,9 @@ from mustafatron.espn.cache import SeasonCache
 from mustafatron.model import Game, League, Season
 from mustafatron.rules import LeagueRules, load_rules
 from mustafatron.stats.allplay import Luck, career_luck, luckiest_seasons, season_luck
+from mustafatron.stats.coaching import CoachingLine, coaching_book
 from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags, rivalries
+from mustafatron.stats.lineup import TeamWeek
 from mustafatron.stats.profiles import best_and_worst_weeks, career_all_play
 from mustafatron.stats.records import records_book
 from mustafatron.stats.seasons import all_play, superlatives, week_scores
@@ -240,6 +242,30 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
         unluckiest=[_season_luck(x) for x in unlucky],
     )
 
+    book = coaching_book(league)
+    out["coaching.json"] = c.CoachingFile(
+        first_season=book.first_season,
+        careers=[c.CareerCoachingOut(**_coaching(x), seasons=x.seasons) for x in book.careers],
+        seasons=[c.SeasonCoachingOut(**_coaching(x), season=x.season) for x in book.seasons],
+        worst_weeks=[_coaching_week(league, w) for w in book.worst_weeks],
+        best_weeks=[_coaching_week(league, w) for w in book.best_weeks],
+        if_only=[
+            c.IfOnlyOut(
+                season=x.game.season,
+                week=x.game.week,
+                tier=x.game.tier,
+                manager=x.manager_id,
+                opponent=x.game.opponent_of(x.manager_id),
+                score=x.score,
+                opponent_score=x.opponent_score,
+                optimal=x.optimal,
+                left_on_bench=x.left_on_bench,
+                weeks=[_coaching_week(league, w) for w in x.weeks],
+            )
+            for x in book.if_only
+        ],
+    )
+
     out["profiles.json"] = c.ProfilesFile(
         profiles=[_profile(league, m.id) for m in league.managers_with_games()]
     )
@@ -279,6 +305,41 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
             **_season_detail(s),
         )
     return out
+
+
+def _coaching(x: CoachingLine) -> dict:
+    return dict(
+        manager=x.manager_id,
+        weeks=x.weeks,
+        actual=x.actual,
+        optimal=x.optimal,
+        left_on_bench=x.left_on_bench,
+        per_week=round(x.per_week, 2),
+        efficiency=round(x.efficiency, 4),
+        perfect_weeks=x.perfect_weeks,
+        substitutions=x.substitutions,
+    )
+
+
+def _player_points(league: League, season: int, player_id: int, points: float) -> c.PlayerPointsOut:
+    p = league.seasons[season].players.get(player_id)
+    return c.PlayerPointsOut(
+        name=p.name if p else str(player_id), position=p.position if p else "?", points=points
+    )
+
+
+def _coaching_week(league: League, w: TeamWeek) -> c.CoachingWeekOut:
+    return c.CoachingWeekOut(
+        season=w.season,
+        period=w.period,
+        manager=w.manager_id,
+        actual=w.actual,
+        optimal=w.optimal,
+        left_on_bench=w.left_on_bench,
+        substitutions=w.substitutions,
+        should_have_started=[_player_points(league, w.season, p, w.points[p]) for p in w.should_have_started],
+        should_have_sat=[_player_points(league, w.season, p, w.points[p]) for p in w.should_have_sat],
+    )
 
 
 def _luck(x: Luck) -> dict:
@@ -419,7 +480,7 @@ def publish(out_dir: Path = OUT_DIR, *, offline: bool = False) -> dict[str, c.Co
         seasons = sorted(
             int(p.name) for p in cache.raw_dir.iterdir() if p.is_dir() and cache.is_frozen(int(p.name))
         )
-    league = load_league(seasons, cache=cache)
+    league = load_league(seasons, cache=cache, player_data=True)
     files = build(league, load_rules())
     write(files, out_dir)
     return files

@@ -1,0 +1,360 @@
+{
+  "$defs": {
+    "CareerCoachingOut": {
+      "additionalProperties": false,
+      "properties": {
+        "actual": {
+          "description": "Points the starters scored",
+          "title": "Actual",
+          "type": "number"
+        },
+        "efficiency": {
+          "description": "actual / optimal",
+          "title": "Efficiency",
+          "type": "number"
+        },
+        "left_on_bench": {
+          "description": "optimal - actual",
+          "title": "Left On Bench",
+          "type": "number"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "optimal": {
+          "description": "Points the best possible lineups would have scored",
+          "title": "Optimal",
+          "type": "number"
+        },
+        "per_week": {
+          "description": "left_on_bench per week counted",
+          "title": "Per Week",
+          "type": "number"
+        },
+        "perfect_weeks": {
+          "title": "Perfect Weeks",
+          "type": "integer"
+        },
+        "seasons": {
+          "title": "Seasons",
+          "type": "integer"
+        },
+        "substitutions": {
+          "description": "Lineup changes that would have made every week optimal",
+          "title": "Substitutions",
+          "type": "integer"
+        },
+        "weeks": {
+          "description": "NFL weeks counted: regular season, championship bracket, 3rd place game",
+          "title": "Weeks",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "weeks",
+        "actual",
+        "optimal",
+        "left_on_bench",
+        "per_week",
+        "efficiency",
+        "perfect_weeks",
+        "substitutions",
+        "seasons"
+      ],
+      "title": "CareerCoachingOut",
+      "type": "object"
+    },
+    "CoachingWeekOut": {
+      "additionalProperties": false,
+      "properties": {
+        "actual": {
+          "title": "Actual",
+          "type": "number"
+        },
+        "left_on_bench": {
+          "title": "Left On Bench",
+          "type": "number"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "optimal": {
+          "title": "Optimal",
+          "type": "number"
+        },
+        "period": {
+          "description": "NFL week",
+          "title": "Period",
+          "type": "integer"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "should_have_sat": {
+          "description": "Starters the best lineup benches",
+          "items": {
+            "$ref": "#/$defs/PlayerPointsOut"
+          },
+          "title": "Should Have Sat",
+          "type": "array"
+        },
+        "should_have_started": {
+          "description": "Benched players the best lineup starts",
+          "items": {
+            "$ref": "#/$defs/PlayerPointsOut"
+          },
+          "title": "Should Have Started",
+          "type": "array"
+        },
+        "substitutions": {
+          "title": "Substitutions",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "season",
+        "period",
+        "manager",
+        "actual",
+        "optimal",
+        "left_on_bench",
+        "substitutions",
+        "should_have_started",
+        "should_have_sat"
+      ],
+      "title": "CoachingWeekOut",
+      "type": "object"
+    },
+    "IfOnlyOut": {
+      "additionalProperties": false,
+      "properties": {
+        "left_on_bench": {
+          "title": "Left On Bench",
+          "type": "number"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "opponent": {
+          "title": "Opponent",
+          "type": "string"
+        },
+        "opponent_score": {
+          "title": "Opponent Score",
+          "type": "number"
+        },
+        "optimal": {
+          "description": "What the manager's best lineup would have scored",
+          "title": "Optimal",
+          "type": "number"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "tier": {
+          "title": "Tier",
+          "type": "string"
+        },
+        "week": {
+          "description": "Matchup period",
+          "title": "Week",
+          "type": "integer"
+        },
+        "weeks": {
+          "description": "One per NFL week of the matchup",
+          "items": {
+            "$ref": "#/$defs/CoachingWeekOut"
+          },
+          "title": "Weeks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "season",
+        "week",
+        "tier",
+        "manager",
+        "opponent",
+        "score",
+        "opponent_score",
+        "optimal",
+        "left_on_bench",
+        "weeks"
+      ],
+      "title": "IfOnlyOut",
+      "type": "object"
+    },
+    "PlayerPointsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "points": {
+          "title": "Points",
+          "type": "number"
+        },
+        "position": {
+          "title": "Position",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "position",
+        "points"
+      ],
+      "title": "PlayerPointsOut",
+      "type": "object"
+    },
+    "SeasonCoachingOut": {
+      "additionalProperties": false,
+      "properties": {
+        "actual": {
+          "description": "Points the starters scored",
+          "title": "Actual",
+          "type": "number"
+        },
+        "efficiency": {
+          "description": "actual / optimal",
+          "title": "Efficiency",
+          "type": "number"
+        },
+        "left_on_bench": {
+          "description": "optimal - actual",
+          "title": "Left On Bench",
+          "type": "number"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "optimal": {
+          "description": "Points the best possible lineups would have scored",
+          "title": "Optimal",
+          "type": "number"
+        },
+        "per_week": {
+          "description": "left_on_bench per week counted",
+          "title": "Per Week",
+          "type": "number"
+        },
+        "perfect_weeks": {
+          "title": "Perfect Weeks",
+          "type": "integer"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "substitutions": {
+          "description": "Lineup changes that would have made every week optimal",
+          "title": "Substitutions",
+          "type": "integer"
+        },
+        "weeks": {
+          "description": "NFL weeks counted: regular season, championship bracket, 3rd place game",
+          "title": "Weeks",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "weeks",
+        "actual",
+        "optimal",
+        "left_on_bench",
+        "per_week",
+        "efficiency",
+        "perfect_weeks",
+        "substitutions",
+        "season"
+      ],
+      "title": "SeasonCoachingOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Lineup decisions, from the first season ESPN kept weekly rosters (2018).",
+  "properties": {
+    "best_weeks": {
+      "description": "Perfect lineups, highest-scoring first, top 10",
+      "items": {
+        "$ref": "#/$defs/CoachingWeekOut"
+      },
+      "title": "Best Weeks",
+      "type": "array"
+    },
+    "careers": {
+      "description": "Fewest points left per week first",
+      "items": {
+        "$ref": "#/$defs/CareerCoachingOut"
+      },
+      "title": "Careers",
+      "type": "array"
+    },
+    "first_season": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "First season with player-level lineups",
+      "title": "First Season"
+    },
+    "if_only": {
+      "description": "Losses the bench would have won, most points left first",
+      "items": {
+        "$ref": "#/$defs/IfOnlyOut"
+      },
+      "title": "If Only",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "seasons": {
+      "description": "By season, fewest points left per week first",
+      "items": {
+        "$ref": "#/$defs/SeasonCoachingOut"
+      },
+      "title": "Seasons",
+      "type": "array"
+    },
+    "worst_weeks": {
+      "description": "Most points left on the bench, top 10",
+      "items": {
+        "$ref": "#/$defs/CoachingWeekOut"
+      },
+      "title": "Worst Weeks",
+      "type": "array"
+    }
+  },
+  "required": [
+    "first_season",
+    "careers",
+    "seasons",
+    "worst_weeks",
+    "best_weeks",
+    "if_only"
+  ],
+  "title": "CoachingFile",
+  "type": "object"
+}
