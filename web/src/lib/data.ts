@@ -23,6 +23,9 @@ import type {
   SeasonFile,
   StandingsFile,
   TradesFile,
+  WeekFile,
+  WeekRefOut,
+  WeeksFile,
 } from "../types/contract";
 
 // Astro always runs from web/, and publicDir is the default public/.
@@ -56,6 +59,8 @@ export const coaching = (): CoachingFile => load("coaching.json");
 export const draft = (): DraftFile => load("draft.json");
 export const trades = (): TradesFile => load("trades.json");
 export const awards = (): AwardsFile => load("awards.json");
+export const weeksFile = (): WeeksFile => load("weeks.json");
+export const week = (year: number, wk: number): WeekFile => load(`weeks/${year}/${wk}.json`);
 
 export const managerHref = (id: string) => `/managers/${id}`;
 
@@ -176,3 +181,17 @@ export const TIER_LABELS: Record<string, string> = {
   WINNERS_CONSOLATION_LADDER: "3rd place game",
   LOSERS_CONSOLATION_LADDER: "Consolation",
 };
+
+// Weekly reports ----------------------------------------------------------------------------------
+
+export type WeekRef = WeekRefOut;
+
+/** The permalink of a weekly report. */
+export const weekHref = (w: Pick<WeekRef, "season" | "week">) => `/week/${w.season}/${w.week}`;
+
+/** The reports either side of this one, across season boundaries. */
+export function weekNeighbors(season: number, wk: number): { prev?: WeekRef; next?: WeekRef } {
+  const all = weeksFile().weeks;
+  const i = all.findIndex((w) => w.season === season && w.week === wk);
+  return { prev: i > 0 ? all[i - 1] : undefined, next: i >= 0 ? all[i + 1] : undefined };
+}

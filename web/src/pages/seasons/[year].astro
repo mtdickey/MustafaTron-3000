@@ -1,7 +1,7 @@
 ---
 import ManagerName from "../../components/ManagerName.astro";
 import Base from "../../layouts/Base.astro";
-import { decodeGame, games as allGames, meta, season } from "../../lib/data";
+import { decodeGame, games as allGames, meta, season, weekHref, weeksFile } from "../../lib/data";
 import { ordinal, pct, points, record, shade, signed } from "../../lib/format";
 
 export function getStaticPaths() {
@@ -15,6 +15,7 @@ const seasons = m.seasons;
 const prev = seasons.includes(year - 1) ? year - 1 : null;
 const next = seasons.includes(year + 1) ? year + 1 : null;
 const live = !s.finished;
+const reports = weeksFile().weeks.filter((w) => w.season === year);
 
 const games = s.games.map((r) => decodeGame(r));
 const finals = allGames().filter((g) => g.season === year).length; // games.json holds final games only
@@ -80,6 +81,21 @@ const SUPERLATIVES: Record<string, { label: string; fmt: (v: number) => string }
       s.settings.points_per_reception ? `${s.settings.points_per_reception} PPR` : "standard scoring"
     } · {live ? `${finals} of ${games.length} games played` : `${games.length} games`}
   </p>
+
+  {
+    reports.length > 0 && (
+      <p class="reports small">
+        <span class="muted">Weekly reports:</span>{" "}
+        {reports.map((w) => (
+          <>
+            <a href={weekHref(w)} title={`${year} ${w.label}`}>
+              {w.playoff ? w.label : w.week}
+            </a>{" "}
+          </>
+        ))}
+      </p>
+    )
+  }
 
   {
     s.champion && (
@@ -343,6 +359,10 @@ const SUPERLATIVES: Record<string, { label: string; fmt: (v: number) => string }
   }
   .podium {
     margin-bottom: 1rem;
+  }
+  .reports a {
+    margin-right: 0.15rem;
+    font-variant-numeric: tabular-nums;
   }
   .champion {
     border-color: var(--gold);

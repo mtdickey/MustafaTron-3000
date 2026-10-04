@@ -1,0 +1,157 @@
+{
+  "$defs": {
+    "StandingLineOut": {
+      "additionalProperties": false,
+      "properties": {
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "points_against": {
+          "title": "Points Against",
+          "type": "number"
+        },
+        "points_for": {
+          "title": "Points For",
+          "type": "number"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "wins": {
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "wins",
+        "losses",
+        "ties",
+        "points_for",
+        "points_against"
+      ],
+      "title": "StandingLineOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One weekly report, everything as it stood when the week ended (\"through week N\").",
+  "properties": {
+    "columns": {
+      "default": [
+        "season",
+        "week",
+        "tier",
+        "home",
+        "away",
+        "home_score",
+        "away_score",
+        "winner"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Columns",
+      "type": "array"
+    },
+    "games": {
+      "description": "This week's games",
+      "items": {
+        "maxItems": 8,
+        "minItems": 8,
+        "prefixItems": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Games",
+      "type": "array"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "periods": {
+      "description": "The NFL weeks this matchup week covers",
+      "items": {
+        "type": "integer"
+      },
+      "title": "Periods",
+      "type": "array"
+    },
+    "playoff": {
+      "title": "Playoff",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "season": {
+      "title": "Season",
+      "type": "integer"
+    },
+    "standings": {
+      "description": "Regular season through this week, best record first; seed order in the playoffs",
+      "items": {
+        "$ref": "#/$defs/StandingLineOut"
+      },
+      "title": "Standings",
+      "type": "array"
+    },
+    "week": {
+      "description": "Matchup period",
+      "title": "Week",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "season",
+    "week",
+    "label",
+    "playoff",
+    "periods",
+    "games",
+    "standings"
+  ],
+  "title": "WeekFile",
+  "type": "object"
+}

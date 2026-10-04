@@ -1,0 +1,160 @@
+---
+// One weekly report ("The Mustafa Report"), everything as it stood when the week ended. Rendered at
+// its permalink, /week/{year}/{week}, and as the front page while a season is in progress.
+import type { WeekFile } from "../../types/contract";
+import ManagerName from "../ManagerName.astro";
+import { decodeGame, rivalryHref, TIER_LABELS, weekHref, weekNeighbors } from "../../lib/data";
+import { points, record } from "../../lib/format";
+
+interface Props {
+  w: WeekFile;
+  /** Show the permalink (on the front page, where the URL isn't the report's own). */
+  permalink?: boolean;
+}
+
+const { w, permalink = false } = Astro.props;
+const { prev, next } = weekNeighbors(w.season, w.week);
+const games = w.games.map((r) => decodeGame(r));
+const tiers = [...new Set(games.map((g) => g.tier))];
+const nflWeeks = w.periods.length > 1 ? `NFL weeks ${w.periods.join("–")}` : `NFL week ${w.periods[0]}`;
+---
+
+<article class="report">
+  <nav class="pager" aria-label="Other weeks">
+    {prev ? <a href={weekHref(prev)} rel="prev">← {prev.season === w.season ? prev.label : `${prev.season} ${prev.label}`}</a> : <span />}
+    <a href="/week">All weeks</a>
+    {next ? <a href={weekHref(next)} rel="next">{next.season === w.season ? next.label : `${next.season} ${next.label}`} →</a> : <span />}
+  </nav>
+
+  <header>
+    <p class="kicker">The Mustafa Report™</p>
+    <h1>{w.season} · {w.label}</h1>
+    <p class="muted small">
+      {nflWeeks}. Everything on this page is as it stood when the week ended.
+      {permalink && (
+        <>
+          {" "}
+          Permalink: <a href={weekHref(w)}>{weekHref(w)}</a>
+        </>
+      )}
+    </p>
+  </header>
+
+  <section id="results">
+    <h2>Results</h2>
+    {
+      tiers.map((tier) => (
+        <>
+          {tiers.length > 1 && <h3>{TIER_LABELS[tier] ?? tier}</h3>}
+          <ul class="scoreboard">
+            {games
+              .filter((g) => g.tier === tier)
+              .map((g) => (
+                <li class="card">
+                  {[g.home, g.away].map((id) => (
+                    <span class:list={["side", { won: g.winner === id }]}>
+                      <ManagerName id={id} link />
+                      <span class="num">{points(id === g.home ? g.homeScore : g.awayScore, 2)}</span>
+                    </span>
+                  ))}
+                  <a class="series small" href={rivalryHref(g.home, g.away)}>
+                    Series
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </>
+      ))
+    }
+  </section>
+
+  <slot />
+
+  <section id="standings">
+    <h2>{w.playoff ? "Final regular season standings" : `Standings through ${w.label.toLowerCase()}`}</h2>
+    <div class="table-scroll">
+      <table class="sticky-first">
+        <thead>
+          <tr>
+            <th scope="col" class="text">Team</th>
+            <th scope="col">Record</th>
+            <th scope="col">PF</th>
+            <th scope="col">PA</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            w.standings.map((s, i) => (
+              <tr>
+                <th scope="row">
+                  <span class="muted rank">{i + 1}</span> <ManagerName id={s.manager} link />
+                </th>
+                <td>{record(s.wins, s.losses, s.ties)}</td>
+                <td>{points(s.points_for)}</td>
+                <td>{points(s.points_against)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="muted small">
+      {w.playoff ? "Playoff seed order." : "Best record first, then most points for."}{" "}
+      <a href={`/seasons/${w.season}`}>The {w.season} season</a>
+    </p>
+  </section>
+</article>
+
+<style>
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: var(--step--1);
+    margin-bottom: 1rem;
+  }
+  .kicker {
+    margin: 0 0 0.25rem;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .scoreboard {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  }
+  .scoreboard li {
+    display: grid;
+    gap: 0.2rem;
+  }
+  .side {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--muted);
+  }
+  .side.won {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .series {
+    justify-self: end;
+  }
+  .rank {
+    display: inline-block;
+    min-width: 1.25em;
+    font-weight: 400;
+  }
+  h3 {
+    font-size: var(--step-0);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>

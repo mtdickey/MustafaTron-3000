@@ -596,7 +596,50 @@ class AwardsFile(ContractFile):
     awards: list[AwardOut]
 
 
-# Published path → model. seasons/{year}.json all use SeasonFile.
+# weeks.json and weeks/{year}/{week}.json --------------------------------------------------------
+
+
+class WeekRefOut(_Model):
+    season: int
+    week: int = Field(description="Matchup period")
+    label: str = Field(description='"Week 5", or the playoff round: "Semifinals", "Championship"')
+    playoff: bool
+
+
+class WeeksFile(ContractFile):
+    """Every weekly report, the archive the /week pages are built from."""
+
+    weeks: list[WeekRefOut] = Field(description="Every week with all its games final, oldest first")
+    current: WeekRefOut | None = Field(
+        description="The latest report of the season in progress (the front page); null between seasons"
+    )
+
+
+class StandingLineOut(_Model):
+    manager: str
+    wins: int
+    losses: int
+    ties: int
+    points_for: float
+    points_against: float
+
+
+class WeekFile(ContractFile):
+    """One weekly report, everything as it stood when the week ended ("through week N")."""
+
+    season: int
+    week: int = Field(description="Matchup period")
+    label: str
+    playoff: bool
+    periods: list[int] = Field(description="The NFL weeks this matchup week covers")
+    columns: list[str] = Field(default=list(GAME_COLUMNS))
+    games: list[GameRow] = Field(description="This week's games")
+    standings: list[StandingLineOut] = Field(
+        description="Regular season through this week, best record first; seed order in the playoffs"
+    )
+
+
+# Published path → model. seasons/{year}.json all use SeasonFile, weeks/{year}/{week}.json WeekFile.
 FILES: dict[str, type[ContractFile]] = {
     "meta.json": Meta,
     "managers.json": ManagersFile,
@@ -610,11 +653,15 @@ FILES: dict[str, type[ContractFile]] = {
     "draft.json": DraftFile,
     "trades.json": TradesFile,
     "awards.json": AwardsFile,
+    "weeks.json": WeeksFile,
 }
 SEASON_FILE = SeasonFile
+WEEK_FILE = WeekFile
 
 
 def model_for(relpath: str) -> type[ContractFile]:
     if relpath.startswith("seasons/"):
         return SEASON_FILE
+    if relpath.startswith("weeks/"):
+        return WEEK_FILE
     return FILES[relpath]

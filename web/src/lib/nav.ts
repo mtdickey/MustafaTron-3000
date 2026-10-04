@@ -8,6 +8,7 @@ export interface NavItem {
 
 export const NAV: NavItem[] = [
   { href: "/", label: "Home" },
+  { href: "/week", label: "Weekly" },
   { href: "/h2h", label: "Head-to-head" },
   { href: "/rivalries", label: "Rivalries" },
   { href: "/standings", label: "Standings" },
