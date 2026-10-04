@@ -1,5 +1,175 @@
 {
   "$defs": {
+    "AllPlayCellOut": {
+      "additionalProperties": false,
+      "description": "One team's NFL week in the all-play grid.",
+      "properties": {
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "opponent": {
+          "title": "Opponent",
+          "type": "string"
+        },
+        "opponent_points": {
+          "title": "Opponent Points",
+          "type": "number"
+        },
+        "points": {
+          "title": "Points",
+          "type": "number"
+        },
+        "rank": {
+          "description": "Where the score ranked that week, 1 = highest",
+          "title": "Rank",
+          "type": "integer"
+        },
+        "result": {
+          "description": "The real game's result",
+          "enum": [
+            "W",
+            "L",
+            "T"
+          ],
+          "title": "Result",
+          "type": "string"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "wins": {
+          "description": "All-play that week: teams outscored",
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "points",
+        "opponent",
+        "opponent_points",
+        "result",
+        "rank",
+        "wins",
+        "losses",
+        "ties"
+      ],
+      "title": "AllPlayCellOut",
+      "type": "object"
+    },
+    "AllPlayGridOut": {
+      "additionalProperties": false,
+      "description": "All-play week by week through the report's week (regular season), and luck: the v0 Records panel.",
+      "properties": {
+        "periods": {
+          "description": "Final regular season NFL weeks through this week",
+          "items": {
+            "type": "integer"
+          },
+          "title": "Periods",
+          "type": "array"
+        },
+        "rows": {
+          "description": "Best all-play pct first",
+          "items": {
+            "$ref": "#/$defs/AllPlayRowOut"
+          },
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "periods",
+        "rows"
+      ],
+      "title": "AllPlayGridOut",
+      "type": "object"
+    },
+    "AllPlayRowOut": {
+      "additionalProperties": false,
+      "properties": {
+        "all_play_losses": {
+          "title": "All Play Losses",
+          "type": "integer"
+        },
+        "all_play_pct": {
+          "title": "All Play Pct",
+          "type": "number"
+        },
+        "all_play_ties": {
+          "title": "All Play Ties",
+          "type": "integer"
+        },
+        "all_play_wins": {
+          "description": "Against every other team, every final regular season week",
+          "title": "All Play Wins",
+          "type": "integer"
+        },
+        "cells": {
+          "description": "Aligned with AllPlayGridOut.periods",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/AllPlayCellOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Cells",
+          "type": "array"
+        },
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "luck": {
+          "description": "win_pct - all_play_pct: positive means the schedule was kind",
+          "title": "Luck",
+          "type": "number"
+        },
+        "luck_wins": {
+          "description": "Actual wins minus wins at the all-play rate over the same games",
+          "title": "Luck Wins",
+          "type": "number"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "win_pct": {
+          "title": "Win Pct",
+          "type": "number"
+        },
+        "wins": {
+          "description": "Regular season",
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "wins",
+        "losses",
+        "ties",
+        "win_pct",
+        "all_play_wins",
+        "all_play_losses",
+        "all_play_ties",
+        "all_play_pct",
+        "luck",
+        "luck_wins",
+        "cells"
+      ],
+      "title": "AllPlayRowOut",
+      "type": "object"
+    },
     "StandingLineOut": {
       "additionalProperties": false,
       "properties": {
@@ -43,6 +213,9 @@
   "additionalProperties": false,
   "description": "One weekly report, everything as it stood when the week ended (\"through week N\").",
   "properties": {
+    "all_play": {
+      "$ref": "#/$defs/AllPlayGridOut"
+    },
     "columns": {
       "default": [
         "season",
@@ -150,7 +323,8 @@
     "playoff",
     "periods",
     "games",
-    "standings"
+    "standings",
+    "all_play"
   ],
   "title": "WeekFile",
   "type": "object"

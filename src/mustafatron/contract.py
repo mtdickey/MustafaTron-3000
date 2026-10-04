@@ -624,6 +624,30 @@ class StandingLineOut(_Model):
     points_against: float
 
 
+class AllPlayCellOut(_Model):
+    """One team's NFL week in the all-play grid."""
+
+    points: float
+    opponent: str
+    opponent_points: float
+    result: Literal["W", "L", "T"] = Field(description="The real game's result")
+    rank: int = Field(description="Where the score ranked that week, 1 = highest")
+    wins: int = Field(description="All-play that week: teams outscored")
+    losses: int
+    ties: int
+
+
+class AllPlayRowOut(LuckLineOut):
+    cells: list[AllPlayCellOut | None] = Field(description="Aligned with AllPlayGridOut.periods")
+
+
+class AllPlayGridOut(_Model):
+    """All-play week by week through the report's week (regular season), and luck: the v0 Records panel."""
+
+    periods: list[int] = Field(description="Final regular season NFL weeks through this week")
+    rows: list[AllPlayRowOut] = Field(description="Best all-play pct first")
+
+
 class WeekFile(ContractFile):
     """One weekly report, everything as it stood when the week ended ("through week N")."""
 
@@ -637,6 +661,7 @@ class WeekFile(ContractFile):
     standings: list[StandingLineOut] = Field(
         description="Regular season through this week, best record first; seed order in the playoffs"
     )
+    all_play: AllPlayGridOut
 
 
 # Published path → model. seasons/{year}.json all use SeasonFile, weeks/{year}/{week}.json WeekFile.

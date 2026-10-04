@@ -1,7 +1,7 @@
 """All-play records and luck, per season and across careers.
 
 All-play is the record a team would have had playing everyone that week, the v0 report's "Records
-vs. Entire League by Week" (``get_weekly_scores_df``). It counts final regular season NFL weeks,
+vs. Entire League by Week" (the v0 ``get_weekly_scores_df``, now ``stats.weekly.all_play_through``). It counts final regular season NFL weeks,
 and each week is worth one game against every other team, however many teams the league had that
 season (``team_count - 1``, never a literal 10).
 

@@ -3,6 +3,7 @@
 // its permalink, /week/{year}/{week}, and as the front page while a season is in progress.
 import type { WeekFile } from "../../types/contract";
 import ManagerName from "../ManagerName.astro";
+import AllPlayPanel from "./AllPlayPanel.astro";
 import { decodeGame, rivalryHref, TIER_LABELS, weekHref, weekNeighbors } from "../../lib/data";
 import { points, record } from "../../lib/format";
 
@@ -16,6 +17,8 @@ const { w, permalink = false } = Astro.props;
 const { prev, next } = weekNeighbors(w.season, w.week);
 const games = w.games.map((r) => decodeGame(r));
 const tiers = [...new Set(games.map((g) => g.tier))];
+// "through week 12", or the whole regular season once the playoffs start
+const through = w.playoff ? "of the regular season" : `through ${w.label.toLowerCase()}`;
 const nflWeeks = w.periods.length > 1 ? `NFL weeks ${w.periods.join("–")}` : `NFL week ${w.periods[0]}`;
 ---
 
@@ -68,8 +71,6 @@ const nflWeeks = w.periods.length > 1 ? `NFL weeks ${w.periods.join("–")}` : `
     }
   </section>
 
-  <slot />
-
   <section id="standings">
     <h2>{w.playoff ? "Final regular season standings" : `Standings through ${w.label.toLowerCase()}`}</h2>
     <div class="table-scroll">
@@ -103,6 +104,7 @@ const nflWeeks = w.periods.length > 1 ? `NFL weeks ${w.periods.join("–")}` : `
       <a href={`/seasons/${w.season}`}>The {w.season} season</a>
     </p>
   </section>
+  <AllPlayPanel grid={w.all_play} label={through} />
 </article>
 
 <style>

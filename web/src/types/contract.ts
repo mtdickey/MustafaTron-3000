@@ -1039,6 +1039,7 @@ export interface PlayerRefOut {
  * via the `definition` "WeekFile".
  */
 export interface WeekFile {
+  all_play: AllPlayGridOut;
   columns: string[];
   /**
    * This week's games
@@ -1060,6 +1061,80 @@ export interface WeekFile {
    * Matchup period
    */
   week: number;
+}
+/**
+ * All-play week by week through the report's week (regular season), and luck: the v0 Records panel.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "AllPlayGridOut".
+ */
+export interface AllPlayGridOut {
+  /**
+   * Final regular season NFL weeks through this week
+   */
+  periods: number[];
+  /**
+   * Best all-play pct first
+   */
+  rows: AllPlayRowOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "AllPlayRowOut".
+ */
+export interface AllPlayRowOut {
+  all_play_losses: number;
+  all_play_pct: number;
+  all_play_ties: number;
+  /**
+   * Against every other team, every final regular season week
+   */
+  all_play_wins: number;
+  /**
+   * Aligned with AllPlayGridOut.periods
+   */
+  cells: (AllPlayCellOut | null)[];
+  losses: number;
+  /**
+   * win_pct - all_play_pct: positive means the schedule was kind
+   */
+  luck: number;
+  /**
+   * Actual wins minus wins at the all-play rate over the same games
+   */
+  luck_wins: number;
+  manager: string;
+  ties: number;
+  win_pct: number;
+  /**
+   * Regular season
+   */
+  wins: number;
+}
+/**
+ * One team's NFL week in the all-play grid.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "AllPlayCellOut".
+ */
+export interface AllPlayCellOut {
+  losses: number;
+  opponent: string;
+  opponent_points: number;
+  points: number;
+  /**
+   * Where the score ranked that week, 1 = highest
+   */
+  rank: number;
+  /**
+   * The real game's result
+   */
+  result: "W" | "L" | "T";
+  ties: number;
+  /**
+   * All-play that week: teams outscored
+   */
+  wins: number;
 }
 /**
  * This interface was referenced by `ContractFiles`'s JSON-Schema
