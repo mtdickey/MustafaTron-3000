@@ -3,7 +3,7 @@
 import pytest
 
 from mustafatron.stats.coaching import COUNTED_TIERS, coaching_book
-from mustafatron.stats.lineup import Candidate, optimal_lineup, team_weeks
+from mustafatron.stats.lineup import Candidate, Swap, TeamWeek, eligibility, optimal_lineup, team_weeks
 
 SLOTS = {"QB": 1, "RB": 2, "WR": 2, "TE": 1, "RB/WR/TE": 1, "D/ST": 1, "K": 1}
 RB, WR, TE = {"RB", "RB/WR/TE"}, {"WR", "RB/WR/TE"}, {"TE", "RB/WR/TE"}
@@ -50,6 +50,62 @@ def test_ties_keep_the_player_who_actually_started():
     roster = [c(1, 10, {"QB"}), c(2, 10, {"QB"})]
     assert optimal_lineup(roster, {"QB": 1}, prefer=frozenset({2})).player_ids == {2}
     assert optimal_lineup(roster, {"QB": 1}, prefer=frozenset({1})).player_ids == {1}
+
+
+def test_flex_takes_only_the_positions_it_lists():
+    # A backup QB outscoring everyone still can't play RB/WR/TE; a TE can.
+    roster = [c(1, 20, {"QB"}), c(2, 30, {"QB"}), c(3, 9, RB), c(4, 8, WR), c(5, 7, TE), c(6, 12, TE)]
+    best = optimal_lineup(roster, {"QB": 1, "RB": 1, "WR": 1, "TE": 1, "RB/WR/TE": 1})
+    assert dict(best.slots) == {"QB": 2, "RB": 3, "WR": 4, "TE": 6, "RB/WR/TE": 5}
+
+
+def week(rows: dict[int, tuple[str, float, set[str]]], slots: dict[str, int]) -> TeamWeek:
+    """A TeamWeek from {player: (slot he was in, points, starting slots he may fill)}."""
+    started = frozenset(p for p, (slot, _, _) in rows.items() if slot != "BE")
+    pool = [c(p, pts, ok) for p, (_, pts, ok) in rows.items()]
+    best = optimal_lineup(pool, slots, prefer=started)
+    return TeamWeek(
+        season=2020,
+        period=1,
+        manager_id="x",
+        actual=round(sum(rows[p][1] for p in started), 2),
+        optimal=best.points,
+        started=started,
+        best=best.player_ids,
+        points={p: pts for p, (_, pts, _) in rows.items()},
+        slot={p: slot for p, (slot, _, _) in rows.items()},
+        eligible={p: frozenset(ok) for p, (_, _, ok) in rows.items()},
+    )
+
+
+def test_swaps_pair_each_benched_player_with_the_starter_he_replaces():
+    w = week(
+        {
+            1: ("WR", 3, WR), 2: ("BE", 15, WR),  # WR for WR
+            3: ("RB", 10, RB), 4: ("BE", 12, RB),  # RB for RB
+            5: ("BE", 8, {"K"}),  # the kicker slot was left empty
+        },
+        {"RB": 1, "WR": 1, "K": 1},
+    )  # fmt: skip
+    assert w.swaps == [Swap(2, 1, 12), Swap(5, None, 8), Swap(4, 3, 2)]
+    assert sum(x.gain for x in w.swaps) == w.left_on_bench == 22
+    assert len(w.swaps) == w.substitutions
+
+
+def test_benching_a_negative_starter_is_a_swap_with_nobody():
+    w = week({1: ("QB", -0.48, {"QB"}), 2: ("K", 9, {"K"})}, {"QB": 1, "K": 1})
+    assert w.swaps == [Swap(None, 1, 0.48)]
+
+
+def test_a_chain_through_a_player_who_moves_still_pairs_one_for_one():
+    # The 2020 Taysom Hill week: he started at QB, the best lineup moves him to TE (where the league
+    # really started him), so the benched QB replaces the started TE.
+    w = week(
+        {1: ("QB", 9, {"QB", "TE"}), 2: ("TE", 5, {"TE"}), 3: ("BE", 14, {"QB"})},
+        {"QB": 1, "TE": 1},
+    )
+    assert w.best == {1, 3}
+    assert w.swaps == [Swap(3, 2, 9)]
 
 
 # On the committed seasons -------------------------------------------------------------------------
@@ -103,3 +159,27 @@ def test_if_only_losses_really_would_have_been_wins(book):
         assert x.score < x.opponent_score < x.optimal
         assert x.score == pytest.approx(sum(w.actual for w in x.weeks), abs=0.01)
     assert book.worst_weeks[0].left_on_bench == max(w.left_on_bench for w in book.weeks)
+
+
+def test_swaps_add_up_to_the_bench_points_every_week(book):
+    for w in book.weeks:
+        assert len(w.swaps) == w.substitutions
+        assert sum(x.gain for x in w.swaps) == pytest.approx(w.left_on_bench, abs=0.011)
+
+
+def test_injured_reserve_never_starts(book):
+    assert any(w.injured for w in book.weeks)
+    assert all(not (w.best & w.injured) for w in book.weeks)
+
+
+def test_eligibility_includes_where_the_league_really_started_someone(league):
+    # ESPN now lists Taysom Hill as QB only; the league started him at TE in 2020 (the v0 "hacky fix").
+    s = league.seasons[2020]
+    hill = next(p for p in s.players.values() if p.name == "Taysom Hill")
+    assert "TE" not in hill.eligible_slots
+    assert "TE" in eligibility(s)[hill.id]
+
+
+def test_the_solve_is_shared(league):
+    s = league.seasons[2024]
+    assert team_weeks(s)[0] is team_weeks(s)[0]  # computed once per season, not per report
