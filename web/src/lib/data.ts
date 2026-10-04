@@ -11,6 +11,7 @@ import { resolve } from "node:path";
 import type {
   GamesFile,
   H2HFile,
+  LuckFile,
   ManagerOut,
   ManagersFile,
   Meta,
@@ -46,6 +47,7 @@ export const standings = (): StandingsFile => load("standings.json");
 export const records = (): RecordsFile => load("records.json");
 export const season = (year: number): SeasonFile => load(`seasons/${year}.json`);
 export const profiles = (): ProfilesFile => load("profiles.json");
+export const luck = (): LuckFile => load("luck.json");
 
 export const managerHref = (id: string) => `/managers/${id}`;
 

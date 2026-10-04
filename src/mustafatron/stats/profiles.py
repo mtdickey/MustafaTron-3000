@@ -7,7 +7,8 @@ Everything else on a profile (career line, seasons, rivalries) is already publis
 from dataclasses import dataclass
 
 from mustafatron.model import League, Result
-from mustafatron.stats.seasons import AllPlay, all_play, final_periods
+from mustafatron.stats.allplay import AllPlay, all_play
+from mustafatron.stats.weeks import final_periods
 
 TOP_WEEKS = 5
 

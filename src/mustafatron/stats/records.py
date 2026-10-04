@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from itertools import groupby
 
 from mustafatron.model import Game, League, TeamSeason
-from mustafatron.stats.seasons import week_scores
+from mustafatron.stats.weeks import week_scores
 
 TOP_N = 10
 

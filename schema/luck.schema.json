@@ -1,0 +1,217 @@
+{
+  "$defs": {
+    "CareerLuckOut": {
+      "additionalProperties": false,
+      "properties": {
+        "all_play_losses": {
+          "title": "All Play Losses",
+          "type": "integer"
+        },
+        "all_play_pct": {
+          "title": "All Play Pct",
+          "type": "number"
+        },
+        "all_play_ties": {
+          "title": "All Play Ties",
+          "type": "integer"
+        },
+        "all_play_wins": {
+          "description": "Against every other team, every final regular season week",
+          "title": "All Play Wins",
+          "type": "integer"
+        },
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "luck": {
+          "description": "win_pct - all_play_pct: positive means the schedule was kind",
+          "title": "Luck",
+          "type": "number"
+        },
+        "luck_wins": {
+          "description": "Actual wins minus wins at the all-play rate over the same games",
+          "title": "Luck Wins",
+          "type": "number"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "seasons": {
+          "title": "Seasons",
+          "type": "integer"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "win_pct": {
+          "title": "Win Pct",
+          "type": "number"
+        },
+        "wins": {
+          "description": "Regular season",
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "wins",
+        "losses",
+        "ties",
+        "win_pct",
+        "all_play_wins",
+        "all_play_losses",
+        "all_play_ties",
+        "all_play_pct",
+        "luck",
+        "luck_wins",
+        "seasons"
+      ],
+      "title": "CareerLuckOut",
+      "type": "object"
+    },
+    "SeasonLuckOut": {
+      "additionalProperties": false,
+      "properties": {
+        "all_play_losses": {
+          "title": "All Play Losses",
+          "type": "integer"
+        },
+        "all_play_pct": {
+          "title": "All Play Pct",
+          "type": "number"
+        },
+        "all_play_ties": {
+          "title": "All Play Ties",
+          "type": "integer"
+        },
+        "all_play_wins": {
+          "description": "Against every other team, every final regular season week",
+          "title": "All Play Wins",
+          "type": "integer"
+        },
+        "final_rank": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Final Rank"
+        },
+        "finished": {
+          "title": "Finished",
+          "type": "boolean"
+        },
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "luck": {
+          "description": "win_pct - all_play_pct: positive means the schedule was kind",
+          "title": "Luck",
+          "type": "number"
+        },
+        "luck_wins": {
+          "description": "Actual wins minus wins at the all-play rate over the same games",
+          "title": "Luck Wins",
+          "type": "number"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "win_pct": {
+          "title": "Win Pct",
+          "type": "number"
+        },
+        "wins": {
+          "description": "Regular season",
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "wins",
+        "losses",
+        "ties",
+        "win_pct",
+        "all_play_wins",
+        "all_play_losses",
+        "all_play_ties",
+        "all_play_pct",
+        "luck",
+        "luck_wins",
+        "season",
+        "finished",
+        "final_rank"
+      ],
+      "title": "SeasonLuckOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "All-play records and luck: careers, every team-season, and the luckiest and unluckiest seasons.",
+  "properties": {
+    "careers": {
+      "description": "Record most overstated (luck_wins) first",
+      "items": {
+        "$ref": "#/$defs/CareerLuckOut"
+      },
+      "title": "Careers",
+      "type": "array"
+    },
+    "luckiest": {
+      "description": "Finished seasons, by luck, top 10",
+      "items": {
+        "$ref": "#/$defs/SeasonLuckOut"
+      },
+      "title": "Luckiest",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "seasons": {
+      "description": "Every team-season, oldest first",
+      "items": {
+        "$ref": "#/$defs/SeasonLuckOut"
+      },
+      "title": "Seasons",
+      "type": "array"
+    },
+    "unluckiest": {
+      "description": "Finished seasons, by luck, bottom 10",
+      "items": {
+        "$ref": "#/$defs/SeasonLuckOut"
+      },
+      "title": "Unluckiest",
+      "type": "array"
+    }
+  },
+  "required": [
+    "careers",
+    "seasons",
+    "luckiest",
+    "unluckiest"
+  ],
+  "title": "LuckFile",
+  "type": "object"
+}

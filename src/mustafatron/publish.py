@@ -16,6 +16,7 @@ from mustafatron import contract as c
 from mustafatron.espn.cache import SeasonCache
 from mustafatron.model import Game, League, Season
 from mustafatron.rules import LeagueRules, load_rules
+from mustafatron.stats.allplay import Luck, career_luck, luckiest_seasons, season_luck
 from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags, rivalries
 from mustafatron.stats.profiles import best_and_worst_weeks, career_all_play
 from mustafatron.stats.records import records_book
@@ -231,6 +232,14 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
         },
     )
 
+    lucky, unlucky = luckiest_seasons(league)
+    out["luck.json"] = c.LuckFile(
+        careers=[c.CareerLuckOut(**_luck(x), seasons=x.seasons) for x in career_luck(league)],
+        seasons=[_season_luck(x) for x in season_luck(league)],
+        luckiest=[_season_luck(x) for x in lucky],
+        unluckiest=[_season_luck(x) for x in unlucky],
+    )
+
     out["profiles.json"] = c.ProfilesFile(
         profiles=[_profile(league, m.id) for m in league.managers_with_games()]
     )
@@ -270,6 +279,26 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
             **_season_detail(s),
         )
     return out
+
+
+def _luck(x: Luck) -> dict:
+    return dict(
+        manager=x.manager_id,
+        wins=x.wins,
+        losses=x.losses,
+        ties=x.ties,
+        win_pct=round(x.win_pct, 4),
+        all_play_wins=x.all_play.wins,
+        all_play_losses=x.all_play.losses,
+        all_play_ties=x.all_play.ties,
+        all_play_pct=round(x.all_play.win_pct, 4),
+        luck=round(x.luck, 4),
+        luck_wins=round(x.luck_wins, 2),
+    )
+
+
+def _season_luck(x) -> c.SeasonLuckOut:
+    return c.SeasonLuckOut(**_luck(x), season=x.season, finished=x.finished, final_rank=x.final_rank)
 
 
 def _profile(league: League, manager_id: str) -> c.ProfileOut:
