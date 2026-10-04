@@ -16,6 +16,7 @@ export interface ContractFiles {
   records: RecordsFile;
   season: SeasonFile;
   standings: StandingsFile;
+  trades: TradesFile;
 }
 /**
  * Lineup decisions, from the first season ESPN kept weekly rosters (2018).
@@ -875,4 +876,111 @@ export interface CareerOut {
    */
   wins: number;
   worst_finish: number | null;
+}
+/**
+ * Every trade with its retrospective verdict (from 2018), and trade and add counts (every season).
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "TradesFile".
+ */
+export interface TradesFile {
+  /**
+   * Sides that gained the most, top 10
+   */
+  best: TradeSideRefOut[];
+  counts: TradeCountOut[];
+  /**
+   * First season with trade detail
+   */
+  first_season: number | null;
+  /**
+   * Trade ids, biggest margin first, top 10
+   */
+  lopsided: string[];
+  schema_version: 1;
+  /**
+   * Finished seasons, oldest first
+   */
+  trades: TradeOut[];
+  /**
+   * Sides that lost the most, top 10
+   */
+  worst: TradeSideRefOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "TradeSideRefOut".
+ */
+export interface TradeSideRefOut {
+  manager: string;
+  /**
+   * TradeOut.id
+   */
+  trade: string;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "TradeCountOut".
+ */
+export interface TradeCountOut {
+  /**
+   * Adds, ESPN's count
+   */
+  acquisitions: number;
+  manager: string;
+  season: number;
+  /**
+   * ESPN's count
+   */
+  trades: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "TradeOut".
+ */
+export interface TradeOut {
+  /**
+   * ISO date ESPN recorded the acceptance, when it could be matched
+   */
+  date: string | null;
+  id: string;
+  /**
+   * Winner's value minus loser's
+   */
+  margin: number;
+  /**
+   * First NFL week the players were on their new rosters
+   */
+  period: number;
+  season: number;
+  /**
+   * Two sides, by manager id
+   */
+  sides: TradeSideOut[];
+  winner: string;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "TradeSideOut".
+ */
+export interface TradeSideOut {
+  manager: string;
+  received: PlayerRefOut[];
+  sent: PlayerRefOut[];
+  /**
+   * Points the trade added to this team's best lineups, rest of season
+   */
+  value: number;
+  /**
+   * Weeks valued: from the trade to the team's last game that mattered
+   */
+  weeks: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "PlayerRefOut".
+ */
+export interface PlayerRefOut {
+  name: string;
+  position: string;
 }
