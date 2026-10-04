@@ -33,10 +33,11 @@ changing or dropping old data. Only the in-progress season is ever refetched.
 | `src/mustafatron/config.py` | Settings from env / `.env` (`pydantic-settings`); never literals |
 | `src/mustafatron/espn/client.py` | ESPN v3 API client: endpoint cutover, retries, a clear error when cookies expire |
 | `src/mustafatron/espn/cache.py` | Read-through `data/raw/` cache: finished seasons immutable, the one in progress always fresh |
+| `src/mustafatron/espn/player_data.py` | The player-level datasets (drafts, weekly box scores, transactions, player points): fetched a week at a time, trimmed |
 | `src/mustafatron/league_settings.py` | League structure per season (lineup, season length, playoffs, scoring) from ESPN `mSettings` |
 | `src/mustafatron/rules.py` | League rules ESPN doesn't model (payouts, keeper eligibility, thresholds, week boundaries) from [`data/manual/league_rules.yml`](data/manual/league_rules.yml) |
 | `src/mustafatron/identity.py` | ESPN member IDs → canonical managers from [`data/manual/managers.yml`](data/manual/managers.yml) |
-| `src/mustafatron/model.py` | The entities stats code reads: `TeamSeason`, `Game`, `DraftPick`, `Transaction`, `Season`, `League` |
+| `src/mustafatron/model.py` | The entities stats code reads: `TeamSeason`, `Game`, `DraftPick`, `Transaction`, `Player`, `PlayerWeek`, `Season`, `League` |
 | `src/mustafatron/transform.py` | Raw ESPN JSON → model; the only layer that knows how ESPN's eras differ. `load_league()` |
 | `src/mustafatron/stats/` | H2H series and rivalries (`h2h.py`, ported from `scratch_h2h.py`), all-time standings, records book |
 | `src/mustafatron/contract.py` | The site JSON contract (pydantic); JSON Schemas generated into [`schema/`](schema/) |

@@ -12,21 +12,40 @@ has to. The differences handled here:
   the real finish. Neither is trusted until the season is finished.
 - **Byes.** A matchup with no ``away`` side is a bye and is not a game (none occur 2015-2025).
 - **Owners.** Teams are keyed by canonical manager via ``mustafatron.identity``, never by ESPN ID.
+- **Player data by era.** Drafts and player season totals exist for every season; weekly rosters
+  and transactions only from 2018 (``data/README.md``). A missing file loads as nothing.
+- **Trades.** ESPN no longer returns the executed record of most past trades, so they are found by
+  following each player's ownership through the draft, adds, drops and weekly rosters
+  (:func:`infer_trades`).
 """
 
+from collections import defaultdict
 from collections.abc import Iterable
 from datetime import UTC, datetime
 
-from mustafatron.espn.cache import MATCHUPS, SeasonCache, is_complete, latest_season
+from mustafatron.espn.cache import (
+    BOXSCORES,
+    DRAFT,
+    MATCHUPS,
+    PLAYERS,
+    TRANSACTIONS,
+    SeasonCache,
+    is_complete,
+    latest_season,
+)
 from mustafatron.espn.client import SeasonNotFoundError
 from mustafatron.espn.raw import RawSeason, RawTeam
 from mustafatron.identity import Managers, load_managers
-from mustafatron.league_settings import load_settings
-from mustafatron.model import DraftPick, Game, League, Season, TeamSeason, Transaction
+from mustafatron.league_settings import SLOT_NAMES, LeagueSettings, load_settings
+from mustafatron.model import DraftPick, Game, League, Player, PlayerWeek, Season, TeamSeason, Transaction
 
 FIRST_SEASON = 2015
 DECIDED = ("HOME", "AWAY", "TIE")
-TRANSACTION_TYPES = {"TRADE_ACCEPT": "TRADE", "WAIVER": "WAIVER", "FREEAGENT": "FREEAGENT"}
+MOVE_TYPES = ("WAIVER", "FREEAGENT")  # executed adds and drops; trades come from infer_trades
+EPOCH = datetime.fromtimestamp(0, tz=UTC)
+# ESPN defaultPositionId. Names match espn-api's POSITION_MAP.
+POSITIONS = {1: "QB", 2: "RB", 3: "WR", 4: "TE", 5: "K", 7: "P", 9: "DT", 10: "DE", 11: "LB", 12: "CB",
+             13: "S", 14: "HC", 16: "D/ST"}  # fmt: skip
 
 
 def team_name(team: RawTeam) -> str:
@@ -112,18 +131,26 @@ def draft_picks(draft_detail: dict, season: int, team_managers: dict[int, str]) 
     ]
 
 
+def _when(ms: int | None) -> datetime | None:
+    return datetime.fromtimestamp(ms / 1000, tz=UTC) if ms else None
+
+
 def transactions(
     raw_transactions: Iterable[dict], season: int, team_managers: dict[int, str]
 ) -> list[Transaction]:
-    """From ``mTransactions2`` ``transactions``: executed trades, waiver claims and free agent moves only."""
+    """Executed adds and drops (waiver claims and free agent moves) from ``transactions.json``.
+
+    Trades are not read from here: see :func:`infer_trades`.
+    """
     out = []
     for t in raw_transactions:
-        kind = TRANSACTION_TYPES.get(t.get("type", ""))
-        if kind is None or t.get("status") != "EXECUTED":
+        if t.get("type") not in MOVE_TYPES or t.get("status") != "EXECUTED":
             continue
-        items = t.get("items", [])
-        teams = sorted({i["toTeamId"] for i in items if i.get("toTeamId")} | {t["teamId"]})
-        when = datetime.fromtimestamp((t.get("processDate") or t["proposedDate"]) / 1000, tz=UTC)
+        items = t.get("items") or []
+        # Free agency is team 0 (-1 in 2018); waivers ESPN runs itself have teamId -2147483648.
+        teams = sorted(
+            team for team in {i.get("toTeamId", 0) for i in items} | {t.get("teamId", 0)} if team > 0
+        )
         for team in teams:
             players_in = tuple(i["playerId"] for i in items if i.get("toTeamId") == team)
             players_out = tuple(i["playerId"] for i in items if i.get("fromTeamId") == team)
@@ -133,21 +160,181 @@ def transactions(
                 Transaction(
                     season=season,
                     scoring_period=t.get("scoringPeriodId", 0),
-                    date=when,
-                    type=kind,
+                    date=_when(t.get("processDate") or t.get("proposedDate")),
+                    type=t["type"],
                     manager_id=team_managers[team],
                     players_in=players_in,
                     players_out=players_out,
-                    bid=t.get("bidAmount", 0) if kind == "WAIVER" else 0,
+                    bid=t.get("bidAmount", 0) if t["type"] == "WAIVER" else 0,
+                    id=t.get("id", ""),
                 )
             )
-    return sorted(out, key=lambda x: (x.date, x.manager_id))
+    return sorted(out, key=lambda x: (x.date or EPOCH, x.manager_id))
 
 
-def build_season(raw: RawSeason, season: int, managers: Managers) -> Season:
+def infer_trades(
+    picks: Iterable[dict],
+    periods: Iterable[dict],
+    raw_transactions: Iterable[dict],
+    season: int,
+    team_managers: dict[int, str],
+) -> list[Transaction]:
+    """Trades, found by following every player from roster to roster.
+
+    A player's holder starts as the team that drafted him and changes with each executed add (to the
+    adding team) and drop (to nobody). A player who turns up on a team's weekly roster while another
+    team still holds him can only have been traded there. Moves between the same two teams in the
+    same NFL week are one trade, attributed to that week: the first the players were on their new
+    rosters, which is also the first week the trade could change a lineup.
+
+    ``picks``, ``periods`` and ``raw_transactions`` are the ``draft.json``, ``boxscores.json`` and
+    ``transactions.json`` lists. The tests check the result against ESPN's per-team trade counts.
+    """
+    raw_transactions = list(raw_transactions)
+    # Per player: (week, order, time, team or None, on a roster). Drafted first, then within a week
+    # adds and drops in time order, then the weekly roster.
+    events: dict[int, list[tuple]] = defaultdict(list)
+    for p in picks:
+        events[p["playerId"]].append((0, 0, 0, p["teamId"], False))
+    for t in raw_transactions:
+        if t.get("type") not in MOVE_TYPES or t.get("status") != "EXECUTED":
+            continue
+        week, when = t.get("scoringPeriodId", 0), t.get("processDate") or t.get("proposedDate") or 0
+        for i in t.get("items") or []:
+            if i["type"] == "ADD":
+                events[i["playerId"]].append((week, 1, when, i["toTeamId"], False))
+            elif i["type"] == "DROP":
+                events[i["playerId"]].append((week, 1, when, None, False))
+    for period in periods:
+        for team in period["teams"]:
+            for e in team["entries"]:
+                events[e["playerId"]].append((period["scoringPeriodId"], 2, 0, team["teamId"], True))
+
+    moved: dict[tuple[int, int, int], list[int]] = defaultdict(list)  # (week, from, to) -> players
+    for player, timeline in events.items():
+        holder = None
+        for week, _, _, team, on_roster in sorted(timeline, key=lambda e: e[:3]):
+            if on_roster and holder is not None and holder != team:
+                moved[(week, holder, team)].append(player)
+            holder = team
+
+    # (week, the two teams) -> team -> (players in, players out)
+    trades: dict[tuple[int, frozenset[int]], dict[int, tuple[list[int], list[int]]]] = {}
+    for (week, src, dst), moved_players in sorted(moved.items()):
+        sides = trades.setdefault((week, frozenset((src, dst))), {src: ([], []), dst: ([], [])})
+        sides[dst][0].extend(moved_players)
+        sides[src][1].extend(moved_players)
+
+    out = []
+    used: set[str] = set()  # acceptance records already matched to a trade
+    for (week, pair), sides in trades.items():
+        a, b = sorted(pair)
+        date = _trade_date(raw_transactions, week, pair, used)
+        for team, (players_in, players_out) in sorted(sides.items()):
+            out.append(
+                Transaction(
+                    season=season,
+                    scoring_period=week,
+                    date=date,
+                    type="TRADE",
+                    manager_id=team_managers[team],
+                    players_in=tuple(sorted(players_in)),
+                    players_out=tuple(sorted(players_out)),
+                    id=f"{season}-w{week}-t{a}-t{b}",
+                )
+            )
+    return sorted(out, key=lambda x: (x.scoring_period, x.id, x.manager_id))
+
+
+def _trade_date(
+    raw_transactions: list[dict], week: int, pair: frozenset[int], used: set[str]
+) -> datetime | None:
+    """When the trade was accepted, if exactly one unused acceptance record can be this trade.
+
+    Acceptances are made by one of the two teams, in the trade's week or the one before (a trade
+    accepted late in a week shows on the rosters the next). A same-week match is preferred.
+    """
+    proposals = {t["id"]: t for t in raw_transactions if t.get("type") == "TRADE_PROPOSAL"}
+    vetoed = {t.get("relatedTransactionId") for t in raw_transactions if t.get("type") == "TRADE_VETO"}
+    for accepted_in in (week, week - 1):
+        candidates: dict[str, list[dict]] = defaultdict(list)
+        for t in raw_transactions:
+            if t.get("type") != "TRADE_ACCEPT" or t.get("teamId") not in pair:
+                continue
+            root = t.get("relatedTransactionId") or t["id"]
+            if t.get("scoringPeriodId") != accepted_in or root in vetoed or root in used:
+                continue
+            proposal = proposals.get(root)
+            if proposal is not None:  # the proposal names both teams: it must be these two
+                teams = {i.get("fromTeamId") for i in proposal.get("items") or []} - {0, None}
+                if teams and teams != set(pair):
+                    continue
+            candidates[root].append(t)
+        if len(candidates) == 1:
+            ((root, records),) = candidates.items()
+            used.add(root)
+            return _when(min(t.get("processDate") or t.get("proposedDate") or 0 for t in records))
+        if candidates:  # ambiguous: leave it undated rather than guess
+            return None
+    return None
+
+
+def players(raw_players: Iterable[dict]) -> dict[int, Player]:
+    """From ``players.json``: identity plus points by NFL week, week ``"0"`` being the season total."""
+    out = {}
+    for p in raw_players:
+        points = {int(k): v for k, v in p.get("appliedTotalByScoringPeriod", {}).items()}
+        out[p["id"]] = Player(
+            id=p["id"],
+            name=p.get("fullName", str(p["id"])),
+            position=POSITIONS.get(p.get("defaultPositionId", 0), "?"),
+            eligible_slots=tuple(SLOT_NAMES.get(s, f"slot{s}") for s in p.get("eligibleSlots", [])),
+            season_points=points.pop(0, None),
+            weekly_points=points,
+        )
+    return out
+
+
+def player_weeks(periods: Iterable[dict], season: int, team_managers: dict[int, str]) -> list[PlayerWeek]:
+    """From ``boxscores.json``: every rostered player, every NFL week, with his lineup slot and points."""
+    return [
+        PlayerWeek(
+            season=season,
+            period=p["scoringPeriodId"],
+            manager_id=team_managers[t["teamId"]],
+            player_id=e["playerId"],
+            slot=SLOT_NAMES.get(e["lineupSlotId"], f"slot{e['lineupSlotId']}"),
+            points=e["points"],
+        )
+        for p in periods
+        for t in p["teams"]
+        for e in t["entries"]
+    ]
+
+
+def add_player_data(season: Season, raw: RawSeason, cache: SeasonCache, managers: Managers) -> None:
+    """Fill a season's player-level fields from its draft, box score, transaction and player files."""
+    team_managers = {team_id: m.id for team_id, m in managers.season_managers(raw).items()}
+    picks = cache.load(season.season, DRAFT).get("draftDetail", {}).get("picks", [])
+    periods = cache.load(season.season, BOXSCORES).get("periods", [])
+    raw_tx = cache.load(season.season, TRANSACTIONS).get("transactions", [])
+    season.draft = draft_picks({"picks": picks}, season.season, team_managers)
+    season.players = players(cache.load(season.season, PLAYERS).get("players", []))
+    season.player_weeks = player_weeks(periods, season.season, team_managers)
+    if periods:  # without weekly rosters there is nothing to follow trades through
+        moves = transactions(raw_tx, season.season, team_managers)
+        trades = infer_trades(picks, periods, raw_tx, season.season, team_managers)
+        season.transactions = sorted(
+            moves + trades, key=lambda t: (t.scoring_period, t.date or EPOCH, t.id, t.manager_id)
+        )
+
+
+def build_season(
+    raw: RawSeason, season: int, managers: Managers, settings: LeagueSettings | None = None
+) -> Season:
     return Season(
         season=season,
-        settings=load_settings(season),
+        settings=settings or load_settings(season),
         teams=team_seasons(raw, season, managers),
         games=games(raw, season, managers),
     )
@@ -158,11 +345,13 @@ def load_league(
     *,
     cache: SeasonCache | None = None,
     managers: Managers | None = None,
+    player_data: bool = False,
 ) -> League:
     """The whole league, one ``Season`` per season that ESPN has.
 
     Finished seasons come from ``data/raw/`` (offline); a season in progress is fetched live, which
-    needs ESPN cookies. Pass ``seasons=range(2015, 2026)`` to stay offline.
+    needs ESPN cookies. Pass ``seasons=range(2015, 2026)`` to stay offline. ``player_data`` also
+    loads drafts, players, weekly rosters and transactions (see ``mustafatron.model.Season``).
     """
     cache = cache or SeasonCache()
     managers = managers or load_managers()
@@ -174,4 +363,6 @@ def load_league(
             continue
         if raw.get("schedule"):
             league.seasons[season] = build_season(raw, season, managers)  # type: ignore[arg-type]
+            if player_data:
+                add_player_data(league.seasons[season], raw, cache, managers)  # type: ignore[arg-type]
     return league

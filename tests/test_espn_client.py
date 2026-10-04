@@ -35,8 +35,9 @@ class FakeSession:
         self.calls: list[tuple[str, dict]] = []
         self.cookies = RequestsCookieJar()
 
-    def get(self, url, params=None, timeout=None):
+    def get(self, url, params=None, timeout=None, headers=None):
         self.calls.append((url, params))
+        self.headers = headers
         r = self.responses.pop(0)
         if isinstance(r, Exception):
             raise r
@@ -121,3 +122,29 @@ def test_non_json_body_is_an_error():
     c, *_ = client(FakeResponse(200, None, text="<html>login</html>"))
     with pytest.raises(EspnError, match="non-JSON"):
         c.season(2025, [View.TEAM])
+
+
+def test_one_week_and_a_player_filter():
+    c, session, _ = client(FakeResponse(200, {"seasonId": 2021}))
+    flt = {"players": {"filterIds": {"value": [1]}}}
+    c.season(2021, [View.PLAYER_INFO], scoring_period=5, player_filter=flt)
+    assert session.calls[0][1] == {"view": ["kona_player_info"], "scoringPeriodId": 5}
+    assert session.headers == {"x-fantasy-filter": '{"players": {"filterIds": {"value": [1]}}}'}
+
+
+def test_requests_are_spaced_out():
+    now = [100.0]
+    session = FakeSession(*[FakeResponse(200, {"seasonId": 2021})] * 3)
+    sleeps: list[float] = []
+
+    def sleep(seconds: float) -> None:
+        sleeps.append(seconds)
+        now[0] += seconds
+
+    c = EspnClient(LEAGUE, None, session=session, sleep=sleep, clock=lambda: now[0], min_interval=0.5)
+    c.season(2021, [View.TEAM])  # the first request goes straight out
+    now[0] += 0.2
+    c.season(2021, [View.TEAM])  # 0.2s later: waits out the other 0.3s
+    now[0] += 2.0
+    c.season(2021, [View.TEAM])  # long after: no wait
+    assert sleeps == [pytest.approx(0.3)]

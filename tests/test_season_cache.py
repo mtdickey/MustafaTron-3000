@@ -4,6 +4,7 @@ from datetime import date
 import pytest
 
 from mustafatron.cli import parse_seasons
+from mustafatron.espn.cache import MATCHUPS as MATCHUPS_DS
 from mustafatron.espn.cache import RAW_DIR, Dataset, SeasonCache, is_complete, latest_season
 from mustafatron.espn.client import EspnAuthError, SeasonNotFoundError, View
 from mustafatron.pseudonymize import MANAGER_ID_RE
@@ -27,7 +28,7 @@ class FakeClient:
         self.seasons = seasons
         self.calls: list[tuple[int, tuple]] = []
 
-    def season(self, year, views):
+    def season(self, year, views, *, scoring_period=None, player_filter=None):
         self.calls.append((year, tuple(views)))
         if year not in self.seasons:
             raise SeasonNotFoundError(str(year))
@@ -135,7 +136,7 @@ def test_backfill_resumes_where_it_left_off(tmp_path):
 
 def test_backfill_stops_on_expired_cookies(tmp_path):
     class Expired(FakeClient):
-        def season(self, year, views):
+        def season(self, year, views, **kwargs):
             self.calls.append((year, tuple(views)))
             raise EspnAuthError("401")
 
@@ -152,6 +153,23 @@ def test_backfill_refresh_only_touches_named_seasons(tmp_path):
     cache, client = make_cache(tmp_path, {2015: season("HOME"), 2016: season("HOME")})
     assert [o for *_, o in cache.backfill([2015, 2016], refresh=[2016])] == ["cached", "fetched"]
     assert [y for y, _ in client.calls] == [2016]
+
+
+def test_dataset_espn_does_not_serve_that_far_back_is_never_fetched(tmp_path):
+    late = Dataset("late", (View.BOXSCORE,), ("schedule",), since=2018)
+    cache, client = make_cache(tmp_path, {2017: season("HOME")})
+    assert cache.load_with_source(2017, late) == ({}, "unavailable")
+    assert client.calls == []
+    assert cache.backfill([2017], [late]) == [(2017, "late", "unavailable")]
+
+
+def test_refresh_refetches_each_dataset_once_per_run(tmp_path):
+    cache, client = make_cache(tmp_path, {2019: season("HOME")})
+    cache.backfill([2019], [MATCHUPS_DS, SETTINGS])
+    cache, client = make_cache(tmp_path, {2019: season("AWAY")})
+    cache.backfill([2019], [MATCHUPS_DS, SETTINGS], refresh=[2019])
+    # matchups once (not again when settings checks whether the season is finished), settings once
+    assert client.calls == [(2019, ("mTeam", "mMatchupScore")), (2019, ("mSettings",))]
 
 
 def test_committed_seasons_load_offline():
