@@ -718,6 +718,38 @@ class RecapOut(_Model):
     flags: list[FlagOut] = Field(description="Notable flags on the series after the game (league_rules.yml)")
 
 
+class FormOut(_Model):
+    """A team's season entering the previewed week."""
+
+    manager: str
+    rank: int = Field(description="Standings position through the report's week (seed in the playoffs)")
+    wins: int = Field(description="Regular season")
+    losses: int
+    ties: int
+    points_for: float
+    last: str = Field(description="Last three results, oldest first")
+    all_play_pct: float
+
+
+class PreviewOut(_Model):
+    """One matchup of the following week, as it looked when the report's week ended."""
+
+    home: str
+    away: str
+    tier: str
+    games: int = Field(description="All-time meetings before this one")
+    wins: int = Field(description="The series from home's side")
+    losses: int
+    ties: int
+    streak: StreakOut
+    last_meeting: MeetingOut | None = Field(description="From home's side; null for a first meeting")
+    closest: MeetingOut | None
+    blowout: MeetingOut | None
+    flags: list[FlagOut]
+    home_form: FormOut
+    away_form: FormOut
+
+
 class WeekFile(ContractFile):
     """One weekly report, everything as it stood when the week ended ("through week N")."""
 
@@ -738,6 +770,12 @@ class WeekFile(ContractFile):
     all_play: AllPlayGridOut
     coaching: WeekCoachingOut | None = Field(description="null before 2018: ESPN kept no bench data")
     draft: WeekDraftOut | None = Field(description="null before 2018: ESPN kept no weekly player points")
+    preview_week: int | None = Field(
+        description="The matchup week after this one, which previews cover (null after the final week). "
+        "This report is always for the week just played; previews look one week ahead."
+    )
+    preview_label: str | None
+    previews: list[PreviewOut]
 
 
 # Published path → model. seasons/{year}.json all use SeasonFile, weeks/{year}/{week}.json WeekFile.

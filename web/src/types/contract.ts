@@ -1063,6 +1063,12 @@ export interface WeekFile {
    */
   periods: number[];
   playoff: boolean;
+  preview_label: string | null;
+  /**
+   * The matchup week after this one, which previews cover (null after the final week). This report is always for the week just played; previews look one week ahead.
+   */
+  preview_week: number | null;
+  previews: PreviewOut[];
   /**
    * The week's games retold, same order as games
    */
@@ -1267,6 +1273,62 @@ export interface WeekDraftOut {
    */
   steals: PickValueOut[];
   steals_after_round: number;
+}
+/**
+ * One matchup of the following week, as it looked when the report's week ended.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "PreviewOut".
+ */
+export interface PreviewOut {
+  away: string;
+  away_form: FormOut;
+  blowout: MeetingOut | null;
+  closest: MeetingOut | null;
+  flags: FlagOut[];
+  /**
+   * All-time meetings before this one
+   */
+  games: number;
+  home: string;
+  home_form: FormOut;
+  /**
+   * From home's side; null for a first meeting
+   */
+  last_meeting: MeetingOut | null;
+  losses: number;
+  streak: StreakOut;
+  tier: string;
+  ties: number;
+  /**
+   * The series from home's side
+   */
+  wins: number;
+}
+/**
+ * A team's season entering the previewed week.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "FormOut".
+ */
+export interface FormOut {
+  all_play_pct: number;
+  /**
+   * Last three results, oldest first
+   */
+  last: string;
+  losses: number;
+  manager: string;
+  points_for: number;
+  /**
+   * Standings position through the report's week (seed in the playoffs)
+   */
+  rank: number;
+  ties: number;
+  /**
+   * Regular season
+   */
+  wins: number;
 }
 /**
  * One game of the week retold in rivalry context (stats/narrative.py).

@@ -1,0 +1,186 @@
+---
+// The forward-looking half of the report: a card per matchup of the following week, as it looked
+// when this week ended (scratch_h2h.py's "upcoming" view). A report is always for the week just
+// played; previews look one week ahead (WeekFile.preview_week), never the other way round.
+import type { WeekFile } from "../../types/contract";
+import ManagerName from "../ManagerName.astro";
+import { flagText, manager, rivalryHref, TIER_LABELS, weekHref, weeksFile } from "../../lib/data";
+import { ordinal, pct, points, record } from "../../lib/format";
+
+interface Props {
+  w: WeekFile;
+}
+
+const { w } = Astro.props;
+const played = weeksFile().weeks.find((x) => x.season === w.season && x.week === w.preview_week);
+type P = WeekFile["previews"][number];
+type M = NonNullable<P["last_meeting"]>;
+const short = (id: string) => manager(id).short_name;
+const when = (m: M) => `${m.season} wk ${m.week}`;
+const score = (m: M) => `${points(m.score, 2)}–${points(m.opponent_score, 2)}`;
+const margin = (m: M) => Math.abs(m.score - m.opponent_score);
+const series = (p: P) =>
+  p.wins === p.losses
+    ? `Series even at ${record(p.wins, p.losses, p.ties)}`
+    : p.wins > p.losses
+      ? `${short(p.home)} leads ${record(p.wins, p.losses, p.ties)}`
+      : `${short(p.away)} leads ${record(p.losses, p.wins, p.ties)}`;
+---
+
+{
+  w.preview_week !== null && w.previews.length > 0 && (
+    <section id="up-next">
+      <h2>Up next: {w.preview_label}</h2>
+      <p class="muted small">
+        {played ? (
+          <>
+            As it stood after {w.label.toLowerCase()}. How it went: <a href={weekHref(played)}>{w.preview_label}</a>.
+          </>
+        ) : (
+          "Series history and form going into the week."
+        )}
+      </p>
+      <ul class="previews">
+        {w.previews.map((p) => (
+          <li class="card">
+            {p.tier !== "NONE" && <p class="tier small">{TIER_LABELS[p.tier] ?? p.tier}</p>}
+            {[p.home_form, p.away_form].map((f) => (
+              <div class="team">
+                <span class="name">
+                  <ManagerName id={f.manager} link />
+                </span>
+                <span class="muted small num">
+                  {ordinal(f.rank)} · {record(f.wins, f.losses, f.ties)} · {points(f.points_for, 0)} PF ·{" "}
+                  {pct(f.all_play_pct)} AP
+                </span>
+                <span class="form" title="Last three results, oldest first">
+                  {[...f.last].map((r) => (
+                    <span class:list={["result", r]}>{r}</span>
+                  ))}
+                </span>
+              </div>
+            ))}
+            <div class="series small">
+              {p.games ? (
+                <>
+                  <p>
+                    <strong>{series(p)}</strong>{" "}
+                    <span class="muted">
+                      in {p.games} meeting{p.games === 1 ? "" : "s"}
+                    </span>
+                    {p.streak.holder && p.streak.length >= 2 && (
+                      <>
+                        {" "}
+                        · {short(p.streak.holder)} has won {p.streak.length} straight
+                      </>
+                    )}
+                  </p>
+                  <dl>
+                    <dt>Last meeting</dt>
+                    <dd>
+                      {when(p.last_meeting!)}, {score(p.last_meeting!)}
+                    </dd>
+                    <dt>Closest</dt>
+                    <dd>
+                      {when(p.closest!)}, {score(p.closest!)}{" "}
+                      <span class="muted">({margin(p.closest!) < 0.005 ? "tiebreak" : `by ${points(margin(p.closest!), 2)}`})</span>
+                    </dd>
+                    <dt>Biggest</dt>
+                    <dd>
+                      {when(p.blowout!)}, {score(p.blowout!)}{" "}
+                      <span class="muted">(by {points(margin(p.blowout!), 1)})</span>
+                    </dd>
+                  </dl>
+                  <p class="muted note">Scores from {short(p.home)}'s side.</p>
+                </>
+              ) : (
+                <p>
+                  <strong>First meeting.</strong>
+                </p>
+              )}
+              {p.flags.length > 0 && (
+                <p class="flags">
+                  {p.flags.map((f) => (
+                    <span class:list={["badge", { win: f.kind === "streak", loss: f.kind === "lopsided" }]}>
+                      {flagText(f)}
+                    </span>
+                  ))}
+                </p>
+              )}
+              {p.games > 0 && <a href={rivalryHref(p.home, p.away)}>The rivalry →</a>}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  .previews {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  }
+  .previews li {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+  .tier {
+    margin: 0;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .team {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0 0.5rem;
+    align-items: center;
+  }
+  .team .name {
+    font-weight: 600;
+  }
+  .team .muted {
+    grid-column: 1;
+  }
+  .form {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    display: flex;
+    gap: 0.15rem;
+  }
+  .series {
+    border-top: 1px solid var(--line);
+    padding-top: 0.5rem;
+  }
+  .series p {
+    margin-bottom: 0.3rem;
+  }
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.1rem 0.75rem;
+    margin: 0 0 0.3rem;
+  }
+  dt {
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .note {
+    font-size: var(--step--2);
+  }
+  .flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+</style>
