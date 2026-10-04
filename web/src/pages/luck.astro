@@ -1,0 +1,188 @@
+---
+import * as Plot from "@observablehq/plot";
+import ManagerName from "../components/ManagerName.astro";
+import PlotFigure from "../components/PlotFigure.astro";
+import SortableTables from "../components/SortableTables.astro";
+import Base from "../layouts/Base.astro";
+import { currentManagers, luck, manager, meta } from "../lib/data";
+import { ordinal, pct, record, shade, signed } from "../lib/format";
+
+const m = meta();
+const data = luck();
+const active = new Set(currentManagers().map((x) => x.id));
+const finished = data.seasons.filter((s) => s.finished);
+const most = data.careers[0]!;
+const least = data.careers.at(-1)!;
+
+// Luck as a cell shade: +/- .150 is about as far as a season strays, so that is full color.
+const luckShade = (v: number) => shade(0.5 + v / 0.6);
+const tables = [
+  { id: "luckiest", title: "Luckiest seasons", rows: data.luckiest },
+  { id: "unluckiest", title: "Unluckiest seasons", rows: data.unluckiest },
+];
+---
+
+<Base
+  title="Luck"
+  section="/luck"
+  description="All-play records and luck: how every manager's record compares with how well they actually scored, week by week."
+>
+  <h1>Luck</h1>
+  <p class="lede">
+    All-play asks what your record would be if you played the whole league every week. Luck is the gap between that and
+    your real record: who has been carried by the schedule, and who has been robbed by it.
+  </p>
+
+  <div class="grid summary">
+    <div class="card stat">
+      <span class="label">Record most flattered by the schedule</span>
+      <span class="value num">{signed(most.luck_wins)} wins</span>
+      <span><ManagerName id={most.manager} link />, {record(most.wins, most.losses, most.ties)} vs {pct(most.all_play_pct)} all-play</span>
+    </div>
+    <div class="card stat">
+      <span class="label">Record most undersold by the schedule</span>
+      <span class="value num">{signed(least.luck_wins)} wins</span>
+      <span><ManagerName id={least.manager} link />, {record(least.wins, least.losses, least.ties)} vs {pct(least.all_play_pct)} all-play</span>
+    </div>
+  </div>
+
+  <h2 id="careers">Careers</h2>
+  <p class="muted small">
+    Regular season, {m.seasons[0]}–{m.seasons.at(-1)}. All-play counts each week as a game against every other team.
+    Luck is win pct minus all-play pct; in wins, it is actual wins minus the wins the all-play rate would have earned
+    over the same games. Sorted by luck in wins.
+  </p>
+  <div class="table-scroll">
+    <table class="sticky-first" data-sortable>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Manager</th>
+          <th scope="col">Yrs</th>
+          <th scope="col">Record</th>
+          <th scope="col">Pct</th>
+          <th scope="col">All-play</th>
+          <th scope="col" title="All-play win percentage">AP pct</th>
+          <th scope="col" title="Win pct minus all-play pct">Luck</th>
+          <th scope="col" title="Actual wins minus all-play-rate wins">Luck (wins)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          data.careers.map((c) => (
+            <tr class:list={{ former: !active.has(c.manager) }}>
+              <th scope="row" data-sort={c.manager}>
+                <ManagerName id={c.manager} link />
+              </th>
+              <td>{c.seasons}</td>
+              <td data-sort={c.wins + c.ties / 2}>{record(c.wins, c.losses, c.ties)}</td>
+              <td data-sort={c.win_pct}>{pct(c.win_pct)}</td>
+              <td data-sort={c.all_play_wins}>{record(c.all_play_wins, c.all_play_losses, c.all_play_ties)}</td>
+              <td data-sort={c.all_play_pct}>{pct(c.all_play_pct)}</td>
+              <td class="shade" style={luckShade(c.luck)} data-sort={c.luck}>
+                {signed(c.luck * 1000, 0)}
+              </td>
+              <td data-sort={c.luck_wins}>{signed(c.luck_wins)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="muted small">Luck in thousandths of win pct (+41 = .041). <span class="former-key">Gray rows</span>: no longer in the league.</p>
+
+  <PlotFigure
+    label="Every finished team-season: all-play win percentage across, actual win percentage up. Above the diagonal was lucky, below unlucky. Champions are highlighted."
+    caption="Every finished team-season. Above the line, the record beat the scoring (lucky); below, it fell short. Filled dots are champions."
+    options={{
+      height: 320,
+      marginLeft: 44,
+      x: { domain: [0, 1], label: "All-play win pct →", tickFormat: (d: number) => pct(d) },
+      y: { domain: [0, 1], label: "↑ Actual win pct", tickFormat: (d: number) => pct(d) },
+      marks: [
+        Plot.line([[0, 0], [1, 1]], { className: "line", strokeDasharray: "4 3" }),
+        Plot.dot(finished.filter((s) => s.final_rank !== 1), {
+          x: "all_play_pct",
+          y: "win_pct",
+          r: 3.5,
+          className: "tie",
+          fillOpacity: 0.55,
+          title: (s) => `${s.season} ${manager(s.manager).short_name}: ${pct(s.win_pct)} vs ${pct(s.all_play_pct)} all-play`,
+        }),
+        Plot.dot(finished.filter((s) => s.final_rank === 1), {
+          x: "all_play_pct",
+          y: "win_pct",
+          r: 4.5,
+          className: "accent",
+          title: (s) => `${s.season} ${manager(s.manager).short_name} (champion): ${pct(s.win_pct)} vs ${pct(s.all_play_pct)} all-play`,
+        }),
+      ],
+    }}
+  />
+
+  <div class="grid seasons">
+    {
+      tables.map((t) => (
+        <section id={t.id}>
+          <h2>{t.title}</h2>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col" class="text">Season</th>
+                  <th scope="col" class="text">Manager</th>
+                  <th scope="col">Record</th>
+                  <th scope="col" title="All-play win percentage">AP pct</th>
+                  <th scope="col">Luck</th>
+                  <th scope="col">Finish</th>
+                </tr>
+              </thead>
+              <tbody>
+                {t.rows.map((s) => (
+                  <tr>
+                    <th scope="row" class="text">
+                      <a href={`/seasons/${s.season}`}>{s.season}</a>
+                    </th>
+                    <td class="text">
+                      <ManagerName id={s.manager} short link />
+                    </td>
+                    <td>{record(s.wins, s.losses, s.ties)}</td>
+                    <td>{pct(s.all_play_pct)}</td>
+                    <td class="shade" style={luckShade(s.luck)}>
+                      {signed(s.luck_wins)} W
+                    </td>
+                    <td>{s.final_rank ? ordinal(s.final_rank) : "–"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ))
+    }
+  </div>
+  <p class="muted small">
+    Finished seasons, ranked by the win pct gap so that 2021's 14-game regular season has no edge; the number shown is
+    the same gap in wins.
+  </p>
+  <SortableTables />
+</Base>
+
+<style>
+  .summary {
+    margin-bottom: 1.5rem;
+  }
+  .seasons {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    align-items: start;
+  }
+  .seasons h2 {
+    margin-top: 0.5rem;
+  }
+  tr.former > *,
+  .former-key {
+    color: var(--muted);
+  }
+  th.text {
+    text-align: left;
+  }
+</style>

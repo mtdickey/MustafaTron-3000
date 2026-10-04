@@ -359,6 +359,42 @@ class ProfilesFile(ContractFile):
     profiles: list[ProfileOut]
 
 
+# luck.json ---------------------------------------------------------------------------------------
+
+
+class LuckLineOut(_Model):
+    manager: str
+    wins: int = Field(description="Regular season")
+    losses: int
+    ties: int
+    win_pct: float
+    all_play_wins: int = Field(description="Against every other team, every final regular season week")
+    all_play_losses: int
+    all_play_ties: int
+    all_play_pct: float
+    luck: float = Field(description="win_pct - all_play_pct: positive means the schedule was kind")
+    luck_wins: float = Field(description="Actual wins minus wins at the all-play rate over the same games")
+
+
+class CareerLuckOut(LuckLineOut):
+    seasons: int
+
+
+class SeasonLuckOut(LuckLineOut):
+    season: int
+    finished: bool
+    final_rank: int | None
+
+
+class LuckFile(ContractFile):
+    """All-play records and luck: careers, every team-season, and the luckiest and unluckiest seasons."""
+
+    careers: list[CareerLuckOut] = Field(description="Record most overstated (luck_wins) first")
+    seasons: list[SeasonLuckOut] = Field(description="Every team-season, oldest first")
+    luckiest: list[SeasonLuckOut] = Field(description="Finished seasons, by luck, top 10")
+    unluckiest: list[SeasonLuckOut] = Field(description="Finished seasons, by luck, bottom 10")
+
+
 # Published path → model. seasons/{year}.json all use SeasonFile.
 FILES: dict[str, type[ContractFile]] = {
     "meta.json": Meta,
@@ -368,6 +404,7 @@ FILES: dict[str, type[ContractFile]] = {
     "standings.json": StandingsFile,
     "records.json": RecordsFile,
     "profiles.json": ProfilesFile,
+    "luck.json": LuckFile,
 }
 SEASON_FILE = SeasonFile
 

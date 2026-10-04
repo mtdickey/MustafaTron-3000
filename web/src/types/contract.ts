@@ -7,6 +7,7 @@
 export interface ContractFiles {
   games: GamesFile;
   h2h: H2HFile;
+  luck: LuckFile;
   managers: ManagersFile;
   meta: Meta;
   profiles: ProfilesFile;
@@ -131,6 +132,93 @@ export interface FlagOut {
   holder: string | null;
   kind: "streak" | "lopsided" | "dead_even";
   losses: number;
+  wins: number;
+}
+/**
+ * All-play records and luck: careers, every team-season, and the luckiest and unluckiest seasons.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "LuckFile".
+ */
+export interface LuckFile {
+  /**
+   * Record most overstated (luck_wins) first
+   */
+  careers: CareerLuckOut[];
+  /**
+   * Finished seasons, by luck, top 10
+   */
+  luckiest: SeasonLuckOut[];
+  schema_version: 1;
+  /**
+   * Every team-season, oldest first
+   */
+  seasons: SeasonLuckOut[];
+  /**
+   * Finished seasons, by luck, bottom 10
+   */
+  unluckiest: SeasonLuckOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "CareerLuckOut".
+ */
+export interface CareerLuckOut {
+  all_play_losses: number;
+  all_play_pct: number;
+  all_play_ties: number;
+  /**
+   * Against every other team, every final regular season week
+   */
+  all_play_wins: number;
+  losses: number;
+  /**
+   * win_pct - all_play_pct: positive means the schedule was kind
+   */
+  luck: number;
+  /**
+   * Actual wins minus wins at the all-play rate over the same games
+   */
+  luck_wins: number;
+  manager: string;
+  seasons: number;
+  ties: number;
+  win_pct: number;
+  /**
+   * Regular season
+   */
+  wins: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "SeasonLuckOut".
+ */
+export interface SeasonLuckOut {
+  all_play_losses: number;
+  all_play_pct: number;
+  all_play_ties: number;
+  /**
+   * Against every other team, every final regular season week
+   */
+  all_play_wins: number;
+  final_rank: number | null;
+  finished: boolean;
+  losses: number;
+  /**
+   * win_pct - all_play_pct: positive means the schedule was kind
+   */
+  luck: number;
+  /**
+   * Actual wins minus wins at the all-play rate over the same games
+   */
+  luck_wins: number;
+  manager: string;
+  season: number;
+  ties: number;
+  win_pct: number;
+  /**
+   * Regular season
+   */
   wins: number;
 }
 /**

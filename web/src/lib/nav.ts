@@ -12,6 +12,7 @@ export const NAV: NavItem[] = [
   { href: "/rivalries", label: "Rivalries" },
   { href: "/standings", label: "Standings" },
   { href: "/records", label: "Records" },
+  { href: "/luck", label: "Luck" },
   { href: "/seasons", label: "Seasons" },
   { href: "/managers", label: "Managers" },
 ];
