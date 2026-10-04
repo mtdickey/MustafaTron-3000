@@ -568,6 +568,34 @@ class TradesFile(ContractFile):
     counts: list[TradeCountOut]
 
 
+# awards.json -------------------------------------------------------------------------------------
+
+
+class AwardWinnerOut(_Model):
+    season: int
+    source: Literal["computed", "manual", "unrecorded"] = Field(
+        description="computed from the data, recorded by hand (data/manual/awards.yml), or not recorded"
+    )
+    manager: str | None
+    value: float | None = Field(description="The metric: trade value, bench points, or luck in wins")
+    detail: str
+
+
+class AwardOut(_Model):
+    id: str
+    name: str
+    description: str
+    status: Literal["official", "proposed"]
+    since: int = Field(description="First season the data can decide it")
+    winners: list[AwardWinnerOut] = Field(description="Every finished season, newest first")
+
+
+class AwardsFile(ContractFile):
+    """The league's awards and every season's winner (league_rules.yml says what decides each)."""
+
+    awards: list[AwardOut]
+
+
 # Published path → model. seasons/{year}.json all use SeasonFile.
 FILES: dict[str, type[ContractFile]] = {
     "meta.json": Meta,
@@ -581,6 +609,7 @@ FILES: dict[str, type[ContractFile]] = {
     "coaching.json": CoachingFile,
     "draft.json": DraftFile,
     "trades.json": TradesFile,
+    "awards.json": AwardsFile,
 }
 SEASON_FILE = SeasonFile
 

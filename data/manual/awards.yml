@@ -1,0 +1,14 @@
+# Award winners recorded by hand, by award id (see `awards` in league_rules.yml) and season.
+#
+# For seasons the data can't decide (trades and benches only exist from 2018), and to override a
+# computed winner if the league decided differently. The site marks these as recorded by hand.
+# Nothing has been backfilled yet: the old winners were only ever announced in GroupMe captions.
+#
+# Format:
+#   kariuki:
+#     2017:
+#       manager: kariuki          # a manager id from managers.yml
+#       note: Traded away ... for ...
+#
+# An award with no entry for a season it can't compute shows as not recorded.
+{}

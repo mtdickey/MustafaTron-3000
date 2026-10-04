@@ -39,6 +39,18 @@ class RivalryRules:
 
 
 @dataclass(frozen=True)
+class AwardRule:
+    """One of the league's awards: which metric decides it, and from when the data supports it."""
+
+    id: str
+    name: str
+    description: str
+    metric: str  # a key of mustafatron.stats.awards.METRICS
+    status: str  # official (the league gives it) or proposed
+    since: int
+
+
+@dataclass(frozen=True)
 class DraftReviewRules:
     steals_after_round: int
     busts_through_round: int
@@ -51,6 +63,7 @@ class LeagueRules:
         self.rivalry = RivalryRules(**doc["rivalry"])
         self.draft_review = DraftReviewRules(**doc["draft_review"])
         self._kickoffs = {int(y): _utc(v) for y, v in doc["nfl_week1_kickoff"].items()}
+        self.awards: list[AwardRule] = [AwardRule(**a) for a in doc.get("awards", [])]
 
     def _for_season(self, rule: str, season: int) -> Any:
         """The value of a ``[{since, value}, ...]`` rule in effect for a season (None before the first)."""

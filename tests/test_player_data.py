@@ -6,10 +6,9 @@ from collections import Counter, defaultdict
 import pytest
 
 from mustafatron.espn import player_data as pd_
-from mustafatron.espn.cache import BOXSCORES, DRAFT, PLAYERS, RAW_DIR, TRANSACTIONS, SeasonCache
+from mustafatron.espn.cache import BOXSCORES, DRAFT, PLAYERS, RAW_DIR, TRANSACTIONS
 from mustafatron.espn.player_data import FetchContext
 from mustafatron.pseudonymize import find_swids
-from mustafatron.transform import load_league
 
 SEASONS = range(2015, 2026)
 WEEKLY = range(2018, 2026)
@@ -148,8 +147,8 @@ def test_players_are_the_ones_the_other_files_mention():
 
 
 @pytest.fixture(scope="module")
-def league():
-    return load_league(SEASONS, cache=SeasonCache(RAW_DIR), player_data=True)
+def league(player_league):
+    return player_league
 
 
 def raw(season: int, name: str) -> dict:

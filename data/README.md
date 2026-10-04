@@ -152,7 +152,8 @@ keys directly: `mustafatron.identity` resolves them to the canonical managers in
 | File | What |
 |---|---|
 | `managers.yml` | One entry per person: canonical id, display and short names, every ESPN member ID they have used, seasons active |
-| `league_rules.yml` | Rules ESPN doesn't model: payouts, keeper eligibility, draft-review and rivalry thresholds, each season's NFL kickoff. Keyed by season where a rule changed. Anything in `mSettings` is deliberately not repeated here |
+| `league_rules.yml` | Rules ESPN doesn't model: payouts, keeper eligibility, draft-review and rivalry thresholds, each season's NFL kickoff, and the league's awards (what decides each, from which season). Keyed by season where a rule changed. Anything in `mSettings` is deliberately not repeated here |
+| `awards.yml` | Award winners recorded by hand: seasons the data can't decide (before 2018 for trades and benches) and overrides of computed winners. Empty until someone backfills the GroupMe-era winners |
 
 To refetch from ESPN: `uv run mustafatron fetch --refresh 2015-2025`. (The original import from the
 legacy `.h2h_cache/` was `scripts/import_h2h_cache.py`.)
