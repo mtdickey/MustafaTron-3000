@@ -10,6 +10,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type {
   CoachingFile,
+  DraftFile,
   GamesFile,
   H2HFile,
   LuckFile,
@@ -50,6 +51,7 @@ export const season = (year: number): SeasonFile => load(`seasons/${year}.json`)
 export const profiles = (): ProfilesFile => load("profiles.json");
 export const luck = (): LuckFile => load("luck.json");
 export const coaching = (): CoachingFile => load("coaching.json");
+export const draft = (): DraftFile => load("draft.json");
 
 export const managerHref = (id: string) => `/managers/${id}`;
 

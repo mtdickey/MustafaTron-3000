@@ -460,6 +460,65 @@ class CoachingFile(ContractFile):
     if_only: list[IfOnlyOut] = Field(description="Losses the bench would have won, most points left first")
 
 
+# draft.json --------------------------------------------------------------------------------------
+
+
+class PickValueOut(_Model):
+    season: int
+    round: int
+    round_pick: int
+    overall_pick: int
+    manager: str
+    player: str
+    position: str
+    points: float = Field(description="The player's season in this league's scoring")
+    points_above_avg: float = Field(description="Points minus the mean of drafted players at his position")
+    expected: float = Field(description="That season's line for this pick")
+    value: float = Field(description="points_above_avg - expected: points above what the pick promised")
+
+
+class DrafterOut(_Model):
+    manager: str
+    seasons: int
+    picks: int
+    value: float
+    per_pick: float
+    early_picks: int
+    early_per_pick: float = Field(description="Rounds 1 through DraftFile.early_rounds")
+    late_picks: int
+    late_per_pick: float
+
+
+class DraftClassOut(_Model):
+    season: int
+    manager: str
+    picks: int
+    value: float
+    best: PickValueOut
+
+
+class RoundOut(_Model):
+    round: int
+    picks: int
+    avg_points: float
+    by_manager: dict[str, float] = Field(description="Average value per pick in this round, by manager")
+
+
+class DraftFile(ContractFile):
+    """Draft value, every finished season, keepers excluded. Each draft is valued against its own line."""
+
+    first_season: int | None
+    early_rounds: int = Field(description="Rounds 1 through this are 'early' (the bust cutoff)")
+    steals_after_round: int
+    busts_through_round: int
+    drafters: list[DrafterOut] = Field(description="Best average value per pick first")
+    steals: list[PickValueOut]
+    busts: list[PickValueOut]
+    best_drafts: list[DraftClassOut]
+    worst_drafts: list[DraftClassOut]
+    rounds: list[RoundOut]
+
+
 # Published path → model. seasons/{year}.json all use SeasonFile.
 FILES: dict[str, type[ContractFile]] = {
     "meta.json": Meta,
@@ -471,6 +530,7 @@ FILES: dict[str, type[ContractFile]] = {
     "profiles.json": ProfilesFile,
     "luck.json": LuckFile,
     "coaching.json": CoachingFile,
+    "draft.json": DraftFile,
 }
 SEASON_FILE = SeasonFile
 
