@@ -3,7 +3,16 @@
 import pytest
 
 from mustafatron.stats.allplay import all_play
-from mustafatron.stats.weekly import all_play_through, games_in, report_weeks, standings_through, week_label
+from mustafatron.stats.coaching import coaching_book
+from mustafatron.stats.weekly import (
+    MISSES_PER_MANAGER,
+    all_play_through,
+    coaching_through,
+    games_in,
+    report_weeks,
+    standings_through,
+    week_label,
+)
 from mustafatron.stats.weeks import regular_season_periods
 from mustafatron.transform import load_league
 
@@ -99,3 +108,48 @@ def test_luck_through_a_week_uses_only_that_weeks_record(league):
     albert = next(r for r in rows if r.manager_id == "albert")
     assert (albert.luck.wins, albert.luck.losses) == (7, 5)
     assert albert.luck.luck == pytest.approx(7 / 12 - 43 / 108)
+
+
+# Coaching ------------------------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def players(player_league):
+    return player_league
+
+
+def test_no_coaching_report_before_2018(players):
+    assert coaching_through(players.seasons[2017], 5) is None
+
+
+def test_the_v0_2022_week_12_coaching_panel(players):
+    s = players.seasons[2022]
+    c = coaching_through(s, 12)
+    # img/example-report.png: "Dylan Edwards (33)" leads the bench chart, and "Dylan would've started
+    # Amari Cooper (5)" the "If only..." list.
+    top = c.bench[0]
+    assert (top.manager_id, top.substitutions) == ("edwards", 33)
+    assert top.left_on_bench == pytest.approx(285.26)
+    first = c.if_only[0]
+    assert (first.manager_id, s.players[first.player_id].name, first.weeks) == ("edwards", "Amari Cooper", 5)
+    assert [x.gain for x in c.if_only] == sorted((x.gain for x in c.if_only), reverse=True)
+
+
+def test_coaching_through_the_last_week_is_the_season_line(players):
+    book = {(x.season, x.manager_id): x for x in coaching_book(players).seasons}
+    for s in players.seasons.values():
+        if not s.has_lineups:
+            continue
+        for b in coaching_through(s, report_weeks(s)[-1].week).bench:
+            line = book[(s.season, b.manager_id)]
+            assert (len(b.weeks), b.substitutions) == (line.weeks, line.substitutions)
+            assert b.left_on_bench == pytest.approx(line.left_on_bench, abs=0.01)
+
+
+def test_coaching_never_sees_a_later_week(players):
+    s = players.seasons[2024]
+    c = coaching_through(s, 6)
+    assert all(w.period <= 6 for b in c.bench for w in b.weeks)
+    assert all(len(b.weeks) == 6 for b in c.bench)
+    for m, misses in c.by_manager.items():
+        assert len(misses) <= MISSES_PER_MANAGER and all(x.manager_id == m for x in misses)

@@ -1,0 +1,195 @@
+---
+// The weekly report's Coaching panel (v0: "Extra Points Left on Bench" and "If only..."), plus the
+// per-manager cut the v0 code built but never shipped, and a drill-down from each bench bar into the
+// weeks behind it. Every number comes from one lineup solve (stats/lineup.py), so they all agree.
+import type { WeekCoachingOut } from "../../types/contract";
+import BarList from "../BarList.astro";
+import ManagerName from "../ManagerName.astro";
+import { manager } from "../../lib/data";
+import { points } from "../../lib/format";
+
+interface Props {
+  coaching: WeekCoachingOut | null;
+  label: string;
+  season: number;
+}
+
+const { coaching, label, season } = Astro.props;
+const short = (id: string) => manager(id).short_name;
+type Ref = WeekCoachingOut["bench"][number]["detail"][number]["swaps"][number]["player_in"];
+const who = (p: Ref) => (p ? `${p.name} (${points(p.points)})` : "nobody");
+---
+
+<section id="coaching" class="coaching">
+  <h2>Coaching</h2>
+  {
+    coaching ? (
+      <>
+        <p class="muted small">
+          Every lineup against the best one the manager could have started from their own roster. Weeks counted: regular
+          season, championship bracket and 3rd place game. <a href="/coaching">All-time coaching</a>
+        </p>
+
+        <h3>Extra points left on the bench {label}</h3>
+        <BarList
+          label={`Points left on the bench ${label}`}
+          tone="loss"
+          bars={coaching.bench.map((b) => ({
+            label: `${manager(b.manager).name} (${b.substitutions})`,
+            value: b.left_on_bench,
+            display: points(b.left_on_bench),
+            href: `#bench-${b.manager}`,
+            title: `${b.perfect_weeks} perfect lineups in ${b.weeks} weeks. See the weeks.`,
+          }))}
+        />
+        <p class="muted small">Substitutions that would have recovered the points in parentheses. Tap a bar for the weeks.</p>
+
+        <h3>If only…</h3>
+        <BarList
+          label="The biggest missed starts"
+          tone="win"
+          bars={coaching.if_only.map((x) => ({
+            label: `${short(x.manager)} would've started ${x.player} (${x.weeks})`,
+            value: x.gain,
+            display: `+${points(x.gain)}`,
+            href: `#bench-${x.manager}`,
+            title: `${x.position}: ${points(x.gain)} points over the starters he'd have replaced, in ${x.weeks} week${x.weeks === 1 ? "" : "s"}`,
+          }))}
+        />
+        <p class="muted small">
+          Points each player would have added over the starter he'd have replaced, summed over the weeks he sat when he
+          shouldn't have (in parentheses).
+        </p>
+
+        <h3>Each manager's misses</h3>
+        <div class="misses">
+          {coaching.bench.map((b) => (
+            <div class="card">
+              <p class="name">
+                <ManagerName id={b.manager} link />
+              </p>
+              {coaching.by_manager[b.manager]?.length ? (
+                <ol>
+                  {coaching.by_manager[b.manager]!.map((x) => (
+                    <li>
+                      {x.player} <span class="muted">({x.weeks})</span>{" "}
+                      <span class="num gain">+{points(x.gain)}</span>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p class="muted small">Not a single bench mistake.</p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <h3>Week by week</h3>
+        {coaching.bench.map((b) => (
+          <details id={`bench-${b.manager}`} class="drill">
+            <summary>
+              <ManagerName id={b.manager} />{" "}
+              <span class="muted">
+                {points(b.left_on_bench)} left in {b.weeks} weeks · {b.perfect_weeks} perfect
+              </span>
+            </summary>
+            <ul>
+              {b.detail.map((w) => (
+                <li>
+                  <a href={`/seasons/${season}#week-${w.period}`}>Week {w.period}</a>: scored {points(w.actual)}, best{" "}
+                  {points(w.optimal)} <span class="num loss-text">({points(w.left_on_bench)} left)</span>
+                  <ul class="swaps">
+                    {w.swaps.map((x) => (
+                      <li>
+                        {x.player_in ? (
+                          <>
+                            Start <span class="win-text">{who(x.player_in)}</span>
+                            {x.player_out && (
+                              <>
+                                {" "}
+                                over <span class="loss-text">{who(x.player_out)}</span>
+                              </>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            Bench <span class="loss-text">{who(x.player_out)}</span>
+                          </>
+                        )}{" "}
+                        <span class="muted num">+{points(x.gain)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </details>
+        ))}
+      </>
+    ) : (
+      <p class="muted small">
+        ESPN kept only the starters before 2018, not the bench, so there is no coaching report for {season}.
+      </p>
+    )
+  }
+</section>
+
+<script>
+  // A bar links to its manager's weeks: open that <details> when it's the URL's target.
+  function openTarget() {
+    const el = location.hash ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null;
+    if (el instanceof HTMLDetailsElement) el.open = true;
+  }
+  window.addEventListener("hashchange", openTarget);
+  openTarget();
+</script>
+
+<style>
+  h3 {
+    margin-top: 1.25rem;
+  }
+  .misses {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    margin-bottom: 1rem;
+  }
+  .misses .name {
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+  }
+  .misses ol {
+    margin: 0;
+    padding-left: 1.2rem;
+    font-size: var(--step--1);
+  }
+  .gain {
+    color: var(--win);
+  }
+  .drill {
+    border-bottom: 1px solid var(--line);
+    padding-block: 0.4rem;
+    font-size: var(--step--1);
+  }
+  .drill summary {
+    cursor: pointer;
+  }
+  .drill:target summary {
+    color: var(--accent);
+  }
+  .drill ul {
+    padding-left: 1.2rem;
+    margin: 0.4rem 0;
+  }
+  .swaps {
+    font-size: var(--step--2);
+  }
+  .win-text {
+    color: var(--win);
+    font-weight: 600;
+  }
+  .loss-text {
+    color: var(--loss);
+    font-weight: 600;
+  }
+</style>

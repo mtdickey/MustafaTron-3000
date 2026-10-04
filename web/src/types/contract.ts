@@ -1040,6 +1040,10 @@ export interface PlayerRefOut {
  */
 export interface WeekFile {
   all_play: AllPlayGridOut;
+  /**
+   * null before 2018: ESPN kept no bench data
+   */
+  coaching: WeekCoachingOut | null;
   columns: string[];
   /**
    * This week's games
@@ -1135,6 +1139,95 @@ export interface AllPlayCellOut {
    * All-play that week: teams outscored
    */
   wins: number;
+}
+/**
+ * Lineup decisions through the week (from 2018): the v0 report's Coaching panel.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WeekCoachingOut".
+ */
+export interface WeekCoachingOut {
+  /**
+   * Most points left on the bench first
+   */
+  bench: BenchLineOut[];
+  /**
+   * Each manager's biggest missed starts
+   */
+  by_manager: {
+    [k: string]: MissedStartOut[];
+  };
+  /**
+   * The league's biggest missed starts, top 10
+   */
+  if_only: MissedStartOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "BenchLineOut".
+ */
+export interface BenchLineOut {
+  /**
+   * Weeks with points left on the bench, most first
+   */
+  detail: BenchWeekOut[];
+  left_on_bench: number;
+  manager: string;
+  perfect_weeks: number;
+  substitutions: number;
+  /**
+   * NFL weeks counted through this week
+   */
+  weeks: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "BenchWeekOut".
+ */
+export interface BenchWeekOut {
+  actual: number;
+  left_on_bench: number;
+  optimal: number;
+  /**
+   * NFL week
+   */
+  period: number;
+  /**
+   * The lineup changes that would have made it optimal, biggest first
+   */
+  swaps: SwapOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "SwapOut".
+ */
+export interface SwapOut {
+  gain: number;
+  /**
+   * Benched player who should have started
+   */
+  player_in: PlayerPointsOut | null;
+  /**
+   * Starter he'd have replaced (null: an empty slot)
+   */
+  player_out: PlayerPointsOut | null;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "MissedStartOut".
+ */
+export interface MissedStartOut {
+  /**
+   * Points those starts would have added
+   */
+  gain: number;
+  manager: string;
+  player: string;
+  position: string;
+  /**
+   * Weeks he should have started and didn't
+   */
+  weeks: number;
 }
 /**
  * This interface was referenced by `ContractFiles`'s JSON-Schema

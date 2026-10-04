@@ -1,0 +1,104 @@
+---
+// Ranked horizontal bars as plain HTML: the label sits above its bar, so long labels ("Dylan would've
+// started Amari Cooper (5)") stay legible at phone width where a chart's axis labels would shrink.
+// Bars scale to the largest |value|; a bar can link somewhere (a drill-down) and carry a tooltip.
+
+export interface Bar {
+  label: string;
+  /** A second, quieter line under the label. */
+  sub?: string;
+  value: number;
+  /** The number printed at the end of the bar. */
+  display: string;
+  href?: string;
+  title?: string;
+}
+
+interface Props {
+  bars: Bar[];
+  /** Fill color token: win (orange), loss (lavender) or accent. */
+  tone?: "win" | "loss" | "accent";
+  /** Accessible name for the list. */
+  label: string;
+}
+
+const { bars, tone = "accent", label } = Astro.props;
+const max = Math.max(...bars.map((b) => Math.abs(b.value)), 1e-9);
+---
+
+<ol class:list={["bars", tone]} aria-label={label}>
+  {
+    bars.map((b) => {
+      const Tag = b.href ? "a" : "div";
+      return (
+        <li>
+          <Tag class="bar" href={b.href} title={b.title}>
+            <span class="label">
+              {b.label}
+              {b.sub && <span class="sub muted">{b.sub}</span>}
+            </span>
+            <span class="track">
+              <span class="fill" style={`width: ${(100 * Math.abs(b.value)) / max}%`} />
+              <span class="num">{b.display}</span>
+            </span>
+          </Tag>
+        </li>
+      );
+    })
+  }
+</ol>
+
+<style>
+  .bars {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.45rem;
+    max-width: 44rem;
+  }
+  .bar {
+    display: grid;
+    gap: 0.1rem;
+    color: inherit;
+    text-decoration: none;
+    font-size: var(--step--1);
+  }
+  a.bar:hover .label,
+  a.bar:focus-visible .label {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  .label {
+    line-height: 1.25;
+  }
+  .sub {
+    display: block;
+    font-size: var(--step--2);
+  }
+  .track {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .fill {
+    display: block;
+    height: 0.8rem;
+    min-width: 2px;
+    border-radius: 0 0.2rem 0.2rem 0;
+  }
+  .num {
+    white-space: nowrap;
+    color: var(--muted);
+    font-size: var(--step--2);
+  }
+  .win .fill {
+    background: var(--win);
+  }
+  .loss .fill {
+    background: var(--loss);
+  }
+  .accent .fill {
+    background: var(--accent);
+  }
+</style>

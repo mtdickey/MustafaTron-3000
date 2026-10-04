@@ -170,6 +170,149 @@
       "title": "AllPlayRowOut",
       "type": "object"
     },
+    "BenchLineOut": {
+      "additionalProperties": false,
+      "properties": {
+        "detail": {
+          "description": "Weeks with points left on the bench, most first",
+          "items": {
+            "$ref": "#/$defs/BenchWeekOut"
+          },
+          "title": "Detail",
+          "type": "array"
+        },
+        "left_on_bench": {
+          "title": "Left On Bench",
+          "type": "number"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "perfect_weeks": {
+          "title": "Perfect Weeks",
+          "type": "integer"
+        },
+        "substitutions": {
+          "title": "Substitutions",
+          "type": "integer"
+        },
+        "weeks": {
+          "description": "NFL weeks counted through this week",
+          "title": "Weeks",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "weeks",
+        "left_on_bench",
+        "substitutions",
+        "perfect_weeks",
+        "detail"
+      ],
+      "title": "BenchLineOut",
+      "type": "object"
+    },
+    "BenchWeekOut": {
+      "additionalProperties": false,
+      "properties": {
+        "actual": {
+          "title": "Actual",
+          "type": "number"
+        },
+        "left_on_bench": {
+          "title": "Left On Bench",
+          "type": "number"
+        },
+        "optimal": {
+          "title": "Optimal",
+          "type": "number"
+        },
+        "period": {
+          "description": "NFL week",
+          "title": "Period",
+          "type": "integer"
+        },
+        "swaps": {
+          "description": "The lineup changes that would have made it optimal, biggest first",
+          "items": {
+            "$ref": "#/$defs/SwapOut"
+          },
+          "title": "Swaps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "period",
+        "actual",
+        "optimal",
+        "left_on_bench",
+        "swaps"
+      ],
+      "title": "BenchWeekOut",
+      "type": "object"
+    },
+    "MissedStartOut": {
+      "additionalProperties": false,
+      "properties": {
+        "gain": {
+          "description": "Points those starts would have added",
+          "title": "Gain",
+          "type": "number"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "player": {
+          "title": "Player",
+          "type": "string"
+        },
+        "position": {
+          "title": "Position",
+          "type": "string"
+        },
+        "weeks": {
+          "description": "Weeks he should have started and didn't",
+          "title": "Weeks",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "manager",
+        "player",
+        "position",
+        "weeks",
+        "gain"
+      ],
+      "title": "MissedStartOut",
+      "type": "object"
+    },
+    "PlayerPointsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "points": {
+          "title": "Points",
+          "type": "number"
+        },
+        "position": {
+          "title": "Position",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "position",
+        "points"
+      ],
+      "title": "PlayerPointsOut",
+      "type": "object"
+    },
     "StandingLineOut": {
       "additionalProperties": false,
       "properties": {
@@ -208,6 +351,84 @@
       ],
       "title": "StandingLineOut",
       "type": "object"
+    },
+    "SwapOut": {
+      "additionalProperties": false,
+      "properties": {
+        "gain": {
+          "title": "Gain",
+          "type": "number"
+        },
+        "player_in": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlayerPointsOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Benched player who should have started"
+        },
+        "player_out": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlayerPointsOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Starter he'd have replaced (null: an empty slot)"
+        }
+      },
+      "required": [
+        "player_in",
+        "player_out",
+        "gain"
+      ],
+      "title": "SwapOut",
+      "type": "object"
+    },
+    "WeekCoachingOut": {
+      "additionalProperties": false,
+      "description": "Lineup decisions through the week (from 2018): the v0 report's Coaching panel.",
+      "properties": {
+        "bench": {
+          "description": "Most points left on the bench first",
+          "items": {
+            "$ref": "#/$defs/BenchLineOut"
+          },
+          "title": "Bench",
+          "type": "array"
+        },
+        "by_manager": {
+          "additionalProperties": {
+            "items": {
+              "$ref": "#/$defs/MissedStartOut"
+            },
+            "type": "array"
+          },
+          "description": "Each manager's biggest missed starts",
+          "title": "By Manager",
+          "type": "object"
+        },
+        "if_only": {
+          "description": "The league's biggest missed starts, top 10",
+          "items": {
+            "$ref": "#/$defs/MissedStartOut"
+          },
+          "title": "If Only",
+          "type": "array"
+        }
+      },
+      "required": [
+        "bench",
+        "if_only",
+        "by_manager"
+      ],
+      "title": "WeekCoachingOut",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -215,6 +436,17 @@
   "properties": {
     "all_play": {
       "$ref": "#/$defs/AllPlayGridOut"
+    },
+    "coaching": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WeekCoachingOut"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "null before 2018: ESPN kept no bench data"
     },
     "columns": {
       "default": [
@@ -324,7 +556,8 @@
     "periods",
     "games",
     "standings",
-    "all_play"
+    "all_play",
+    "coaching"
   ],
   "title": "WeekFile",
   "type": "object"
