@@ -1,0 +1,19 @@
+---
+import WeekReport from "../../../components/week/WeekReport.astro";
+import Base from "../../../layouts/Base.astro";
+import { week, weeksFile } from "../../../lib/data";
+
+export function getStaticPaths() {
+  return weeksFile().weeks.map((w) => ({ params: { year: String(w.season), week: String(w.week) } }));
+}
+
+const w = week(Number(Astro.params.year), Number(Astro.params.week));
+---
+
+<Base
+  title={`${w.season} ${w.label}`}
+  section="/week"
+  description={`The Mustafa Report for ${w.season} ${w.label.toLowerCase()}: results, standings and the week in review.`}
+>
+  <WeekReport w={w} />
+</Base>

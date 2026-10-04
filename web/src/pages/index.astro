@@ -1,7 +1,8 @@
 ---
 import ManagerName from "../components/ManagerName.astro";
+import WeekReport from "../components/week/WeekReport.astro";
 import Base from "../layouts/Base.astro";
-import { games, gamesFile, managers, meta, rivalryHref, season, series } from "../lib/data";
+import { games, gamesFile, managers, meta, rivalryHref, season, series, week, weeksFile } from "../lib/data";
 import { points, record } from "../lib/format";
 
 const m = meta();
@@ -9,22 +10,35 @@ const lastFinished = m.current_season_finished ? m.current_season : m.current_se
 const champ = m.seasons.includes(lastFinished) ? season(lastFinished).champion : null;
 const all = games();
 
+// During the season the front page is this week's report; between seasons, the all-time hub.
+const current = weeksFile().current;
+const report = current ? week(current.season, current.week) : null;
+
 // This week's matchups with each series' all-time record, the scratch script's "upcoming" view.
 const upcoming = gamesFile().upcoming.map(([, , home, away]) => ({ home, away, ...series(home, away) }));
-const lastWeek = m.current_season_finished
+const lastWeek = report || m.current_season_finished
   ? []
   : all.filter((g) => g.season === m.current_season && g.week === m.last_completed_week);
 ---
 
 <Base title={m.league_name} section="/" description="All-time head-to-head records, rivalries, standings and the records book.">
-  <section class="hero">
-    <p class="kicker">The league hub of</p>
-    <h1>{m.league_name}</h1>
-    <p class="lede">
-      {m.seasons.length} seasons, {all.length} games, {managers().length} managers, one trophy. Every
-      number since {m.seasons[0]}.
-    </p>
-  </section>
+  {
+    report ? (
+      <>
+        <WeekReport w={report} permalink />
+        <h2>{m.league_name}</h2>
+      </>
+    ) : (
+      <section class="hero">
+        <p class="kicker">The league hub of</p>
+        <h1>{m.league_name}</h1>
+        <p class="lede">
+          {m.seasons.length} seasons, {all.length} games, {managers().length} managers, one trophy. Every
+          number since {m.seasons[0]}.
+        </p>
+      </section>
+    )
+  }
 
   <div class="grid">
     {

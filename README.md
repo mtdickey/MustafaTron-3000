@@ -40,6 +40,7 @@ changing or dropping old data. Only the in-progress season is ever refetched.
 | `src/mustafatron/model.py` | The entities stats code reads: `TeamSeason`, `Game`, `DraftPick`, `Transaction`, `Player`, `PlayerWeek`, `Season`, `League` |
 | `src/mustafatron/transform.py` | Raw ESPN JSON → model; the only layer that knows how ESPN's eras differ. `load_league()` |
 | `src/mustafatron/stats/` | H2H series and rivalries (`h2h.py`, ported from `scratch_h2h.py`), all-time standings, records book, all-play and luck (`allplay.py`), the optimal-lineup engine (`lineup.py`) coaching (`coaching.py`) draft value (`draft.py`) trade valuations (`trades.py`) and the league's awards (`awards.py`) |
+| `src/mustafatron/stats/weekly.py` | The weekly report: which weeks get one, labels, and everything "through week N" |
 | `src/mustafatron/contract.py` | The site JSON contract (pydantic); JSON Schemas generated into [`schema/`](schema/) |
 | `src/mustafatron/publish.py` | Writes `web/public/data/*.json` through the contract |
 | `src/mustafatron/cli.py` | `uv run mustafatron fetch [--seasons 2019-2021] [--refresh 2019]` |
@@ -125,6 +126,8 @@ lays out what the contract publishes.
 | `records.json` | Records book top 10s: single game and matchup (one-week matchups only), league-wide NFL week, season, and win/loss streaks |
 | `profiles.json` | Per manager: best and worst single NFL weeks, career all-play record (vs the field) |
 | `seasons/{year}.json` | One season: settings, final standings, every game, each team's points per NFL week, all-play records, superlatives |
+| `weeks.json` | Every weekly report (season, week, label), and the current one while a season is in progress |
+| `weeks/{year}/{week}.json` | One weekly report, as it stood when the week ended: the week's games and the standings through it |
 
 Managers are referenced by canonical id everywhere; `week` is ESPN's matchup period (playoff weeks
 span two NFL weeks). The models in [`contract.py`](src/mustafatron/contract.py) are the contract,

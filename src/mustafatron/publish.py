@@ -27,6 +27,7 @@ from mustafatron.stats.records import records_book
 from mustafatron.stats.seasons import all_play, superlatives, week_scores
 from mustafatron.stats.standings import all_time_standings, championship_ledger
 from mustafatron.stats.trades import Trade, trade_book
+from mustafatron.stats.weekly import ReportWeek, games_in, report_weeks, standings_through
 from mustafatron.transform import load_league
 
 REPO = Path(__file__).resolve().parents[2]
@@ -377,7 +378,43 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
             games=[game_row(g) for g in s.games],
             **_season_detail(s),
         )
+
+    reports = [w for s in league.seasons.values() for w in report_weeks(s)]
+    in_progress = [w for w in reports if w.season == current.season and not current.finished]
+    out["weeks.json"] = c.WeeksFile(
+        weeks=[_week_ref(w) for w in reports],
+        current=_week_ref(in_progress[-1]) if in_progress else None,
+    )
+    for w in reports:
+        out[f"weeks/{w.season}/{w.week}.json"] = week_file(league, w)
     return out
+
+
+def _week_ref(w: ReportWeek) -> c.WeekRefOut:
+    return c.WeekRefOut(season=w.season, week=w.week, label=w.label, playoff=w.playoff)
+
+
+def week_file(league: League, w: ReportWeek) -> c.WeekFile:
+    s = league.seasons[w.season]
+    return c.WeekFile(
+        season=w.season,
+        week=w.week,
+        label=w.label,
+        playoff=w.playoff,
+        periods=list(w.periods),
+        games=[game_row(g) for g in games_in(s, w.week)],
+        standings=[
+            c.StandingLineOut(
+                manager=x.manager_id,
+                wins=x.wins,
+                losses=x.losses,
+                ties=x.ties,
+                points_for=x.points_for,
+                points_against=x.points_against,
+            )
+            for x in standings_through(s, w.week)
+        ],
+    )
 
 
 def _pick(p: PickValue) -> c.PickValueOut:
@@ -574,6 +611,7 @@ def schemas() -> dict[str, dict]:
     """JSON Schema for every published file, keyed by schema file name."""
     out = {f"{Path(name).stem}.schema.json": model.model_json_schema() for name, model in c.FILES.items()}
     out["season.schema.json"] = c.SEASON_FILE.model_json_schema()
+    out["week.schema.json"] = c.WEEK_FILE.model_json_schema()
     return out
 
 

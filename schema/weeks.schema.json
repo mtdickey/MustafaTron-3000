@@ -1,0 +1,70 @@
+{
+  "$defs": {
+    "WeekRefOut": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "description": "\"Week 5\", or the playoff round: \"Semifinals\", \"Championship\"",
+          "title": "Label",
+          "type": "string"
+        },
+        "playoff": {
+          "title": "Playoff",
+          "type": "boolean"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "week": {
+          "description": "Matchup period",
+          "title": "Week",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "season",
+        "week",
+        "label",
+        "playoff"
+      ],
+      "title": "WeekRefOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Every weekly report, the archive the /week pages are built from.",
+  "properties": {
+    "current": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WeekRefOut"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The latest report of the season in progress (the front page); null between seasons"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "weeks": {
+      "description": "Every week with all its games final, oldest first",
+      "items": {
+        "$ref": "#/$defs/WeekRefOut"
+      },
+      "title": "Weeks",
+      "type": "array"
+    }
+  },
+  "required": [
+    "weeks",
+    "current"
+  ],
+  "title": "WeeksFile",
+  "type": "object"
+}

@@ -18,7 +18,8 @@ def published(tmp_path_factory):
 def test_offline_publish_writes_every_file(published):
     out, files = published
     names = {p.relative_to(out).as_posix() for p in out.rglob("*.json")}
-    assert names == set(c.FILES) | {f"seasons/{y}.json" for y in range(2015, 2026)}
+    weeks = {n for n in names if n.startswith("weeks/")}
+    assert names == set(c.FILES) | {f"seasons/{y}.json" for y in range(2015, 2026)} | weeks
     assert names == set(files)
 
 
@@ -72,3 +73,17 @@ def test_season_file(published):
     assert s["finished"] and s["champion"] == s["teams"][0]["manager"]
     assert [t["final_rank"] for t in s["teams"]] == list(range(1, 11))
     assert s["settings"]["final_week"] == 16 and len(s["games"]) == 80
+
+
+def test_weekly_reports(published):
+    out, _ = published
+    index = json.loads((out / "weeks.json").read_text(encoding="utf-8"))
+    assert index["current"] is None  # offline: no season in progress
+    refs = [(w["season"], w["week"]) for w in index["weeks"]]
+    assert refs == sorted(refs) and len(refs) == 166
+    for season, week in refs:
+        assert (out / "weeks" / str(season) / f"{week}.json").exists()
+    w = json.loads((out / "weeks" / "2022" / "12.json").read_text(encoding="utf-8"))
+    assert (w["label"], w["playoff"], w["periods"]) == ("Week 12", False, [12])
+    assert len(w["games"]) == 5 and all(g[1] == 12 for g in w["games"])
+    assert [x["manager"] for x in w["standings"]][:2] == ["joyce", "grudee"]

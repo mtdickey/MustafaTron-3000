@@ -1,0 +1,88 @@
+---
+import Base from "../../layouts/Base.astro";
+import { weekHref, weeksFile } from "../../lib/data";
+
+const { weeks, current } = weeksFile();
+const seasons = [...new Set(weeks.map((w) => w.season))].sort((a, b) => b - a);
+const isCurrent = (w: (typeof weeks)[number]) => current?.season === w.season && current?.week === w.week;
+---
+
+<Base
+  title="Weekly reports"
+  section="/week"
+  description="Every weekly report since 2015: results, standings, luck, coaching and the draft, week by week."
+>
+  <h1>Weekly reports</h1>
+  <p class="lede">
+    The Mustafa Report for every week of every season, each one as it stood when the week ended.
+    {current && (
+      <>
+        {" "}
+        This week: <a href={weekHref(current)}>{current.season} {current.label.toLowerCase()}</a>.
+      </>
+    )}
+  </p>
+
+  {
+    seasons.map((y) => (
+      <section class="season" id={`season-${y}`}>
+        <h2>
+          <a href={`/seasons/${y}`}>{y}</a>
+        </h2>
+        <ul class="weeks">
+          {weeks
+            .filter((w) => w.season === y)
+            .map((w) => (
+              <li>
+                <a
+                  href={weekHref(w)}
+                  class:list={{ playoff: w.playoff }}
+                  aria-current={isCurrent(w) ? "page" : undefined}
+                  title={`${y} ${w.label}`}
+                >
+                  {w.playoff ? w.label : w.week}
+                </a>
+              </li>
+            ))}
+        </ul>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .season h2 {
+    margin-top: 1.5rem;
+  }
+  .weeks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .weeks a {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    padding: 0 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .weeks a.playoff {
+    font-weight: 600;
+  }
+  .weeks a:hover {
+    border-color: var(--accent);
+  }
+  .weeks a[aria-current="page"] {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+</style>

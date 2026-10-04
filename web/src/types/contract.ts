@@ -18,6 +18,8 @@ export interface ContractFiles {
   season: SeasonFile;
   standings: StandingsFile;
   trades: TradesFile;
+  week: WeekFile;
+  weeks: WeeksFile;
 }
 /**
  * The league's awards and every season's winner (league_rules.yml says what decides each).
@@ -1029,4 +1031,78 @@ export interface TradeSideOut {
 export interface PlayerRefOut {
   name: string;
   position: string;
+}
+/**
+ * One weekly report, everything as it stood when the week ended ("through week N").
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WeekFile".
+ */
+export interface WeekFile {
+  columns: string[];
+  /**
+   * This week's games
+   */
+  games: [number, number, number, string, string, number, number, string | null][];
+  label: string;
+  /**
+   * The NFL weeks this matchup week covers
+   */
+  periods: number[];
+  playoff: boolean;
+  schema_version: 1;
+  season: number;
+  /**
+   * Regular season through this week, best record first; seed order in the playoffs
+   */
+  standings: StandingLineOut[];
+  /**
+   * Matchup period
+   */
+  week: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "StandingLineOut".
+ */
+export interface StandingLineOut {
+  losses: number;
+  manager: string;
+  points_against: number;
+  points_for: number;
+  ties: number;
+  wins: number;
+}
+/**
+ * Every weekly report, the archive the /week pages are built from.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WeeksFile".
+ */
+export interface WeeksFile {
+  /**
+   * The latest report of the season in progress (the front page); null between seasons
+   */
+  current: WeekRefOut | null;
+  schema_version: 1;
+  /**
+   * Every week with all its games final, oldest first
+   */
+  weeks: WeekRefOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WeekRefOut".
+ */
+export interface WeekRefOut {
+  /**
+   * "Week 5", or the playoff round: "Semifinals", "Championship"
+   */
+  label: string;
+  playoff: boolean;
+  season: number;
+  /**
+   * Matchup period
+   */
+  week: number;
 }
