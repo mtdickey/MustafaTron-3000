@@ -2,12 +2,14 @@
 
 import pytest
 
+from mustafatron.rules import load_rules
 from mustafatron.stats.allplay import all_play
 from mustafatron.stats.coaching import coaching_book
 from mustafatron.stats.weekly import (
     MISSES_PER_MANAGER,
     all_play_through,
     coaching_through,
+    draft_through,
     games_in,
     report_weeks,
     standings_through,
@@ -15,6 +17,8 @@ from mustafatron.stats.weekly import (
 )
 from mustafatron.stats.weeks import regular_season_periods
 from mustafatron.transform import load_league
+
+RULES = load_rules()
 
 
 @pytest.fixture(scope="module")
@@ -153,3 +157,48 @@ def test_coaching_never_sees_a_later_week(players):
     assert all(len(b.weeks) == 6 for b in c.bench)
     for m, misses in c.by_manager.items():
         assert len(misses) <= MISSES_PER_MANAGER and all(x.manager_id == m for x in misses)
+
+
+# Draft ---------------------------------------------------------------------------------------------
+
+
+def test_no_weekly_draft_report_before_2018(players):
+    assert draft_through(players.seasons[2017], 5, RULES.draft_review) is None
+
+
+def test_the_v0_2022_week_12_draft_panel(players):
+    # The right panel of img/example-report.png, every bar in order.
+    d = draft_through(players.seasons[2022], 12, RULES.draft_review)
+    assert [(p.player, p.overall_pick) for p in d.steals] == [
+        ("Josh Jacobs", 44), ("Jalen Hurts", 76), ("Patrick Mahomes", 49), ("Jamaal Williams", 128),
+        ("Josh Allen", 37), ("Travis Kelce", 17), ("Nick Chubb", 15), ("Stefon Diggs", 19),
+        ("Joe Burrow", 93), ("Cowboys D/ST", 148),
+    ]  # fmt: skip
+    assert [(p.player, p.overall_pick) for p in d.busts] == [
+        ("Javonte Williams", 21), ("Cam Akers", 34), ("Keenan Allen", 33), ("D'Andre Swift", 14),
+        ("Kyle Pitts", 31), ("James Conner", 23), ("Mike Williams", 38), ("Jonathan Taylor", 1),
+        ("Alvin Kamara", 11), ("Najee Harris", 8),
+    ]  # fmt: skip
+    assert all(p.round > 1 for p in d.steals) and all(p.round <= 4 for p in d.busts)
+
+
+def test_the_line_is_the_fit_and_values_are_residuals(players):
+    d = draft_through(players.seasons[2024], 6, RULES.draft_review)
+    assert not any(
+        p
+        for p in players.seasons[2024].draft
+        if p.keeper and p.player_id in {x.player_id for x in d.line.picks}
+    )
+    for p in d.line.picks:
+        assert p.expected == pytest.approx(d.line.expected(p.overall_pick), abs=0.01)
+        assert p.value == pytest.approx(p.points_above_avg - p.expected, abs=0.02)
+    assert sum(p.value for p in d.line.picks) == pytest.approx(0, abs=0.5)  # least squares residuals
+
+
+def test_points_so_far_never_include_a_later_week(players):
+    s = players.seasons[2022]
+    d = draft_through(s, 3, RULES.draft_review)
+    for p in d.line.picks[:20]:
+        assert p.points == pytest.approx(
+            sum(s.players[p.player_id].points_in(w) for w in (1, 2, 3)), abs=0.01
+        )

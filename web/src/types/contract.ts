@@ -1046,6 +1046,10 @@ export interface WeekFile {
   coaching: WeekCoachingOut | null;
   columns: string[];
   /**
+   * null before 2018: ESPN kept no weekly player points
+   */
+  draft: WeekDraftOut | null;
+  /**
    * This week's games
    */
   games: [number, number, number, string, string, number, number, string | null][];
@@ -1228,6 +1232,33 @@ export interface MissedStartOut {
    * Weeks he should have started and didn't
    */
   weeks: number;
+}
+/**
+ * The draft graded on points so far (from 2018): the v0 report's Draft panel, plus its regression.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WeekDraftOut".
+ */
+export interface WeekDraftOut {
+  /**
+   * Smallest value through round busts_through_round, top 10
+   */
+  busts: PickValueOut[];
+  busts_through_round: number;
+  /**
+   * The draft's line: expected points_above_avg = intercept + slope * pick
+   */
+  intercept: number;
+  /**
+   * Every non-keeper pick, by overall pick
+   */
+  picks: PickValueOut[];
+  slope: number;
+  /**
+   * Biggest value after round steals_after_round, top 10
+   */
+  steals: PickValueOut[];
+  steals_after_round: number;
 }
 /**
  * This interface was referenced by `ContractFiles`'s JSON-Schema

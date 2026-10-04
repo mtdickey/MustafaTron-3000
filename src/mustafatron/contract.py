@@ -689,6 +689,20 @@ class WeekCoachingOut(_Model):
     by_manager: dict[str, list[MissedStartOut]] = Field(description="Each manager's biggest missed starts")
 
 
+class WeekDraftOut(_Model):
+    """The draft graded on points so far (from 2018): the v0 report's Draft panel, plus its regression."""
+
+    steals_after_round: int
+    busts_through_round: int
+    intercept: float = Field(
+        description="The draft's line: expected points_above_avg = intercept + slope * pick"
+    )
+    slope: float
+    picks: list[PickValueOut] = Field(description="Every non-keeper pick, by overall pick")
+    steals: list[PickValueOut] = Field(description="Biggest value after round steals_after_round, top 10")
+    busts: list[PickValueOut] = Field(description="Smallest value through round busts_through_round, top 10")
+
+
 class WeekFile(ContractFile):
     """One weekly report, everything as it stood when the week ended ("through week N")."""
 
@@ -704,6 +718,7 @@ class WeekFile(ContractFile):
     )
     all_play: AllPlayGridOut
     coaching: WeekCoachingOut | None = Field(description="null before 2018: ESPN kept no bench data")
+    draft: WeekDraftOut | None = Field(description="null before 2018: ESPN kept no weekly player points")
 
 
 # Published path → model. seasons/{year}.json all use SeasonFile, weeks/{year}/{week}.json WeekFile.

@@ -1,0 +1,116 @@
+---
+// The weekly report's Draft panel (v0: "Biggest Steals after Rd. 1" and "Biggest Busts of Rds. 1-4"),
+// with what the PNG couldn't show: the regression itself, every pick against the draft's line.
+import * as Plot from "@observablehq/plot";
+import type { WeekDraftOut } from "../../types/contract";
+import BarList from "../BarList.astro";
+import PlotFigure from "../PlotFigure.astro";
+import { manager } from "../../lib/data";
+import { points, signed } from "../../lib/format";
+
+interface Props {
+  draft: WeekDraftOut | null;
+  label: string;
+  season: number;
+}
+
+const { draft, label, season } = Astro.props;
+type Pick = WeekDraftOut["picks"][number];
+const short = (id: string) => manager(id).short_name;
+const sub = (p: Pick) => `${short(p.manager)} · pick #${p.overall_pick} (rd ${p.round})`;
+const tip = (p: Pick) =>
+  `${p.player} (${p.position}), ${short(p.manager)} pick #${p.overall_pick}: ${points(p.points)} pts, ` +
+  `${signed(p.points_above_avg)} vs the position, ${signed(p.value)} vs the pick`;
+const bars = (ps: Pick[]) =>
+  ps.map((p) => ({ label: p.player, sub: sub(p), value: p.value, display: signed(p.value), title: tip(p) }));
+const key = (p: Pick) => p.overall_pick;
+const steals = new Set(draft?.steals.map(key));
+const busts = new Set(draft?.busts.map(key));
+const lastPick = Math.max(...(draft?.picks.map(key) ?? [1]));
+---
+
+<section id="draft" class="draft">
+  <h2>Draft</h2>
+  {
+    draft ? (
+      <>
+        <p class="muted small">
+          Every pick graded on points so far: points above the average drafted player at his position, against what that
+          slot in this draft should return (the line in the chart below). Keepers are left out.{" "}
+          <a href="/draft">All-time draft</a>
+        </p>
+        <div class="pair">
+          <div>
+            <h3>
+              Biggest steals after round {draft.steals_after_round} <span class="muted">{label}</span>
+            </h3>
+            <BarList label="Biggest steals" tone="win" bars={bars(draft.steals)} />
+          </div>
+          <div>
+            <h3>
+              Biggest busts of rounds 1–{draft.busts_through_round} <span class="muted">{label}</span>
+            </h3>
+            <BarList label="Biggest busts" tone="loss" bars={bars(draft.busts)} />
+          </div>
+        </div>
+
+        <h3>The regression</h3>
+        <div class="scatter">
+          <PlotFigure
+            label="Every pick: points above his position's average against overall pick, with the draft's expectation line. Steals and busts are highlighted."
+            caption="Each dot is a pick. Above the line, he has outscored his draft slot; below, he hasn't. Orange: the steals above; lavender: the busts. Hover a dot for the player."
+            options={{
+              width: 640,
+              height: 340,
+              marginLeft: 44,
+              x: { label: "Overall pick →", domain: [0, lastPick + 1] },
+              y: { label: "↑ Points above position avg", grid: true },
+              marks: [
+                Plot.ruleY([0], { strokeOpacity: 0.3 }),
+                Plot.line(
+                  [
+                    [1, draft.intercept + draft.slope],
+                    [lastPick, draft.intercept + draft.slope * lastPick],
+                  ],
+                  { className: "line", strokeWidth: 2 },
+                ),
+                Plot.dot(
+                  draft.picks.filter((p) => !steals.has(key(p)) && !busts.has(key(p))),
+                  { x: "overall_pick", y: "points_above_avg", r: 3, className: "tie", fillOpacity: 0.5, title: tip },
+                ),
+                Plot.dot(draft.steals, { x: "overall_pick", y: "points_above_avg", r: 4.5, className: "win", title: tip }),
+                Plot.dot(draft.busts, { x: "overall_pick", y: "points_above_avg", r: 4.5, className: "loss", title: tip }),
+              ],
+            }}
+          />
+        </div>
+        <p class="muted small">
+          Line: expected points above average = {points(draft.intercept, 1)} {draft.slope < 0 ? "−" : "+"}{" "}
+          {Math.abs(draft.slope).toFixed(2)} × pick.
+        </p>
+      </>
+    ) : (
+      <p class="muted small">
+        ESPN kept only season totals before 2018, not points week by week, so {season}'s draft is graded once, on the{" "}
+        <a href="/draft">all-time draft page</a>.
+      </p>
+    )
+  }
+</section>
+
+<style>
+  h3 {
+    margin-top: 1.25rem;
+    font-size: var(--step-0);
+  }
+  .pair {
+    display: grid;
+    gap: 0 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    align-items: start;
+  }
+  .scatter :global(figure.plot svg) {
+    max-height: none;
+    max-width: 44rem;
+  }
+</style>

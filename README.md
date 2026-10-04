@@ -45,7 +45,7 @@ changing or dropping old data. Only the in-progress season is ever refetched.
 | `src/mustafatron/publish.py` | Writes `web/public/data/*.json` through the contract |
 | `src/mustafatron/cli.py` | `uv run mustafatron fetch [--seasons 2019-2021] [--refresh 2019]` |
 | `src/mustafatron/pseudonymize.py` | Replaces ESPN SWIDs with stable opaque IDs before anything hits disk |
-| `src/mustafatron/legacy/` | The v1 matplotlib report code, kept until M1/M4 replace it |
+| `src/mustafatron/legacy/` | The v1 keeper script, kept until the keeper module (M5) replaces it |
 | `data/raw/` | Committed ESPN responses, one directory per season ([format](data/README.md)) |
 | `scratch_h2h.py` | The original H2H script, kept as the reference `stats/h2h.py` is tested against |
 | `web/` | Astro site: static pages built from the published JSON at build time ([below](#the-site)) |
@@ -56,7 +56,7 @@ Requires [uv](https://docs.astral.sh/uv/) (Python 3.12 is installed by uv) and, 
 Node 22.12+.
 
 ```sh
-uv sync                  # add --extra legacy to run the v1 report code
+uv sync                  # add --extra legacy to run the v1 keeper script
 cp .env.example .env     # then fill it in, see below
 ```
 
@@ -170,5 +170,6 @@ can be attached later in the Pages dashboard without touching the workflow.
 
 ![Example report](img/example-report.png "Weekly report from 2022")
 
-The hand-assembled weekly PNG this project replaces (2022). It is the design target for the
-interactive weekly report pages in M4. The original code is preserved at the `archive/v0` tag.
+The hand-assembled weekly PNG this project replaced (2022). Since M4 every week has its own page
+instead: this one is [/week/2022/12](https://mustafatron.pages.dev/week/2022/12), and its numbers are
+checked against the PNG in `tests/test_weekly.py`. The original code is preserved at the `archive/v0` tag.

@@ -32,6 +32,7 @@ from mustafatron.stats.weekly import (
     ReportWeek,
     all_play_through,
     coaching_through,
+    draft_through,
     games_in,
     report_weeks,
     standings_through,
@@ -394,7 +395,7 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
         current=_week_ref(in_progress[-1]) if in_progress else None,
     )
     for w in reports:
-        out[f"weeks/{w.season}/{w.week}.json"] = week_file(league, w)
+        out[f"weeks/{w.season}/{w.week}.json"] = week_file(league, w, rules)
     return out
 
 
@@ -402,7 +403,7 @@ def _week_ref(w: ReportWeek) -> c.WeekRefOut:
     return c.WeekRefOut(season=w.season, week=w.week, label=w.label, playoff=w.playoff)
 
 
-def week_file(league: League, w: ReportWeek) -> c.WeekFile:
+def week_file(league: League, w: ReportWeek, rules: LeagueRules) -> c.WeekFile:
     s = league.seasons[w.season]
     return c.WeekFile(
         season=w.season,
@@ -424,6 +425,22 @@ def week_file(league: League, w: ReportWeek) -> c.WeekFile:
         ],
         all_play=_all_play_grid(s, w.week),
         coaching=_week_coaching(league, s, w.week),
+        draft=_week_draft(s, w.week, rules),
+    )
+
+
+def _week_draft(s: Season, week: int, rules: LeagueRules) -> c.WeekDraftOut | None:
+    d = draft_through(s, week, rules.draft_review)
+    if d is None:
+        return None
+    return c.WeekDraftOut(
+        steals_after_round=rules.draft_review.steals_after_round,
+        busts_through_round=rules.draft_review.busts_through_round,
+        intercept=round(d.line.intercept, 4),
+        slope=round(d.line.slope, 4),
+        picks=[_pick(p) for p in sorted(d.line.picks, key=lambda p: p.overall_pick)],
+        steals=[_pick(p) for p in d.steals],
+        busts=[_pick(p) for p in d.busts],
     )
 
 
