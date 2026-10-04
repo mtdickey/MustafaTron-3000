@@ -253,6 +253,47 @@
       "title": "BenchWeekOut",
       "type": "object"
     },
+    "FlagOut": {
+      "additionalProperties": false,
+      "properties": {
+        "holder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Holder"
+        },
+        "kind": {
+          "enum": [
+            "streak",
+            "lopsided",
+            "dead_even"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "losses": {
+          "default": 0,
+          "title": "Losses",
+          "type": "integer"
+        },
+        "wins": {
+          "default": 0,
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "FlagOut",
+      "type": "object"
+    },
     "MissedStartOut": {
       "additionalProperties": false,
       "properties": {
@@ -381,6 +422,73 @@
       "title": "PlayerPointsOut",
       "type": "object"
     },
+    "RecapOut": {
+      "additionalProperties": false,
+      "description": "One game of the week retold in rivalry context (stats/narrative.py).",
+      "properties": {
+        "away": {
+          "title": "Away",
+          "type": "string"
+        },
+        "first_meeting": {
+          "title": "First Meeting",
+          "type": "boolean"
+        },
+        "flags": {
+          "description": "Notable flags on the series after the game (league_rules.yml)",
+          "items": {
+            "$ref": "#/$defs/FlagOut"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "home": {
+          "title": "Home",
+          "type": "string"
+        },
+        "losses": {
+          "title": "Losses",
+          "type": "integer"
+        },
+        "manager": {
+          "description": "The side the record and streak are from: the winner (home on a tie)",
+          "title": "Manager",
+          "type": "string"
+        },
+        "streak": {
+          "$ref": "#/$defs/StreakOut",
+          "description": "The series' current streak after the game"
+        },
+        "text": {
+          "description": "Prose; managers appear as @[id] tokens for the site to link",
+          "title": "Text",
+          "type": "string"
+        },
+        "ties": {
+          "title": "Ties",
+          "type": "integer"
+        },
+        "wins": {
+          "description": "The series after the game, from manager's side",
+          "title": "Wins",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "home",
+        "away",
+        "text",
+        "first_meeting",
+        "manager",
+        "wins",
+        "losses",
+        "ties",
+        "streak",
+        "flags"
+      ],
+      "title": "RecapOut",
+      "type": "object"
+    },
     "StandingLineOut": {
       "additionalProperties": false,
       "properties": {
@@ -418,6 +526,33 @@
         "points_against"
       ],
       "title": "StandingLineOut",
+      "type": "object"
+    },
+    "StreakOut": {
+      "additionalProperties": false,
+      "properties": {
+        "holder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "null when the last meeting was a tie",
+          "title": "Holder"
+        },
+        "length": {
+          "title": "Length",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "holder",
+        "length"
+      ],
+      "title": "StreakOut",
       "type": "object"
     },
     "SwapOut": {
@@ -645,6 +780,14 @@
       "title": "Games",
       "type": "array"
     },
+    "headlines": {
+      "description": "High and low score, closest game, biggest blowout (@[id] tokens)",
+      "items": {
+        "type": "string"
+      },
+      "title": "Headlines",
+      "type": "array"
+    },
     "label": {
       "title": "Label",
       "type": "string"
@@ -660,6 +803,14 @@
     "playoff": {
       "title": "Playoff",
       "type": "boolean"
+    },
+    "recaps": {
+      "description": "The week's games retold, same order as games",
+      "items": {
+        "$ref": "#/$defs/RecapOut"
+      },
+      "title": "Recaps",
+      "type": "array"
     },
     "schema_version": {
       "const": 1,
@@ -692,6 +843,8 @@
     "playoff",
     "periods",
     "games",
+    "recaps",
+    "headlines",
     "standings",
     "all_play",
     "coaching",

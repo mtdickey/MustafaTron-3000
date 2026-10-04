@@ -148,6 +148,12 @@ class PairRecord:
             self.a, self.b, tuple(m for m in self.meetings if (m.season, m.week) < (season, week))
         )
 
+    def through(self, season: int, week: int) -> "PairRecord":
+        """The series as it stood leaving ``season`` week ``week``: that week's meeting included."""
+        return PairRecord(
+            self.a, self.b, tuple(m for m in self.meetings if (m.season, m.week) <= (season, week))
+        )
+
 
 def pair_record(games: Iterable[Game], a: str, b: str) -> PairRecord:
     meetings = [

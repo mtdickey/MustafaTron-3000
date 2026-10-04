@@ -5,6 +5,7 @@ import PlotFigure from "../../components/PlotFigure.astro";
 import Base from "../../layouts/Base.astro";
 import {
   TIER_LABELS,
+  flagText as describeFlag,
   gameHref,
   isPlayoff,
   manager,
@@ -30,12 +31,7 @@ const B = manager(p.b);
 const games = meetings(p.a, p.b);
 const leader = p.wins > p.losses ? p.a : p.losses > p.wins ? p.b : null;
 
-const flagText = p.flags.map((f) => {
-  if (f.kind === "streak") return `${manager(f.holder!).short_name} has won ${f.wins} straight`;
-  if (f.kind === "lopsided")
-    return `Lopsided series: ${manager(f.holder!).short_name} leads ${record(f.wins, f.losses)}`;
-  return "Dead-even rivalry";
-});
+const flagText = p.flags.map(describeFlag);
 
 const streak = p.current_streak;
 // ESPN broke the one tied playoff score (2017, 154-154): say so rather than "by 0.00".

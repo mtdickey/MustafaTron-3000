@@ -3,10 +3,11 @@
 // its permalink, /week/{year}/{week}, and as the front page while a season is in progress.
 import type { WeekFile } from "../../types/contract";
 import ManagerName from "../ManagerName.astro";
+import Prose from "../Prose.astro";
 import AllPlayPanel from "./AllPlayPanel.astro";
 import CoachingPanel from "./CoachingPanel.astro";
 import DraftPanel from "./DraftPanel.astro";
-import { decodeGame, rivalryHref, TIER_LABELS, weekHref, weekNeighbors } from "../../lib/data";
+import { decodeGame, flagText, rivalryHref, TIER_LABELS, weekHref, weekNeighbors } from "../../lib/data";
 import { points, record } from "../../lib/format";
 
 interface Props {
@@ -18,7 +19,10 @@ interface Props {
 const { w, permalink = false } = Astro.props;
 const { prev, next } = weekNeighbors(w.season, w.week);
 const games = w.games.map((r) => decodeGame(r));
-const tiers = [...new Set(games.map((g) => g.tier))];
+const recapOf = (home: string, away: string) => w.recaps.find((r) => r.home === home && r.away === away);
+// The title game first, the consolation ladder last
+const TIER_ORDER = ["NONE", "WINNERS_BRACKET", "WINNERS_CONSOLATION_LADDER", "LOSERS_CONSOLATION_LADDER"];
+const tiers = [...new Set(games.map((g) => g.tier))].sort((a, b) => TIER_ORDER.indexOf(a) - TIER_ORDER.indexOf(b));
 // "through week 12", or the whole regular season once the playoffs start
 const through = w.playoff ? "of the regular season" : `through ${w.label.toLowerCase()}`;
 // Coaching and the draft count playoff weeks too
@@ -50,25 +54,53 @@ const nflWeeks = w.periods.length > 1 ? `NFL weeks ${w.periods.join("–")}` : `
   <section id="results">
     <h2>Results</h2>
     {
+      w.headlines.length > 0 && (
+        <ul class="headlines small">
+          {w.headlines.map((h) => (
+            <li>
+              <Prose text={h} short />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    {
       tiers.map((tier) => (
         <>
           {tiers.length > 1 && <h3>{TIER_LABELS[tier] ?? tier}</h3>}
           <ul class="scoreboard">
             {games
               .filter((g) => g.tier === tier)
-              .map((g) => (
-                <li class="card">
-                  {[g.home, g.away].map((id) => (
-                    <span class:list={["side", { won: g.winner === id }]}>
-                      <ManagerName id={id} link />
-                      <span class="num">{points(id === g.home ? g.homeScore : g.awayScore, 2)}</span>
-                    </span>
-                  ))}
-                  <a class="series small" href={rivalryHref(g.home, g.away)}>
-                    Series
-                  </a>
-                </li>
-              ))}
+              .map((g) => {
+                const r = recapOf(g.home, g.away);
+                return (
+                  <li class="card">
+                    {[g.home, g.away].map((id) => (
+                      <span class:list={["side", { won: g.winner === id }]}>
+                        <ManagerName id={id} link />
+                        <span class="num">{points(id === g.home ? g.homeScore : g.awayScore, 2)}</span>
+                      </span>
+                    ))}
+                    {r && (
+                      <p class="recap">
+                        <Prose text={r.text} short />
+                      </p>
+                    )}
+                    {r && r.flags.length > 0 && (
+                      <p class="flags">
+                        {r.flags.map((f) => (
+                          <span class:list={["badge", { win: f.kind === "streak", loss: f.kind === "lopsided" }]}>
+                            {flagText(f)}
+                          </span>
+                        ))}
+                      </p>
+                    )}
+                    <a class="series small" href={rivalryHref(g.home, g.away)}>
+                      The rivalry →
+                    </a>
+                  </li>
+                );
+              })}
           </ul>
         </>
       ))
@@ -135,11 +167,32 @@ const nflWeeks = w.periods.length > 1 ? `NFL weeks ${w.periods.join("–")}` : `
     margin: 0 0 1rem;
     display: grid;
     gap: 0.75rem;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
   }
   .scoreboard li {
     display: grid;
     gap: 0.2rem;
+    align-content: start;
+  }
+  .recap {
+    margin: 0.4rem 0 0;
+    font-size: var(--step--1);
+    line-height: 1.45;
+  }
+  .flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin: 0.2rem 0 0;
+  }
+  .headlines {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: grid;
+    gap: 0.15rem 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    color: var(--muted);
   }
   .side {
     display: flex;

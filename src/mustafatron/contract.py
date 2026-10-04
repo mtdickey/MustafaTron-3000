@@ -703,6 +703,21 @@ class WeekDraftOut(_Model):
     busts: list[PickValueOut] = Field(description="Smallest value through round busts_through_round, top 10")
 
 
+class RecapOut(_Model):
+    """One game of the week retold in rivalry context (stats/narrative.py)."""
+
+    home: str
+    away: str
+    text: str = Field(description="Prose; managers appear as @[id] tokens for the site to link")
+    first_meeting: bool
+    manager: str = Field(description="The side the record and streak are from: the winner (home on a tie)")
+    wins: int = Field(description="The series after the game, from manager's side")
+    losses: int
+    ties: int
+    streak: StreakOut = Field(description="The series' current streak after the game")
+    flags: list[FlagOut] = Field(description="Notable flags on the series after the game (league_rules.yml)")
+
+
 class WeekFile(ContractFile):
     """One weekly report, everything as it stood when the week ended ("through week N")."""
 
@@ -713,6 +728,10 @@ class WeekFile(ContractFile):
     periods: list[int] = Field(description="The NFL weeks this matchup week covers")
     columns: list[str] = Field(default=list(GAME_COLUMNS))
     games: list[GameRow] = Field(description="This week's games")
+    recaps: list[RecapOut] = Field(description="The week's games retold, same order as games")
+    headlines: list[str] = Field(
+        description="High and low score, closest game, biggest blowout (@[id] tokens)"
+    )
     standings: list[StandingLineOut] = Field(
         description="Regular season through this week, best record first; seed order in the playoffs"
     )
