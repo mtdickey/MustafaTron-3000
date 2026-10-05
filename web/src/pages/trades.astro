@@ -2,7 +2,7 @@
 import ManagerName from "../components/ManagerName.astro";
 import SortableTables from "../components/SortableTables.astro";
 import Base from "../layouts/Base.astro";
-import { managers, meta, trades } from "../lib/data";
+import { manager, managers, meta, trades } from "../lib/data";
 import { points, signed } from "../lib/format";
 
 const m = meta();
@@ -21,6 +21,26 @@ const traders = managers()
   .map((mg) => ({ id: mg.id, total: book.counts.filter((x) => x.manager === mg.id).reduce((n, x) => n + x.trades, 0) }))
   .filter((x) => book.counts.some((c) => c.manager === x.id))
   .sort((a, b) => b.total - a.total);
+
+// Trading partners: how often each pair has traded (trades with detail only, so from first_season).
+const pairKey = (a: string, b: string) => [a, b].sort().join("|");
+const byPair = new Map<string, Trade[]>();
+for (const t of book.trades) {
+  const k = pairKey(t.sides[0]!.manager, t.sides[1]!.manager);
+  byPair.set(k, [...(byPair.get(k) ?? []), t]);
+}
+const partnerTotal = (id: string) => book.trades.filter((t) => t.sides.some((s) => s.manager === id)).length;
+const partners = managers()
+  .map((mg) => ({ id: mg.id, total: partnerTotal(mg.id) }))
+  .filter((x) => x.total > 0)
+  .sort((a, b) => b.total - a.total || manager(a.id).short_name.localeCompare(manager(b.id).short_name));
+const mostWithOne = Math.max(1, ...[...byPair.values()].map((ts) => ts.length));
+// Sequential orange: faint for one trade, full for the most-traded pair.
+const heat = (n: number) => `color-mix(in oklab, var(--win) ${Math.round(12 + (68 * (n - 1)) / Math.max(1, mostWithOne - 1))}%, var(--surface))`;
+const pairDetail = (a: string, b: string, ts: Trade[]) =>
+  `${manager(a).short_name} and ${manager(b).short_name}: ${ts.length} trade${ts.length === 1 ? "" : "s"} (` +
+  ts.map((t) => `${t.season} wk ${t.period}`).join(", ") +
+  ")";
 
 const lists = [
   { id: "best", title: "Best trades", note: "The sides that gained the most", refs: book.best },
@@ -89,6 +109,87 @@ const lists = [
     }
   </div>
 
+  <h2 id="counts">Trades by season</h2>
+  <p class="muted small">ESPN's count of each manager's trades every season, and adds in the tooltip. Sorted by career trades.</p>
+  <div class="table-scroll">
+    <table class="sticky-first" data-sortable>
+      <thead>
+        <tr>
+          <th scope="col" class="text">Manager</th>
+          {countSeasons.map((y) => <th scope="col">{String(y).slice(2)}</th>)}
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          traders.map((x) => (
+            <tr>
+              <th scope="row" data-sort={x.id}>
+                <ManagerName id={x.id} link />
+              </th>
+              {countSeasons.map((y) => {
+                const cnt = count.get(`${x.id}|${y}`);
+                return cnt ? (
+                  <td title={`${cnt.acquisitions} adds`} class:list={{ zero: cnt.trades === 0 }}>
+                    {cnt.trades}
+                  </td>
+                ) : (
+                  <td class="zero" data-sort="-1">
+                    ·
+                  </td>
+                );
+              })}
+              <td>
+                <strong>{x.total}</strong>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <h2 id="partners">Trading partners</h2>
+  <p class="muted small">
+    How many times each pair of managers has traded since {book.first_season ?? 2018}. Darker orange: more trades. Tap or
+    hover a cell for when.
+  </p>
+  <div class="table-scroll partners-scroll">
+    <table class="partners sticky-first">
+      <caption class="visually-hidden">Number of trades between each pair of managers</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="corner text"><span class="muted">with →</span></th>
+          {partners.map((p) => <th scope="col" title={manager(p.id).name}>{manager(p.id).short_name}</th>)}
+          <th scope="col" class="total">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          partners.map((row) => (
+            <tr>
+              <th scope="row">
+                <ManagerName id={row.id} short link />
+              </th>
+              {partners.map((col) => {
+                if (col.id === row.id) return <td class="self" aria-hidden="true" />;
+                const ts = byPair.get(pairKey(row.id, col.id)) ?? [];
+                if (!ts.length) return <td class="never">·</td>;
+                const d = pairDetail(row.id, col.id, ts);
+                return (
+                  <td class="cell" style={`background: ${heat(ts.length)}`} title={d} data-detail={d}>
+                    {ts.length}
+                  </td>
+                );
+              })}
+              <td class="total">{row.total}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <output class="cell-detail small" aria-live="polite" />
+
   <h2 id="ledger">The ledger</h2>
   <p class="muted small">
     Every trade, newest first. The week is the first one the players were on their new rosters. Value is points added to
@@ -140,47 +241,21 @@ const lists = [
     ))
   }
 
-  <h2 id="counts">Trades by season</h2>
-  <p class="muted small">ESPN's count of each manager's trades every season, and adds in the tooltip. Sorted by career trades.</p>
-  <div class="table-scroll">
-    <table class="sticky-first" data-sortable>
-      <thead>
-        <tr>
-          <th scope="col" class="text">Manager</th>
-          {countSeasons.map((y) => <th scope="col">{String(y).slice(2)}</th>)}
-          <th scope="col">Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        {
-          traders.map((x) => (
-            <tr>
-              <th scope="row" data-sort={x.id}>
-                <ManagerName id={x.id} link />
-              </th>
-              {countSeasons.map((y) => {
-                const cnt = count.get(`${x.id}|${y}`);
-                return cnt ? (
-                  <td title={`${cnt.acquisitions} adds`} class:list={{ zero: cnt.trades === 0 }}>
-                    {cnt.trades}
-                  </td>
-                ) : (
-                  <td class="zero" data-sort="-1">
-                    ·
-                  </td>
-                );
-              })}
-              <td>
-                <strong>{x.total}</strong>
-              </td>
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
-  </div>
   <SortableTables />
 </Base>
+
+<script>
+  // Tap a pair to read when they traded: title tooltips don't show on touch screens.
+  const table = document.querySelector<HTMLTableElement>("table.partners");
+  const out = document.querySelector<HTMLOutputElement>("output.cell-detail");
+  table?.addEventListener("click", (e) => {
+    const cell = (e.target as Element).closest<HTMLElement>("td[data-detail]");
+    if (!cell || !out) return;
+    table.querySelectorAll(".cell.selected").forEach((c) => c.classList.remove("selected"));
+    cell.classList.add("selected");
+    out.textContent = cell.dataset.detail ?? "";
+  });
+</script>
 
 <style>
   .note {
@@ -238,6 +313,55 @@ const lists = [
     font-weight: 600;
   }
   td.zero {
+    color: var(--muted);
+  }
+
+  .partners-scroll {
+    width: fit-content;
+    max-width: 100%;
+  }
+  .partners {
+    width: auto;
+  }
+  .partners th,
+  .partners td {
+    text-align: center;
+    border-right: 1px solid var(--line);
+  }
+  .partners thead th {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: var(--step--1);
+    color: var(--ink);
+    min-width: 3.25rem;
+  }
+  .partners tbody th {
+    text-align: left;
+    font-weight: 600;
+  }
+  .partners td.cell {
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .partners td.cell.selected {
+    outline: 2px solid var(--ink);
+    outline-offset: -2px;
+  }
+  .partners .self {
+    background: repeating-linear-gradient(135deg, var(--panel) 0 4px, var(--surface) 4px 8px);
+  }
+  .partners .never {
+    color: var(--muted);
+  }
+  .partners .total {
+    font-weight: 600;
+    background: var(--panel);
+  }
+  .cell-detail {
+    display: block;
+    min-height: 1.5em;
+    margin: -0.5rem 0 1rem;
     color: var(--muted);
   }
 </style>
