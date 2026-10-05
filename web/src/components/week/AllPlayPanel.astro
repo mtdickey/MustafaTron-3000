@@ -10,7 +10,7 @@ import type { AllPlayGridOut } from "../../types/contract";
 import ManagerName from "../ManagerName.astro";
 import PlotFigure from "../PlotFigure.astro";
 import { manager } from "../../lib/data";
-import { ordinal, pct, points, record, shade, signed } from "../../lib/format";
+import { ordinal, pct, points, record, shade, shadeColor, signed } from "../../lib/format";
 
 interface Props {
   grid: AllPlayGridOut;
@@ -27,6 +27,10 @@ const detail = (id: string, period: number, c: Cell) =>
   `${name(id)}, week ${period}: ${points(c.points, 2)} vs ${name(c.opponent)} ${points(c.opponent_points, 2)} (${c.result}). ` +
   `${ordinal(c.rank)} of ${teams} that week, ${record(c.wins, c.losses, c.ties)} against the league.`;
 const byLuck = [...grid.rows].sort((a, b) => b.luck - a.luck);
+// Absolute scale: full orange only for a perfect all-play week (the week's top scorer), full
+// lavender only for a winless one (its lowest scorer). The legend shows every week's possible record.
+const SPAN = 0.5;
+const legend = Array.from({ length: others + 1 }, (_, w) => ({ w, color: shadeColor(w / others, SPAN) }));
 ---
 
 {
@@ -35,9 +39,25 @@ const byLuck = [...grid.rows].sort((a, b) => b.luck - a.luck);
       <h2>Records</h2>
       <h3>All-play by week</h3>
       <p class="muted small">
-        Each week as a game against every other team: darker orange for a week near the top of the league, lavender near
-        the bottom. W/L is the real result. Tap or hover a week for the score.
+        Each week as a game against every other team: the color is that all-play record, the letter the real result. A
+        high scorer who ran into one of the few teams that outscored it can lose and still have an orange week. The
+        All-play column uses the same scale for the whole season so far. Tap or hover a week for the score.
       </p>
+      <figure class="legend small" aria-label="Color scale: all-play record that week">
+        <span class="end">Lowest score of the week</span>
+        <ol>
+          {legend.map((l) => (
+            <li style={`background: ${l.color}`} title={`${record(l.w, others - l.w)} all-play`}>
+              <span class="visually-hidden">{record(l.w, others - l.w)}</span>
+            </li>
+          ))}
+        </ol>
+        <span class="end">Highest score of the week</span>
+        <figcaption class="muted">
+          All-play record that week, {record(0, others)} to {record(others, 0)}. Deepest orange: the week's top scorer;
+          deepest lavender: its lowest.
+        </figcaption>
+      </figure>
       <div class="table-scroll">
         <table class="sticky-first ap-grid">
           <thead>
@@ -56,14 +76,14 @@ const byLuck = [...grid.rows].sort((a, b) => b.luck - a.luck);
                   <ManagerName id={r.manager} short link />{" "}
                   <span class="muted">{record(r.wins, r.losses, r.ties)}</span>
                 </th>
-                <td class="shade total" style={shade(r.all_play_pct)}>
+                <td class="shade total" style={shade(r.all_play_pct, SPAN)}>
                   {record(r.all_play_wins, r.all_play_losses, r.all_play_ties)}
                 </td>
                 {r.cells.map((c, i) =>
                   c ? (
                     <td
                       class="shade cell"
-                      style={shade((c.wins + c.ties / 2) / others)}
+                      style={shade((c.wins + c.ties / 2) / others, SPAN)}
                       title={detail(r.manager, grid.periods[i]!, c)}
                       data-detail={detail(r.manager, grid.periods[i]!, c)}
                     >
@@ -170,6 +190,29 @@ const byLuck = [...grid.rows].sort((a, b) => b.luck - a.luck);
   .ap-grid td.total {
     font-weight: 600;
     border-right: 2px solid var(--line);
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.5rem;
+    margin: 0 0 0.75rem;
+  }
+  .legend ol {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .legend li {
+    width: 1.4rem;
+    height: 1rem;
+  }
+  .legend figcaption {
+    flex-basis: 100%;
   }
   .cell-detail {
     display: block;
