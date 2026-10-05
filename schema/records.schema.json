@@ -1,5 +1,44 @@
 {
   "$defs": {
+    "ExtremeMarkOut": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "description": "Regular season weeks as the league's top (or lowest) scorer; ties count",
+          "title": "Count",
+          "type": "integer"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "season": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "null: a career total",
+          "title": "Season"
+        },
+        "weeks": {
+          "description": "Regular season weeks counted for this manager",
+          "title": "Weeks",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "season",
+        "manager",
+        "count",
+        "weeks"
+      ],
+      "title": "ExtremeMarkOut",
+      "type": "object"
+    },
     "GameMarkOut": {
       "additionalProperties": false,
       "properties": {
@@ -215,8 +254,19 @@
     }
   },
   "additionalProperties": false,
-  "description": "Top 10 of each record, best first.\n\nGame and matchup records count one-week matchups only; week records are per NFL week, league-wide;\nseason records count finished seasons; streaks are regular season games (see stats/records.py).",
+  "description": "Top 10 of each record, best first.\n\nGame and matchup records count one-week matchups only; week records are per NFL week, league-wide;\nseason records count finished seasons; streaks are regular season games; extremes count regular\nseason weeks, the season in progress included (see stats/records.py).",
   "properties": {
+    "extremes_records": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/$defs/ExtremeMarkOut"
+        },
+        "type": "array"
+      },
+      "description": "Most regular season weeks as the league's top or lowest scorer, single season and career",
+      "title": "Extremes Records",
+      "type": "object"
+    },
     "game_records": {
       "additionalProperties": {
         "items": {
@@ -279,7 +329,8 @@
     "matchup_records",
     "season_records",
     "streak_records",
-    "week_records"
+    "week_records",
+    "extremes_records"
   ],
   "title": "RecordsFile",
   "type": "object"

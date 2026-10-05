@@ -7,6 +7,9 @@
   plays every NFL week, playoff weeks included, so those are comparable across the whole season.
 - **Season records** count finished seasons only. 2021 had a 14-week regular season (13 otherwise),
   so total-points records favor it; points per game don't.
+- **Top and bottom of the week** count regular season NFL weeks, every one final so far (the season
+  in progress included), in which a manager had the league's highest or lowest score. Ties credit
+  everyone tied.
 - **Streaks** run over regular season games in order, ties breaking them. "Spanning" streaks may
   carry from one season into the next; "within a season" ones may not.
 
@@ -19,8 +22,8 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from itertools import groupby
 
-from mustafatron.model import Game, League, TeamSeason
-from mustafatron.stats.weeks import week_scores
+from mustafatron.model import Game, League, Season, TeamSeason
+from mustafatron.stats.weeks import regular_season_periods, week_scores
 
 TOP_N = 10
 
@@ -85,6 +88,16 @@ class WeekMark:
     teams: int
 
 
+@dataclass(frozen=True)
+class ExtremeMark:
+    """How many weeks a manager was the league's top (or bottom) scorer, in a season or a career."""
+
+    season: int | None  # None: career
+    manager_id: str
+    count: int
+    weeks: int  # regular season weeks counted for this manager
+
+
 @dataclass
 class RecordsBook:
     game: dict[str, list[GameMark]] = field(default_factory=dict)
@@ -92,6 +105,7 @@ class RecordsBook:
     season: dict[str, list[SeasonMark]] = field(default_factory=dict)
     streak: dict[str, list[StreakMark]] = field(default_factory=dict)
     week: dict[str, list[WeekMark]] = field(default_factory=dict)
+    extremes: dict[str, list[ExtremeMark]] = field(default_factory=dict)
 
 
 def one_week_games(league: League) -> list[Game]:
@@ -164,8 +178,51 @@ def streaks(league: League, result: str, *, span_seasons: bool) -> list[StreakMa
     return out
 
 
+def _final_periods(season: Season) -> set[int]:
+    """NFL weeks of a season in which every game is final."""
+    return {p for g in season.games if g.final for p, *_ in g.period_scores} - {
+        p for g in season.games if not g.final for p, *_ in g.period_scores
+    }
+
+
+def week_extremes(league: League) -> tuple[list[ExtremeMark], list[ExtremeMark]]:
+    """Per season and manager: regular season weeks as the league's top and its bottom scorer."""
+    top: list[ExtremeMark] = []
+    bottom: list[ExtremeMark] = []
+    for s in league.seasons.values():
+        periods = set(regular_season_periods(s)) & _final_periods(s)
+        by_period: dict[int, dict[str, float]] = {}
+        for w in week_scores(s):
+            if w.period in periods:
+                by_period.setdefault(w.period, {})[w.manager_id] = w.points
+        if not by_period:
+            continue
+        hi: dict[str, int] = {}
+        lo: dict[str, int] = {}
+        weeks: dict[str, int] = {}
+        for scores in by_period.values():
+            best, worst = max(scores.values()), min(scores.values())
+            for mid, pts in scores.items():
+                weeks[mid] = weeks.get(mid, 0) + 1
+                hi[mid] = hi.get(mid, 0) + (pts == best)
+                lo[mid] = lo.get(mid, 0) + (pts == worst)
+        top += [ExtremeMark(s.season, m, hi[m], weeks[m]) for m in sorted(weeks)]
+        bottom += [ExtremeMark(s.season, m, lo[m], weeks[m]) for m in sorted(weeks)]
+    return top, bottom
+
+
+def _careers(marks: list[ExtremeMark]) -> list[ExtremeMark]:
+    totals: dict[str, tuple[int, int]] = {}
+    for m in marks:
+        c, w = totals.get(m.manager_id, (0, 0))
+        totals[m.manager_id] = (c + m.count, w + m.weeks)
+    return [ExtremeMark(None, mid, c, w) for mid, (c, w) in sorted(totals.items())]
+
+
 def _when(mark: object) -> tuple[int, int]:
     """When a mark was set, for breaking ties in favor of the earlier one."""
+    if isinstance(mark, ExtremeMark):
+        return mark.season or 0, 0
     if isinstance(mark, StreakMark):
         return mark.start_season, mark.start_week
     if isinstance(mark, WeekMark):
@@ -182,9 +239,7 @@ def week_totals(league: League) -> list[WeekMark]:
     """League-wide points in every NFL week where every game is final."""
     out = []
     for s in league.seasons.values():
-        final_weeks = {p for g in s.games if g.final for p, *_ in g.period_scores} - {
-            p for g in s.games if not g.final for p, *_ in g.period_scores
-        }
+        final_weeks = _final_periods(s)
         by_period: dict[int, list[float]] = {}
         for w in week_scores(s):
             if w.period in final_weeks:
@@ -241,5 +296,14 @@ def records_book(league: League, n: int = TOP_N) -> RecordsBook:
     book.week = {
         "highest_scoring_week": _top(weeks, lambda m: m.total, True, n),
         "lowest_scoring_week": _top(weeks, lambda m: m.total, False, n),
+    }
+    # Most weeks first; on a tie, the one who did it in fewer weeks
+    top, bottom = week_extremes(league)
+    most = lambda m: (m.count, -m.weeks)  # noqa: E731
+    book.extremes = {
+        "most_weeks_top_scorer_season": _top(top, most, True, n),
+        "most_weeks_lowest_scorer_season": _top(bottom, most, True, n),
+        "most_weeks_top_scorer": _top(_careers(top), most, True, n),
+        "most_weeks_lowest_scorer": _top(_careers(bottom), most, True, n),
     }
     return book

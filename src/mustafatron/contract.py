@@ -243,11 +243,19 @@ class WeekMarkOut(_Model):
     teams: int
 
 
+class ExtremeMarkOut(_Model):
+    season: int | None = Field(description="null: a career total")
+    manager: str
+    count: int = Field(description="Regular season weeks as the league's top (or lowest) scorer; ties count")
+    weeks: int = Field(description="Regular season weeks counted for this manager")
+
+
 class RecordsFile(ContractFile):
     """Top 10 of each record, best first.
 
     Game and matchup records count one-week matchups only; week records are per NFL week, league-wide;
-    season records count finished seasons; streaks are regular season games (see stats/records.py).
+    season records count finished seasons; streaks are regular season games; extremes count regular
+    season weeks, the season in progress included (see stats/records.py).
     """
 
     game_records: dict[str, list[GameMarkOut]]
@@ -255,6 +263,9 @@ class RecordsFile(ContractFile):
     season_records: dict[str, list[SeasonMarkOut]]
     streak_records: dict[str, list[StreakMarkOut]]
     week_records: dict[str, list[WeekMarkOut]]
+    extremes_records: dict[str, list[ExtremeMarkOut]] = Field(
+        description="Most regular season weeks as the league's top or lowest scorer, single season and career"
+    )
 
 
 # seasons/{year}.json -----------------------------------------------------------------------------
