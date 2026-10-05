@@ -251,6 +251,13 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
             k: [c.WeekMarkOut(season=m.season, period=m.period, total=m.total, teams=m.teams) for m in v]
             for k, v in book.week.items()
         },
+        extremes_records={
+            k: [
+                c.ExtremeMarkOut(season=m.season, manager=m.manager_id, count=m.count, weeks=m.weeks)
+                for m in v
+            ]
+            for k, v in book.extremes.items()
+        },
     )
 
     lucky, unlucky = luckiest_seasons(league)

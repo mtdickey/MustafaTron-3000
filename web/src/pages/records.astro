@@ -1,7 +1,7 @@
 ---
 import RecordCard, { type Mark } from "../components/RecordCard.astro";
 import Base from "../layouts/Base.astro";
-import { meta, records } from "../lib/data";
+import { managerHref, meta, records } from "../lib/data";
 import { pct, points, record } from "../lib/format";
 
 const m = meta();
@@ -59,6 +59,15 @@ const weekMarks = (key: string): Mark[] =>
     when: `${w.season} · NFL week ${w.period}`,
     href: weekHref(w.season, w.period),
     detail: `${points(w.total / w.teams, 1)} per team`,
+  }));
+
+const extremeMarks = (key: string): Mark[] =>
+  (book.extremes_records[key] ?? []).map((x) => ({
+    who: [x.manager],
+    value: `${x.count}`,
+    when: x.season ? `${x.season}` : "career",
+    href: x.season ? `/seasons/${x.season}` : managerHref(x.manager),
+    detail: `of ${x.weeks} weeks`,
   }));
 
 const sections: { id: string; title: string; note?: string; cards: { id: string; title: string; note?: string; marks: Mark[] }[] }[] = [
@@ -125,6 +134,17 @@ const sections: { id: string; title: string; note?: string; cards: { id: string;
         title: "Fewest points per game",
         marks: seasonMarks("fewest_points_per_game_season", (s) => points(s.value, 2)),
       },
+    ],
+  },
+  {
+    id: "extremes",
+    title: "Top and bottom of the week",
+    note: "Regular season weeks with the league's highest or lowest score, the season in progress included. Ties count for everyone tied.",
+    cards: [
+      { id: "most-top-weeks-season", title: "Most weeks as top scorer, one season", marks: extremeMarks("most_weeks_top_scorer_season") },
+      { id: "most-bottom-weeks-season", title: "Most weeks as lowest scorer, one season", marks: extremeMarks("most_weeks_lowest_scorer_season") },
+      { id: "most-top-weeks", title: "Most weeks as top scorer, career", marks: extremeMarks("most_weeks_top_scorer") },
+      { id: "most-bottom-weeks", title: "Most weeks as lowest scorer, career", marks: extremeMarks("most_weeks_lowest_scorer") },
     ],
   },
   {

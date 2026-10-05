@@ -2,8 +2,9 @@
 
 import pytest
 
-from mustafatron.stats.records import one_week_games, records_book, streaks, week_totals
+from mustafatron.stats.records import one_week_games, records_book, streaks, week_extremes, week_totals
 from mustafatron.stats.seasons import week_scores
+from mustafatron.stats.weeks import regular_season_periods
 from mustafatron.transform import load_league
 
 LEAGUE = load_league(range(2015, 2026))
@@ -11,8 +12,8 @@ BOOK = records_book(LEAGUE)
 
 
 def test_every_record_has_ten_ordered_marks():
-    families = [BOOK.game, BOOK.matchup, BOOK.season, BOOK.streak, BOOK.week]
-    assert sum(len(f) for f in families) == 20
+    families = [BOOK.game, BOOK.matchup, BOOK.season, BOOK.streak, BOOK.week, BOOK.extremes]
+    assert sum(len(f) for f in families) == 24
     assert all(len(v) == 10 for f in families for v in f.values())
 
 
@@ -94,4 +95,40 @@ def test_active_streaks_can_still_grow():
     left = {"kariuki", "sedaghat", "ray", "moundous"}
     assert not any(
         m.active for r in ("W", "L") for m in streaks(LEAGUE, r, span_seasons=True) if m.manager_id in left
+    )
+
+
+def test_week_extremes_match_the_weekly_scores():
+    top, bottom = week_extremes(LEAGUE)
+    for season in LEAGUE.seasons.values():
+        periods = regular_season_periods(season)
+        tops = [m for m in top if m.season == season.season]
+        bottoms = [m for m in bottom if m.season == season.season]
+        # Every regular season week has at least one top and one bottom scorer (more on a tie)
+        assert sum(m.count for m in tops) >= len(periods) and sum(m.count for m in bottoms) >= len(periods)
+        assert all(m.weeks == len(periods) for m in tops)
+    # Spot-check one season by hand
+    s = LEAGUE.seasons[2022]
+    scores = [w for w in week_scores(s) if w.period in regular_season_periods(s)]
+    by_period: dict[int, list] = {}
+    for w in scores:
+        by_period.setdefault(w.period, []).append(w)
+    expect: dict[str, int] = {}
+    for ws in by_period.values():
+        best = max(w.points for w in ws)
+        for w in ws:
+            expect[w.manager_id] = expect.get(w.manager_id, 0) + (w.points == best)
+    assert {m.manager_id: m.count for m in top if m.season == 2022} == expect
+
+
+def test_extreme_records_are_ordered_and_careers_add_up():
+    top, _ = week_extremes(LEAGUE)
+    for key in ("most_weeks_top_scorer_season", "most_weeks_lowest_scorer_season"):
+        counts = [m.count for m in BOOK.extremes[key]]
+        assert counts == sorted(counts, reverse=True) and all(m.season for m in BOOK.extremes[key])
+    leader = BOOK.extremes["most_weeks_top_scorer"][0]
+    assert leader.season is None
+    assert leader.count == sum(m.count for m in top if m.manager_id == leader.manager_id)
+    assert leader.count == max(
+        sum(m.count for m in top if m.manager_id == mid) for mid in {m.manager_id for m in top}
     )

@@ -634,12 +634,19 @@ export interface WeekLineOut {
  * Top 10 of each record, best first.
  *
  * Game and matchup records count one-week matchups only; week records are per NFL week, league-wide;
- * season records count finished seasons; streaks are regular season games (see stats/records.py).
+ * season records count finished seasons; streaks are regular season games; extremes count regular
+ * season weeks, the season in progress included (see stats/records.py).
  *
  * This interface was referenced by `ContractFiles`'s JSON-Schema
  * via the `definition` "RecordsFile".
  */
 export interface RecordsFile {
+  /**
+   * Most regular season weeks as the league's top or lowest scorer, single season and career
+   */
+  extremes_records: {
+    [k: string]: ExtremeMarkOut[];
+  };
   game_records: {
     [k: string]: GameMarkOut[];
   };
@@ -656,6 +663,25 @@ export interface RecordsFile {
   week_records: {
     [k: string]: WeekMarkOut[];
   };
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "ExtremeMarkOut".
+ */
+export interface ExtremeMarkOut {
+  /**
+   * Regular season weeks as the league's top (or lowest) scorer; ties count
+   */
+  count: number;
+  manager: string;
+  /**
+   * null: a career total
+   */
+  season: number | null;
+  /**
+   * Regular season weeks counted for this manager
+   */
+  weeks: number;
 }
 /**
  * This interface was referenced by `ContractFiles`'s JSON-Schema
