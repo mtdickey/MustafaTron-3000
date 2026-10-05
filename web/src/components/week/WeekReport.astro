@@ -13,11 +13,15 @@ import { points, record } from "../../lib/format";
 
 interface Props {
   w: WeekFile;
-  /** Show the permalink (on the front page, where the URL isn't the report's own). */
+  /**
+   * On the front page, where the URL isn't the report's own: show the permalink, and title the
+   * report one level down, under the league's own heading.
+   */
   permalink?: boolean;
 }
 
 const { w, permalink = false } = Astro.props;
+const Title = permalink ? "h2" : "h1";
 const { prev, next } = weekNeighbors(w.season, w.week);
 const games = w.games.map((r) => decodeGame(r));
 const recapOf = (home: string, away: string) => w.recaps.find((r) => r.home === home && r.away === away);
@@ -40,7 +44,7 @@ const nflWeeks = w.periods.length > 1 ? `NFL weeks ${w.periods.join("–")}` : `
 
   <header>
     <p class="kicker">The Mustafa Report™</p>
-    <h1>{w.season} · {w.label}</h1>
+    <Title class="title">{w.season} · {w.label}</Title>
     <p class="muted small">
       {nflWeeks}. Everything on this page is as it stood when the week ended.
       {permalink && (
@@ -148,6 +152,16 @@ const nflWeeks = w.periods.length > 1 ? `NFL weeks ${w.periods.join("–")}` : `
 </article>
 
 <style>
+  /* Under the front page's league header, set the report off from the stat cards */
+  .report:has(h2.title) {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+  h2.title {
+    font-size: var(--step-3);
+    margin-top: 0;
+  }
   .pager {
     display: flex;
     justify-content: space-between;

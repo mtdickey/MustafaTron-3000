@@ -25,29 +25,20 @@ const lastWeek = report || m.current_season_finished
 ---
 
 <Base title={m.league_name} section="/" description="All-time head-to-head records, rivalries, standings and the records book.">
-  {
-    report ? (
-      <>
-        <WeekReport w={report} permalink />
-        <h2>{m.league_name}</h2>
-      </>
-    ) : (
-      <section class="hero">
-        <p class="kicker">The league hub of</p>
-        <h1>{m.league_name}</h1>
-        <p class="lede">
-          {m.seasons.length} seasons, {all.length} games, {managers().length} managers, one trophy. Every
-          number since {m.seasons[0]}.
-        </p>
-      </section>
-    )
-  }
+  <section class="hero">
+    <p class="kicker">The league hub of</p>
+    <h1>{m.league_name}</h1>
+    <p class="lede">
+      {m.seasons.length} seasons, {all.length} games, {managers().length} managers, one trophy. Every number since{" "}
+      {m.seasons[0]}.
+    </p>
+  </section>
 
   <div class="grid">
     {
       champ && (
         <div class="card stat">
-          <span class="label">{lastFinished} champion</span>
+          <span class="label">Reigning champion · {lastFinished}</span>
           <span class="value">
             <span class="trophy" aria-hidden="true">
               🏆
@@ -74,6 +65,8 @@ const lastWeek = report || m.current_season_finished
       <span class="value">{all.length.toLocaleString("en-US")}</span>
     </div>
   </div>
+
+  {report && <WeekReport w={report} permalink />}
 
   {
     lastWeek.length > 0 && (
