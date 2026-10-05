@@ -1,0 +1,67 @@
+---
+import Base from "../layouts/Base.astro";
+
+// League documents and media that live outside ESPN. These links are public (so is this site);
+// the Drive folder itself only opens for league members it's shared with.
+const RESOURCES = [
+  {
+    title: "League Constitution",
+    href: "https://docs.google.com/document/d/1aRX8WSUwzqvzh8J1wjskDaiX-1_aYaCDTfprz1Okmqs/edit?usp=sharing",
+    where: "Google Doc",
+    about: "The rules of the league, in writing.",
+  },
+  {
+    title: "Press Conference Video Archive",
+    href: "https://drive.google.com/drive/u/0/folders/1V64QQkLaUCuiTnxaP-yAO7Llfa4iXUqQ",
+    where: "Google Drive folder",
+    about: "The league's press conference videos.",
+    members: true,
+  },
+];
+---
+
+<Base title="League Resources" section="/resources" description="The league constitution and the press conference video archive.">
+  <h1>League Resources</h1>
+  <p class="lede">The league's paperwork and footage, wherever it lives.</p>
+
+  <ul class="grid resources">
+    {
+      RESOURCES.map((r) => (
+        <li class="card">
+          <h2>
+            <a href={r.href} target="_blank" rel="noopener">
+              {r.title} <span aria-hidden="true">↗</span>
+            </a>
+          </h2>
+          <p class="muted small">
+            {r.where}
+            {r.members && <span class="badge">League members only</span>}
+          </p>
+          <p>{r.about}</p>
+          {r.members && <p class="muted small">Opens for the Google accounts it's shared with. Ask the commissioner for access.</p>}
+        </li>
+      ))
+    }
+  </ul>
+</Base>
+
+<style>
+  .resources {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+  }
+  .resources h2 {
+    font-size: var(--step-1);
+    margin-bottom: 0.25rem;
+  }
+  .resources a {
+    text-decoration: none;
+  }
+  .resources a:hover {
+    text-decoration: underline;
+  }
+  .badge {
+    margin-left: 0.5rem;
+  }
+</style>
