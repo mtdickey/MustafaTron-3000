@@ -62,7 +62,7 @@
               "type": "null"
             }
           ],
-          "description": "ISO date ESPN recorded the acceptance, when it could be matched",
+          "description": "ISO execution date (matched acceptance date in 2018, when known)",
           "title": "Date"
         },
         "id": {
@@ -75,7 +75,7 @@
           "type": "number"
         },
         "period": {
-          "description": "First NFL week the players were on their new rosters",
+          "description": "Trade execution NFL week (first observed roster week in 2018)",
           "title": "Period",
           "type": "integer"
         },

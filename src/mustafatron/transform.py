@@ -14,12 +14,11 @@ has to. The differences handled here:
 - **Owners.** Teams are keyed by canonical manager via ``mustafatron.identity``, never by ESPN ID.
 - **Player data by era.** Drafts and player season totals exist for every season; weekly rosters
   and transactions only from 2018 (``data/README.md``). A missing file loads as nothing.
-- **Trades.** ESPN no longer returns the executed record of most past trades, so they are found by
-  following each player's ownership through the draft, adds, drops and weekly rosters
-  (:func:`infer_trades`).
+- **Trades.** Executed player-card records supply the actual packages from 2019.
+  Only 2018 falls back to following ownership through weekly rosters (:func:`infer_trades`).
 """
 
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Iterable
 from datetime import UTC, datetime
 
@@ -34,6 +33,7 @@ from mustafatron.espn.cache import (
     latest_season,
 )
 from mustafatron.espn.client import SeasonNotFoundError
+from mustafatron.espn.player_data import EXECUTED_TRADES_SINCE
 from mustafatron.espn.raw import RawSeason, RawTeam
 from mustafatron.identity import Managers, load_managers
 from mustafatron.league_settings import SLOT_NAMES, LeagueSettings, load_settings
@@ -41,7 +41,7 @@ from mustafatron.model import DraftPick, Game, League, Player, PlayerWeek, Seaso
 
 FIRST_SEASON = 2015
 DECIDED = ("HOME", "AWAY", "TIE")
-MOVE_TYPES = ("WAIVER", "FREEAGENT")  # executed adds and drops; trades come from infer_trades
+MOVE_TYPES = ("WAIVER", "FREEAGENT")  # executed adds and drops; trades are parsed separately
 EPOCH = datetime.fromtimestamp(0, tz=UTC)
 # ESPN defaultPositionId. Names match espn-api's POSITION_MAP.
 POSITIONS = {1: "QB", 2: "RB", 3: "WR", 4: "TE", 5: "K", 7: "P", 9: "DT", 10: "DE", 11: "LB", 12: "CB",
@@ -140,7 +140,7 @@ def transactions(
 ) -> list[Transaction]:
     """Executed adds and drops (waiver claims and free agent moves) from ``transactions.json``.
 
-    Trades are not read from here: see :func:`infer_trades`.
+    Trades are parsed separately by :func:`executed_trades` (2018 uses :func:`infer_trades`).
     """
     out = []
     for t in raw_transactions:
@@ -170,6 +170,40 @@ def transactions(
                 )
             )
     return sorted(out, key=lambda x: (x.date or EPOCH, x.manager_id))
+
+
+def executed_trades(
+    raw_transactions: Iterable[dict], season: int, team_managers: dict[int, str]
+) -> list[Transaction]:
+    """Actual executed packages, preserving multiple trades between a pair within one week."""
+    records = {}
+    for t in raw_transactions:
+        if t.get("type") in {"TRADE", "TRADE_ACCEPT"} and t.get("status") == "EXECUTED":
+            records[t.get("relatedTransactionId") or t["id"]] = t
+    out = []
+    for root, t in records.items():
+        items = [i for i in t.get("items") or [] if i.get("type") == "TRADE"]
+        teams = {i["fromTeamId"] for i in items} | {i["toTeamId"] for i in items}
+        if len(teams) != 2 or not teams <= team_managers.keys():
+            raise ValueError(f"{season} trade {root}: incomplete or unsupported trade package")
+        for team in sorted(teams):
+            received = tuple(sorted(i["playerId"] for i in items if i["toTeamId"] == team))
+            sent = tuple(sorted(i["playerId"] for i in items if i["fromTeamId"] == team))
+            if not received or not sent:
+                raise ValueError(f"{season} trade {root}: missing players on one side")
+            out.append(
+                Transaction(
+                    season=season,
+                    scoring_period=t["scoringPeriodId"],
+                    date=_when(t.get("processDate") or t.get("proposedDate")),
+                    type="TRADE",
+                    manager_id=team_managers[team],
+                    players_in=received,
+                    players_out=sent,
+                    id=f"{season}-{root}",
+                )
+            )
+    return sorted(out, key=lambda t: (t.scoring_period, t.date or EPOCH, t.id, t.manager_id))
 
 
 def infer_trades(
@@ -323,7 +357,15 @@ def add_player_data(season: Season, raw: RawSeason, cache: SeasonCache, managers
     season.player_weeks = player_weeks(periods, season.season, team_managers)
     if periods:  # without weekly rosters there is nothing to follow trades through
         moves = transactions(raw_tx, season.season, team_managers)
-        trades = infer_trades(picks, periods, raw_tx, season.season, team_managers)
+        if season.season >= EXECUTED_TRADES_SINCE:
+            trades = executed_trades(raw_tx, season.season, team_managers)
+            counts = Counter(t.manager_id for t in trades)
+            if any(counts[t.manager_id] != t.trades for t in season.teams):
+                raise ValueError(
+                    f"{season.season}: executed trade counts do not match ESPN; refresh transactions"
+                )
+        else:
+            trades = infer_trades(picks, periods, raw_tx, season.season, team_managers)
         season.transactions = sorted(
             moves + trades, key=lambda t: (t.scoring_period, t.date or EPOCH, t.id, t.manager_id)
         )

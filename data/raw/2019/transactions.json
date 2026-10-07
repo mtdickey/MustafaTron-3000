@@ -2212,6 +2212,30 @@
    "type": "TRADE_ACCEPT"
   },
   {
+   "id": "835825b5-a2ad-4eac-908b-3f4edb56cf78",
+   "items": [
+    {
+     "fromTeamId": 7,
+     "playerId": 14912,
+     "toTeamId": 1,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 1,
+     "playerId": 2979477,
+     "toTeamId": 7,
+     "type": "TRADE"
+    }
+   ],
+   "processDate": 1571580555302,
+   "proposedDate": 1571580543281,
+   "relatedTransactionId": "ad3c23e6-73c9-4021-b80d-a72da8419b0f",
+   "scoringPeriodId": 7,
+   "status": "EXECUTED",
+   "teamId": 1,
+   "type": "TRADE_ACCEPT"
+  },
+  {
    "bidAmount": 0,
    "id": "8cbc5cbd-78dd-43ef-9c71-cc5695213faa",
    "items": [
@@ -2650,6 +2674,30 @@
    "status": "EXECUTED",
    "teamId": 5,
    "type": "FREEAGENT"
+  },
+  {
+   "id": "ed05e068-c565-4b72-b438-58c06f7a3260",
+   "items": [
+    {
+     "fromTeamId": 10,
+     "playerId": 12514,
+     "toTeamId": 8,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 8,
+     "playerId": 3120348,
+     "toTeamId": 10,
+     "type": "TRADE"
+    }
+   ],
+   "processDate": 1572332400000,
+   "proposedDate": 1572333138966,
+   "relatedTransactionId": "749405e2-d51d-4118-9e92-88cbfdb25d2c",
+   "scoringPeriodId": 9,
+   "status": "EXECUTED",
+   "teamId": 8,
+   "type": "TRADE_ACCEPT"
   },
   {
    "bidAmount": 0,
@@ -3587,6 +3635,42 @@
    "status": "EXECUTED",
    "teamId": 5,
    "type": "FREEAGENT"
+  },
+  {
+   "id": "0282d754-7445-4b51-82a2-b6e95bfb5c41",
+   "items": [
+    {
+     "fromTeamId": 10,
+     "playerId": 17359,
+     "toTeamId": 2,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 2,
+     "playerId": 3925357,
+     "toTeamId": 10,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 2,
+     "playerId": -16033,
+     "toTeamId": 10,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 10,
+     "playerId": 16504,
+     "toTeamId": 0,
+     "type": "DROP"
+    }
+   ],
+   "processDate": 1573779858015,
+   "proposedDate": 1573779843105,
+   "relatedTransactionId": "e69f5b0b-88fc-42da-a0d6-a4eef5434c08",
+   "scoringPeriodId": 11,
+   "status": "EXECUTED",
+   "teamId": 2,
+   "type": "TRADE_ACCEPT"
   },
   {
    "bidAmount": 0,

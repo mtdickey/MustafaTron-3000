@@ -1014,7 +1014,7 @@ export interface TradeCountOut {
  */
 export interface TradeOut {
   /**
-   * ISO date ESPN recorded the acceptance, when it could be matched
+   * ISO execution date (matched acceptance date in 2018, when known)
    */
   date: string | null;
   id: string;
@@ -1023,7 +1023,7 @@ export interface TradeOut {
    */
   margin: number;
   /**
-   * First NFL week the players were on their new rosters
+   * Trade execution NFL week (first observed roster week in 2018)
    */
   period: number;
   season: number;

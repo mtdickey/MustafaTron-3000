@@ -125,16 +125,22 @@ in `matchups.json`, and every entry matches the player's line in `players.json` 
 `playerId`, `fromTeamId`, `toTeamId`), plus every trade record ESPN still has. Week 0 holds moves
 made between the draft and week 1.
 
-**Trades are not read from here directly.** For most past trades ESPN no longer returns the executed
-record, only the bookkeeping around it: the acceptance (`TRADE_ACCEPT`, by the team receiving the
-offer), league votes (`TRADE_UPHOLD`), vetoes (`TRADE_VETO`) and sometimes the proposal. So
-`mustafatron.transform.infer_trades` follows every player's ownership through the draft, adds, drops
-and weekly rosters: a player who turns up on a team's roster while another team still holds him was
-traded there. The acceptance records only date the trades. The result matches ESPN's per-team trade
-counts (`transactionCounter.trades`) in every season but one. In 2022, two trades passed a player
-through a third team inside one week (Tyler Lockett went Carpenter → Edwards → Richardson in
-week 10). Weekly rosters can't see the middle hop, so the move shows as direct. Each team's net
-players that week are still right.
+**Trades from 2019 use executed records from `kona_playercard`.** The per-week
+`mTransactions2` view usually returns acceptance and league-vote bookkeeping without the exchanged
+players. The fetcher also queries player cards for every player mentioned by the draft, weekly
+rosters, and transactions, and merges executed `TRADE_ACCEPT` records by transaction ID. Only
+allowlisted transaction/item fields are retained; member IDs are discarded.
+
+`mustafatron.transform.executed_trades` uses each package's `TRADE` items, execution date and
+scoring period. Shared proposal IDs identify a trade across duplicated records; distinct trades
+between the same teams in the same week remain separate. Each team's ledger count must match
+ESPN's `transactionCounter.trades`, otherwise loading fails with a refresh instruction.
+
+**2018 still uses roster inference.** ESPN player cards do not return executed trade history for
+that season. `infer_trades` follows ownership through the draft, executed adds/drops and weekly
+rosters. This fallback cannot see transfers followed by another trade or a drop within one week.
+The 2022 Lockett/Watson transfers and 2023 Gainwell trade are regression-tested against the executed
+records rather than accepting drift. See `2022-trade-investigation.md` for the investigation.
 
 Free agency is team `0`, or `-1` in 2018. Waivers ESPN processes itself carry `teamId` -2147483648.
 From 2023, ESPN's `transactionCounter.acquisitions` runs 1–3 below the executed adds for a few

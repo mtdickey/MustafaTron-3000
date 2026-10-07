@@ -103,13 +103,48 @@ def test_transactions_keep_executed_moves_and_trade_records():
             {"id": "d", "type": "TRADE_DECLINE", "status": "EXECUTED", "relatedTransactionId": "p2"},
         ]}  # fmt: skip
 
-    client = WeeklyClient({"mTransactions2": respond})
+    client = WeeklyClient({"mTransactions2": respond, "kona_playercard": lambda *_: {"players": []}})
     out = pd_.fetch_transactions(context(client))
-    assert [c[2] for c in client.calls] == [0, 1, 2, 3]  # week 0: before the season starts
+    assert [c[2] for c in client.calls if c[1] == ("mTransactions2",)] == [0, 1, 2, 3]
     by_id = {t["id"]: t for t in out["transactions"]}
     assert set(by_id) == {"w", "p1", "a", "u"}
     assert by_id["w"]["items"] == [{"type": "ADD", "playerId": 5, "fromTeamId": 0, "toTeamId": 1}]
     assert "memberId" not in by_id["w"]
+
+
+def test_player_cards_recover_executed_packages_once_without_member_ids():
+    trade = {
+        "id": "executed",
+        "relatedTransactionId": "proposal",
+        "type": "TRADE_ACCEPT",
+        "status": "EXECUTED",
+        "scoringPeriodId": 2,
+        "processDate": 2000,
+        "memberId": BARE_SWID,
+        "isPending": True,
+        "items": [
+            {"type": "TRADE", "playerId": 7, "fromTeamId": 1, "toTeamId": 2},
+            {"type": "TRADE", "playerId": 8, "fromTeamId": 2, "toTeamId": 1},
+            {"type": "DROP", "playerId": 9, "fromTeamId": 1, "toTeamId": 0},
+        ],
+    }
+    declined = {**trade, "id": "declined", "status": "CANCELED"}
+    client = WeeklyClient(
+        {
+            "mTransactions2": lambda *_: {"transactions": []},
+            "kona_playercard": lambda *_: {
+                "players": [
+                    {"transactions": [trade, declined]},
+                    {"transactions": [trade]},
+                ]
+            },
+        }
+    )
+    out = pd_.fetch_transactions(context(client, draft={"draftDetail": {"picks": [{"playerId": 7}]}}))
+    assert len(out["transactions"]) == 1
+    assert out["transactions"][0]["items"] == trade["items"]
+    assert "memberId" not in out["transactions"][0]
+    assert client.calls[-1][3] == {"players": {"filterIds": {"value": [7]}}}
 
 
 def test_players_are_the_ones_the_other_files_mention():
@@ -212,18 +247,12 @@ def test_every_team_has_a_full_roster_every_week(league, season):
     assert all(12 <= n <= 18 for n in per_team_week.values())
 
 
-# Two trades in 2022 passed a player through a third team inside one week (Tyler Lockett went
-# Carpenter -> Edwards -> Richardson in week 10). Weekly rosters can't see the middle hop, so those
-# show as direct moves: each team's net players are still right, but the per-team trade counts drift.
-TRADE_COUNT_DRIFT = {2022: {"grudee": -1, "edwards": 1, "richardson": 1, "carpenter": 1}}
-
-
 @pytest.mark.parametrize("season", WEEKLY)
-def test_trades_found_from_rosters_match_espns_counts(league, season):
+def test_trade_ledger_matches_espns_counts(league, season):
     s = league.seasons[season]
     found = Counter(t.manager_id for t in s.trades)
     drift = {t.manager_id: found[t.manager_id] - t.trades for t in s.teams if found[t.manager_id] != t.trades}
-    assert drift == TRADE_COUNT_DRIFT.get(season, {})
+    assert drift == {}
 
 
 @pytest.mark.parametrize("season", WEEKLY)

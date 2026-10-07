@@ -138,10 +138,9 @@ class DraftPick:
 class Transaction:
     """One manager's side of a roster move. A trade yields one per team involved, sharing ``id``.
 
-    Adds and drops are ESPN's executed records. Trades are found by following players from roster to
-    roster (``transform.infer_trades``), because ESPN no longer returns the executed record of most
-    past trades: their ``scoring_period`` is the first NFL week the players were on their new rosters,
-    and ``date`` comes from ESPN's acceptance record when one can be matched (else None).
+    Adds, drops and trades use ESPN's executed records. Trades from 2019 preserve the actual
+    execution date and scoring period. In 2018 only, trades are inferred from weekly rosters,
+    with a matching acceptance date when available.
     """
 
     season: int

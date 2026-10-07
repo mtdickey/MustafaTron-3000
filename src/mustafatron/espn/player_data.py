@@ -30,6 +30,8 @@ if TYPE_CHECKING:
 
 # The first season ESPN serves weekly box scores and transactions for.
 WEEKLY_SINCE = 2018
+# Player cards retain executed trade packages from this season onward.
+EXECUTED_TRADES_SINCE = 2019
 # kona_player_info is asked about this many players at a time (the IDs travel in a header).
 PLAYER_BATCH = 100
 
@@ -44,13 +46,10 @@ PICK_KEYS = (
     "reservedForKeeper",
     "autoDraftTypeId",
 )
-# Executed adds and drops are kept as they are. Trades are messier: for most past trades ESPN no
-# longer returns the executed record, only the bookkeeping around it, the acceptance (TRADE_ACCEPT,
-# by the team receiving the offer), league votes (TRADE_UPHOLD) and vetoes (TRADE_VETO). Those are
-# kept, plus any proposal one of them refers to, because they date the trades that
-# ``mustafatron.transform`` finds by following players between rosters.
+# mTransactions2 retains trade bookkeeping but often omits the exchanged players.
+# kona_playercard supplies the executed packages, deduplicated across player cards.
 KEPT_MOVE_TYPES = frozenset({"WAIVER", "FREEAGENT"})
-KEPT_TRADE_TYPES = frozenset({"TRADE_ACCEPT", "TRADE_UPHOLD", "TRADE_VETO"})
+KEPT_TRADE_TYPES = frozenset({"TRADE", "TRADE_ACCEPT", "TRADE_UPHOLD", "TRADE_VETO"})
 TRANSACTION_KEYS = (
     "id",
     "type",
@@ -157,6 +156,20 @@ def fetch_transactions(ctx: FetchContext) -> dict:
     for period in scoring_periods(ctx, first=0):
         raw = ctx.client.season(ctx.season, [View.TRANSACTIONS], scoring_period=period)
         every.update({t["id"]: t for t in raw.get("transactions") or []})
+    if ctx.season >= EXECUTED_TRADES_SINCE:
+        ids = mentioned_players(
+            ctx.load("draft"), ctx.load("boxscores"), {"transactions": list(every.values())}
+        )
+        for start in range(0, len(ids), PLAYER_BATCH):
+            raw = ctx.client.season(
+                ctx.season,
+                [View.PLAYER_CARD],
+                player_filter={"players": {"filterIds": {"value": ids[start : start + PLAYER_BATCH]}}},
+            )
+            for player in raw.get("players", []):
+                for t in player.get("transactions") or []:
+                    if t.get("type") in {"TRADE", "TRADE_ACCEPT"} and t.get("status") == "EXECUTED":
+                        every[t["id"]] = t
     found = {t["id"]: trim_transaction(t) for t in kept_transactions(every.values())}
 
     def when(t: dict) -> tuple:
@@ -169,7 +182,7 @@ def mentioned_players(draft: dict, boxscores: dict, transactions: dict) -> list[
     """Every player a season's draft, box scores or transactions refer to."""
     ids = {p["playerId"] for p in draft.get("draftDetail", {}).get("picks", [])}
     ids |= {e["playerId"] for p in boxscores.get("periods", []) for t in p["teams"] for e in t["entries"]}
-    ids |= {i["playerId"] for t in transactions.get("transactions", []) for i in t["items"]}
+    ids |= {i["playerId"] for t in transactions.get("transactions", []) for i in t.get("items") or []}
     return sorted(ids)
 
 

@@ -11,9 +11,8 @@ Changed from v0:
 
 - **The season length** comes from the data: every week the team's game mattered (regular season,
   championship bracket, 3rd place game; ``stats.coaching.COUNTED_TIERS``), not ``range(start, 18)``.
-- **The trade's first week** is the first NFL week the players were on their new rosters
-  (``transform.infer_trades``), replacing the hand-typed season start date the old code counted
-  from, which disagreed with itself.
+- **The trade's first week** comes from ESPN's execution scoring period (2019 onward),
+  or the first weekly roster after an inferred trade (2018).
 - Each side is valued on its own roster, so a trade can help both teams, or neither.
 
 Trades start in 2018, the first season ESPN kept weekly rosters. Trade and acquisition *counts* come
@@ -43,7 +42,7 @@ class TradeSide:
 class Trade:
     id: str
     season: int
-    period: int  # first NFL week the players were on their new rosters
+    period: int  # execution scoring period, or first observed roster in 2018
     date: str | None  # ISO date of ESPN's acceptance, when known
     sides: tuple[TradeSide, TradeSide]
 

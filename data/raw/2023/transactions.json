@@ -914,6 +914,30 @@
    "type": "TRADE_UPHOLD"
   },
   {
+   "id": "1869393a-8b30-448a-87da-af1047614232",
+   "items": [
+    {
+     "fromTeamId": 10,
+     "playerId": 4372019,
+     "toTeamId": 7,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 7,
+     "playerId": 14880,
+     "toTeamId": 10,
+     "type": "TRADE"
+    }
+   ],
+   "processDate": 1695309991696,
+   "proposedDate": 1695309962012,
+   "relatedTransactionId": "31542e89-bf77-4505-821e-b548ecf1bb7d",
+   "scoringPeriodId": 3,
+   "status": "EXECUTED",
+   "teamId": 10,
+   "type": "TRADE_ACCEPT"
+  },
+  {
    "bidAmount": 0,
    "id": "cefde37b-6dbd-4f45-bab1-1714ceaabbbe",
    "items": [
@@ -1751,6 +1775,42 @@
    "type": "TRADE_UPHOLD"
   },
   {
+   "id": "592e0e6c-7796-477e-afab-1f92465beecb",
+   "items": [
+    {
+     "fromTeamId": 2,
+     "playerId": 4366031,
+     "toTeamId": 9,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 9,
+     "playerId": 4427366,
+     "toTeamId": 2,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 9,
+     "playerId": 4241372,
+     "toTeamId": 2,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 2,
+     "playerId": 4569173,
+     "toTeamId": 9,
+     "type": "TRADE"
+    }
+   ],
+   "processDate": 1696440267026,
+   "proposedDate": 1696440266954,
+   "relatedTransactionId": "cf0fb91c-53ea-48eb-822f-8302df901ea0",
+   "scoringPeriodId": 5,
+   "status": "EXECUTED",
+   "teamId": 2,
+   "type": "TRADE_ACCEPT"
+  },
+  {
    "bidAmount": 0,
    "id": "02a7b72c-68ae-427b-9ac7-fc9cb7188772",
    "items": [
@@ -1914,6 +1974,30 @@
    "type": "TRADE_UPHOLD"
   },
   {
+   "id": "f029e64c-f5a8-4970-a28a-d005f08d4806",
+   "items": [
+    {
+     "fromTeamId": 10,
+     "playerId": 4239934,
+     "toTeamId": 5,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 5,
+     "playerId": -16027,
+     "toTeamId": 10,
+     "type": "TRADE"
+    }
+   ],
+   "processDate": 1696886404363,
+   "proposedDate": 1696886404298,
+   "relatedTransactionId": "ad6ec5ef-b940-48be-9132-78fec4b277c0",
+   "scoringPeriodId": 5,
+   "status": "EXECUTED",
+   "teamId": 10,
+   "type": "TRADE_ACCEPT"
+  },
+  {
    "bidAmount": 0,
    "id": "f3911f7d-69d5-4e31-91fd-d1d54018f726",
    "items": [],
@@ -1943,6 +2027,30 @@
    "status": "EXECUTED",
    "teamId": 1,
    "type": "TRADE_UPHOLD"
+  },
+  {
+   "id": "0a61c29e-defe-4698-806f-1bcdbe5d26f0",
+   "items": [
+    {
+     "fromTeamId": 3,
+     "playerId": 4374302,
+     "toTeamId": 1,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 1,
+     "playerId": 4567048,
+     "toTeamId": 3,
+     "type": "TRADE"
+    }
+   ],
+   "processDate": 1696951460959,
+   "proposedDate": 1696951460886,
+   "relatedTransactionId": "dacb30a7-8022-4baa-a786-b3f3d6201df4",
+   "scoringPeriodId": 6,
+   "status": "EXECUTED",
+   "teamId": 1,
+   "type": "TRADE_ACCEPT"
   },
   {
    "bidAmount": 0,
@@ -2068,6 +2176,30 @@
    "status": "EXECUTED",
    "teamId": 6,
    "type": "WAIVER"
+  },
+  {
+   "id": "0c808f25-c8bd-42f4-ab1f-05f0c5f859d6",
+   "items": [
+    {
+     "fromTeamId": 10,
+     "playerId": -16027,
+     "toTeamId": 5,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 5,
+     "playerId": 4428557,
+     "toTeamId": 10,
+     "type": "TRADE"
+    }
+   ],
+   "processDate": 1697023151783,
+   "proposedDate": 1697023142916,
+   "relatedTransactionId": "de721dc6-e726-4577-a8e1-38855a770155",
+   "scoringPeriodId": 6,
+   "status": "EXECUTED",
+   "teamId": 5,
+   "type": "TRADE_ACCEPT"
   },
   {
    "bidAmount": 0,
@@ -2235,6 +2367,42 @@
    "type": "TRADE_UPHOLD"
   },
   {
+   "id": "c00b7eec-76c5-4b20-8f1f-44c412796b4d",
+   "items": [
+    {
+     "fromTeamId": 2,
+     "playerId": 4371733,
+     "toTeamId": 10,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 2,
+     "playerId": 3122976,
+     "toTeamId": 10,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 10,
+     "playerId": 14880,
+     "toTeamId": 2,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 10,
+     "playerId": 4426388,
+     "toTeamId": 0,
+     "type": "DROP"
+    }
+   ],
+   "processDate": 1697052112939,
+   "proposedDate": 1697052112875,
+   "relatedTransactionId": "1cb564e7-0052-4056-829a-3ba386e3a85b",
+   "scoringPeriodId": 6,
+   "status": "EXECUTED",
+   "teamId": 2,
+   "type": "TRADE_ACCEPT"
+  },
+  {
    "bidAmount": 0,
    "id": "81d3c574-fb3a-4c3c-9096-386dd97787cf",
    "items": [
@@ -2298,7 +2466,6 @@
    "type": "TRADE_UPHOLD"
   },
   {
-   "bidAmount": 0,
    "id": "184b00bc-6c1d-4309-93ed-9c934071aff2",
    "items": [
     {
@@ -3672,7 +3839,6 @@
    "type": "FREEAGENT"
   },
   {
-   "bidAmount": 0,
    "id": "43d3ff65-4236-4e14-af6d-1e5e3021b924",
    "items": [
     {
@@ -3716,6 +3882,42 @@
    "status": "EXECUTED",
    "teamId": 10,
    "type": "TRADE_UPHOLD"
+  },
+  {
+   "id": "717d5768-df05-4cf0-80b6-d50258ec7ff0",
+   "items": [
+    {
+     "fromTeamId": 10,
+     "playerId": 16800,
+     "toTeamId": 3,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 10,
+     "playerId": 4360238,
+     "toTeamId": 3,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 3,
+     "playerId": 4426354,
+     "toTeamId": 10,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 3,
+     "playerId": 4035676,
+     "toTeamId": 10,
+     "type": "TRADE"
+    }
+   ],
+   "processDate": 1698890210297,
+   "proposedDate": 1698890210242,
+   "relatedTransactionId": "8ecd1973-fc46-48f6-8a6d-d9b72c26590f",
+   "scoringPeriodId": 9,
+   "status": "EXECUTED",
+   "teamId": 10,
+   "type": "TRADE_ACCEPT"
   },
   {
    "bidAmount": 0,
@@ -4234,6 +4436,54 @@
    "status": "EXECUTED",
    "teamId": 10,
    "type": "TRADE_UPHOLD"
+  },
+  {
+   "id": "914664d4-845d-432b-949f-224f592080fe",
+   "items": [
+    {
+     "fromTeamId": 10,
+     "playerId": 4371733,
+     "toTeamId": 2,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 10,
+     "playerId": 4430027,
+     "toTeamId": 2,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 2,
+     "playerId": 4596334,
+     "toTeamId": 10,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 2,
+     "playerId": 3116165,
+     "toTeamId": 10,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 2,
+     "playerId": 4241457,
+     "toTeamId": 10,
+     "type": "TRADE"
+    },
+    {
+     "fromTeamId": 10,
+     "playerId": 3122976,
+     "toTeamId": 0,
+     "type": "DROP"
+    }
+   ],
+   "processDate": 1699452793608,
+   "proposedDate": 1699452793542,
+   "relatedTransactionId": "29586863-206e-4ce4-a273-9709deb8a309",
+   "scoringPeriodId": 10,
+   "status": "EXECUTED",
+   "teamId": 10,
+   "type": "TRADE_ACCEPT"
   },
   {
    "bidAmount": 0,

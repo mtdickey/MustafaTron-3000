@@ -52,6 +52,7 @@ class View(StrEnum):
     DRAFT_DETAIL = "mDraftDetail"
     TRANSACTIONS = "mTransactions2"
     PLAYER_INFO = "kona_player_info"
+    PLAYER_CARD = "kona_playercard"
 
 
 class EspnError(RuntimeError):

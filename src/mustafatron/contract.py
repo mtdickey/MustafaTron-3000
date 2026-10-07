@@ -549,8 +549,8 @@ class TradeSideOut(_Model):
 class TradeOut(_Model):
     id: str
     season: int
-    period: int = Field(description="First NFL week the players were on their new rosters")
-    date: str | None = Field(description="ISO date ESPN recorded the acceptance, when it could be matched")
+    period: int = Field(description="Trade execution NFL week (first observed roster week in 2018)")
+    date: str | None = Field(description="ISO execution date (matched acceptance date in 2018, when known)")
     sides: list[TradeSideOut] = Field(description="Two sides, by manager id")
     winner: str
     margin: float = Field(description="Winner's value minus loser's")
