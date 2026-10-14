@@ -18,6 +18,7 @@ export interface ContractFiles {
   season: SeasonFile;
   standings: StandingsFile;
   trades: TradesFile;
+  waivers: WaiversFile;
   week: WeekFile;
   weeks: WeeksFile;
 }
@@ -1057,6 +1058,63 @@ export interface TradeSideOut {
 export interface PlayerRefOut {
   name: string;
   position: string;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WaiversFile".
+ */
+export interface WaiversFile {
+  detail_seasons: number[];
+  expensive: WaiverPurchaseOut[];
+  faab_seasons: number[];
+  managers: WaiverManagerOut[];
+  schema_version: 1;
+  seasons: WaiverSeasonOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WaiverPurchaseOut".
+ */
+export interface WaiverPurchaseOut {
+  bid: number;
+  budget_pct: number | null;
+  date: string | null;
+  manager: string;
+  period: number;
+  players: string[];
+  season: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WaiverManagerOut".
+ */
+export interface WaiverManagerOut {
+  acquisitions: number;
+  average_bid: number | null;
+  detail_seasons: number;
+  faab_wins: number;
+  free_agents: number;
+  manager: string;
+  per_season: number;
+  /**
+   * Mean dollars above other managers' season average winning bid, including $0 wins
+   */
+  premium: number | null;
+  seasons: number;
+  spent: number;
+  waiver_wins: number;
+  waivers_per_season: number | null;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "WaiverSeasonOut".
+ */
+export interface WaiverSeasonOut {
+  acquisitions: number;
+  free_agents: number | null;
+  manager: string;
+  season: number;
+  waiver_wins: number | null;
 }
 /**
  * One weekly report, everything as it stood when the week ended ("through week N").

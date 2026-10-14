@@ -68,6 +68,9 @@ class LeagueSettings:
     trade_deadline: datetime | None
     playoff_seeding_tiebreak: str
 
+    uses_faab: bool = False
+    acquisition_budget: int = 0
+
     @property
     def final_matchup_period(self) -> int:
         return max(self.matchup_periods)
@@ -114,6 +117,8 @@ def parse_settings(season: int, raw: dict) -> LeagueSettings:
     )
     draft = s.get("draftSettings", {})
     return LeagueSettings(
+        uses_faab=s.get("acquisitionSettings", {}).get("isUsingAcquisitionBudget", False),
+        acquisition_budget=s.get("acquisitionSettings", {}).get("acquisitionBudget", 0),
         season=season,
         name=s.get("name", ""),
         team_count=s["size"],

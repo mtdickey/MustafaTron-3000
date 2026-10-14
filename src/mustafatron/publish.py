@@ -28,6 +28,7 @@ from mustafatron.stats.records import records_book
 from mustafatron.stats.seasons import all_play, superlatives, week_scores
 from mustafatron.stats.standings import all_time_standings, championship_ledger
 from mustafatron.stats.trades import Trade, trade_book
+from mustafatron.stats.waivers import waiver_book
 from mustafatron.stats.weekly import (
     Form,
     MissedStart,
@@ -81,6 +82,8 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
     current = league.seasons[seasons[-1]]
     last_done, upcoming_week = _week_status(current)
     out: dict[str, c.ContractFile] = {}
+
+    out["waivers.json"] = waiver_book(league)
 
     out["meta.json"] = c.Meta(
         league_name=current.settings.name,

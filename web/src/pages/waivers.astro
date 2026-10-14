@@ -1,0 +1,52 @@
+---
+import ManagerName from "../components/ManagerName.astro";
+import SortableTables from "../components/SortableTables.astro";
+import Base from "../layouts/Base.astro";
+import { waivers } from "../lib/data";
+
+const book = waivers();
+const years = [...new Set(book.seasons.map(s => s.season))].sort((a, b) => a - b);
+const count = new Map(book.seasons.map(s => [`${s.manager}|${s.season}`, s]));
+const spenders = book.managers.filter(m => m.faab_wins > 0).sort((a, b) => (b.premium ?? -Infinity) - (a.premium ?? -Infinity));
+const dollars = (n: number | null) => n === null ? "—" : `$${n.toFixed(2)}`;
+const leader = book.managers[0];
+const rateLeader = [...book.managers].sort((a,b) => b.per_season - a.per_season)[0];
+const range = (ys: number[]) => ys.length ? `${ys[0]} - ${ys[ys.length - 1]}` : "none available";
+---
+<Base title="Waiver history" section="/waivers" description="Career pickups, waiver activity, FAAB spending habits and the biggest winning bids in league history.">
+  <h1>Waiver history</h1>
+  <p class="lede">The busiest managers on the wire, who pays above the league average, and the most expensive FAAB wins.</p>
+  <div class="grid highlights">
+    {leader && <div class="card"><span class="muted small">Most career pickups</span><p><ManagerName id={leader.manager} link /> · <strong class="num">{leader.acquisitions}</strong></p></div>}
+    {rateLeader && <div class="card"><span class="muted small">Most pickups per season</span><p><ManagerName id={rateLeader.manager} link /> · <strong class="num">{rateLeader.per_season.toFixed(1)}</strong></p></div>}
+    {spenders[0] && <div class="card"><span class="muted small">Highest average bid premium</span><p><ManagerName id={spenders[0].manager} link /> · <strong class="num">{dollars(spenders[0].premium)}</strong></p></div>}
+  </div>
+  <h2>Who makes the most pickups?</h2>
+  <p class="muted small">Career pickups use ESPN’s acquisition counters, including waiver claims and free agents. Averages divide by seasons managed, including a current season in progress. Waiver wins and free agent detail cover {range(book.detail_seasons)} only; waiver wins/season divides by the seasons managed within that detail coverage. Click any column to sort.</p>
+  <div class="table-scroll"><table data-sortable>
+    <thead><tr><th class="text" scope="col">Manager</th><th scope="col">Seasons</th><th scope="col">Total pickups</th><th scope="col">Per season</th><th scope="col">Waiver wins (detail)</th><th scope="col">Waiver wins/season (detail)</th><th scope="col">Free agents (detail)</th></tr></thead>
+    <tbody>{book.managers.map(m => <tr><th scope="row"><ManagerName id={m.manager} link /></th><td>{m.seasons}</td><td>{m.acquisitions}</td><td>{m.per_season.toFixed(1)}</td><td data-sort={m.detail_seasons ? m.waiver_wins : -1}>{m.detail_seasons ? m.waiver_wins : "--"}</td><td data-sort={m.waivers_per_season ?? -1}>{m.waivers_per_season?.toFixed(1) ?? "--"}</td><td data-sort={m.detail_seasons ? m.free_agents : -1}>{m.detail_seasons ? m.free_agents : "--"}</td></tr>)}</tbody>
+  </table></div>
+  <h2>Who bids above average?</h2>
+  <p class="muted small">FAAB seasons: {range(book.faab_seasons)}. For each win, the premium is the bid minus the average winning bid by other managers that season; the table averages those differences. Includes $0 wins. This measures spending habits, not overpayment for the same player: losing bids and player market values are unavailable.</p>
+  {spenders.length ? <div class="table-scroll"><table data-sortable>
+    <thead><tr><th class="text" scope="col">Manager</th><th scope="col">FAAB wins</th><th scope="col">Total spent</th><th scope="col">Avg. winning bid</th><th scope="col">Avg. premium</th></tr></thead>
+    <tbody>{spenders.map(m => <tr><th scope="row"><ManagerName id={m.manager} link /></th><td>{m.faab_wins}</td><td data-sort={m.spent}>${m.spent}</td><td data-sort={m.average_bid}>{dollars(m.average_bid)}</td><td data-sort={m.premium}>{dollars(m.premium)}</td></tr>)}</tbody>
+  </table></div> : <p>No FAAB wins available yet.</p>}
+  <h2>Most expensive FAAB wins</h2>
+  <p class="muted small">The 25 largest executed winning bids in the available FAAB history. Budget share uses that season’s starting budget. Repeat pickups of a player are separate wins; a bid belongs to the whole claim.</p>
+  {book.expensive.length ? <div class="table-scroll"><table data-sortable>
+    <thead><tr><th class="text" scope="col">Player</th><th class="text" scope="col">Manager</th><th scope="col">Season</th><th scope="col">NFL week</th><th scope="col">Date</th><th scope="col">Bid</th><th scope="col">Budget share</th></tr></thead>
+    <tbody>{book.expensive.map(p => <tr><th scope="row">{p.players.join(", ")}</th><td><ManagerName id={p.manager} link /></td><td>{p.season}</td><td>{p.period === 0 ? "Preseason" : p.period}</td><td>{p.date ?? "—"}</td><td data-sort={p.bid}>${p.bid}</td><td data-sort={p.budget_pct ?? -1}>{p.budget_pct === null ? "—" : `${p.budget_pct}%`}</td></tr>)}</tbody>
+  </table></div> : <p>No FAAB purchases available yet.</p>}
+  <h2>Pickups by season</h2>
+  <div class="table-scroll"><table class="sticky-first" data-sortable>
+    <thead><tr><th class="text" scope="col">Manager</th>{years.map(y => <th scope="col">{y}</th>)}</tr></thead>
+    <tbody>{book.managers.map(m => <tr><th scope="row"><ManagerName id={m.manager} link /></th>{years.map(y => {const row = count.get(`${m.manager}|${y}`); return <td data-sort={row?.acquisitions ?? -1}>{row?.acquisitions ?? "—"}</td>;})}</tr>)}</tbody>
+  </table></div>
+  <SortableTables />
+</Base>
+<style>
+  .highlights { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-block: 1.5rem; }
+  .highlights p { margin-bottom: 0; }
+</style>

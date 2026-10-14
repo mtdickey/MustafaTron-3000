@@ -789,6 +789,49 @@ class WeekFile(ContractFile):
     previews: list[PreviewOut]
 
 
+class WaiverManagerOut(BaseModel):
+    manager: str
+    seasons: int
+    acquisitions: int
+    per_season: float
+    waiver_wins: int
+    detail_seasons: int
+    waivers_per_season: float | None
+    free_agents: int
+    faab_wins: int
+    spent: int
+    average_bid: float | None
+    premium: float | None = Field(
+        description="Mean dollars above other managers' season average winning bid, including $0 wins"
+    )
+
+
+class WaiverSeasonOut(BaseModel):
+    season: int
+    manager: str
+    acquisitions: int
+    waiver_wins: int | None
+    free_agents: int | None
+
+
+class WaiverPurchaseOut(BaseModel):
+    season: int
+    period: int
+    date: str | None
+    manager: str
+    players: list[str]
+    bid: int
+    budget_pct: float | None
+
+
+class WaiversFile(ContractFile):
+    detail_seasons: list[int]
+    faab_seasons: list[int]
+    managers: list[WaiverManagerOut]
+    seasons: list[WaiverSeasonOut]
+    expensive: list[WaiverPurchaseOut]
+
+
 # Published path → model. seasons/{year}.json all use SeasonFile, weeks/{year}/{week}.json WeekFile.
 FILES: dict[str, type[ContractFile]] = {
     "meta.json": Meta,
@@ -802,6 +845,7 @@ FILES: dict[str, type[ContractFile]] = {
     "coaching.json": CoachingFile,
     "draft.json": DraftFile,
     "trades.json": TradesFile,
+    "waivers.json": WaiversFile,
     "awards.json": AwardsFile,
     "weeks.json": WeeksFile,
 }
