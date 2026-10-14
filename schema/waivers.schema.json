@@ -1,0 +1,254 @@
+{
+  "$defs": {
+    "WaiverManagerOut": {
+      "properties": {
+        "acquisitions": {
+          "title": "Acquisitions",
+          "type": "integer"
+        },
+        "average_bid": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Average Bid"
+        },
+        "detail_seasons": {
+          "title": "Detail Seasons",
+          "type": "integer"
+        },
+        "faab_wins": {
+          "title": "Faab Wins",
+          "type": "integer"
+        },
+        "free_agents": {
+          "title": "Free Agents",
+          "type": "integer"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "per_season": {
+          "title": "Per Season",
+          "type": "number"
+        },
+        "premium": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Mean dollars above other managers' season average winning bid, including $0 wins",
+          "title": "Premium"
+        },
+        "seasons": {
+          "title": "Seasons",
+          "type": "integer"
+        },
+        "spent": {
+          "title": "Spent",
+          "type": "integer"
+        },
+        "waiver_wins": {
+          "title": "Waiver Wins",
+          "type": "integer"
+        },
+        "waivers_per_season": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Waivers Per Season"
+        }
+      },
+      "required": [
+        "manager",
+        "seasons",
+        "acquisitions",
+        "per_season",
+        "waiver_wins",
+        "detail_seasons",
+        "waivers_per_season",
+        "free_agents",
+        "faab_wins",
+        "spent",
+        "average_bid",
+        "premium"
+      ],
+      "title": "WaiverManagerOut",
+      "type": "object"
+    },
+    "WaiverPurchaseOut": {
+      "properties": {
+        "bid": {
+          "title": "Bid",
+          "type": "integer"
+        },
+        "budget_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Budget Pct"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Date"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "period": {
+          "title": "Period",
+          "type": "integer"
+        },
+        "players": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Players",
+          "type": "array"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "season",
+        "period",
+        "date",
+        "manager",
+        "players",
+        "bid",
+        "budget_pct"
+      ],
+      "title": "WaiverPurchaseOut",
+      "type": "object"
+    },
+    "WaiverSeasonOut": {
+      "properties": {
+        "acquisitions": {
+          "title": "Acquisitions",
+          "type": "integer"
+        },
+        "free_agents": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Free Agents"
+        },
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "season": {
+          "title": "Season",
+          "type": "integer"
+        },
+        "waiver_wins": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Waiver Wins"
+        }
+      },
+      "required": [
+        "season",
+        "manager",
+        "acquisitions",
+        "waiver_wins",
+        "free_agents"
+      ],
+      "title": "WaiverSeasonOut",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "detail_seasons": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Detail Seasons",
+      "type": "array"
+    },
+    "expensive": {
+      "items": {
+        "$ref": "#/$defs/WaiverPurchaseOut"
+      },
+      "title": "Expensive",
+      "type": "array"
+    },
+    "faab_seasons": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Faab Seasons",
+      "type": "array"
+    },
+    "managers": {
+      "items": {
+        "$ref": "#/$defs/WaiverManagerOut"
+      },
+      "title": "Managers",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "seasons": {
+      "items": {
+        "$ref": "#/$defs/WaiverSeasonOut"
+      },
+      "title": "Seasons",
+      "type": "array"
+    }
+  },
+  "required": [
+    "detail_seasons",
+    "faab_seasons",
+    "managers",
+    "seasons",
+    "expensive"
+  ],
+  "title": "WaiversFile",
+  "type": "object"
+}

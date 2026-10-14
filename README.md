@@ -123,6 +123,7 @@ lays out what the contract publishes.
 | `games.json` | Every final game as `[season, week, tier, home, away, home_score, away_score, winner]`, plus upcoming |
 | `h2h.json` | Every all-time series (record, win pct, average scores and margin, last five, streaks, closest/blowout, playoff record, rivalry flags) and the most competitive rivalries |
 | `standings.json` | All-time standings (regular season record and margin, playoff record, titles, best/worst finish, net payout and ROI) and the championship ledger |
+| `waivers.json` | Career and per-season pickups, waiver wins and free agents from 2018, FAAB spending and largest winning bids in seasons using FAAB |
 | `records.json` | Records book top 10s: single game and matchup (one-week matchups only), league-wide NFL week, season, and win/loss streaks |
 | `profiles.json` | Per manager: best and worst single NFL weeks, career all-play record (vs the field) |
 | `seasons/{year}.json` | One season: settings, final standings, every game, each team's points per NFL week, all-play records, superlatives |
@@ -150,10 +151,13 @@ with JSON Schemas in [`schema/`](schema/) for the site to generate types from.
 The data is published live (current season from ESPN) when the ESPN secrets are available. If the
 cookies have expired the build fails and nothing is deployed, so the site keeps the last good build.
 
-[`etl.yml`](.github/workflows/etl.yml) is the weekly in-season refresh: Tuesdays at 14:00 UTC,
+[`etl.yml`](.github/workflows/etl.yml) is the weekly in-season refresh: Tuesdays at 8:17 AM
+America/New_York (adjusts for daylight saving time),
 September through January, after Monday night games are final, and on demand from the Actions tab.
 It runs `mustafatron fetch` with the ESPN cookies and `MANAGER_ID_KEY` from Actions secrets, commits
 any newly finished season to `data/raw/` (after the tests pass on it), then runs the deploy.
+GitHub schedules are best effort and can be delayed; the schedule avoids
+the busy start of the hour. Use manual dispatch if an update is urgently needed.
 
 **When the cookies expire** (a few times a year), `fetch` exits with code 3 and the run fails. The ETL
 then opens an issue titled *ESPN cookies expired* that says how to fix it, and the next successful

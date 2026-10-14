@@ -2,8 +2,9 @@ name: ETL
 
 # The weekly in-season refresh: pull the current season from ESPN, then rebuild and deploy the site.
 #
-# Runs Tuesday 14:00 UTC (10:00 ET) September through January, after Monday night games and ESPN's
-# overnight stat finalization, plus on demand from the Actions tab.
+# Runs Tuesday 08:17 America/New_York September through January (DST-aware), after Monday
+# night games and ESPN overnight stat finalization, plus on demand from the Actions tab.
+# Avoid the busy top of the hour. GitHub schedules are best effort and may still be delayed.
 #
 # Expired cookies fail loudly: the run fails, and an issue titled "ESPN cookies expired" is opened
 # (or commented on) so it reaches everyone watching the repo, not just whoever owns the cron. The
@@ -16,7 +17,8 @@ name: ETL
 
 on:
   schedule:
-    - cron: "0 14 * 9-12,1 2"
+    - cron: "17 8 * 9-12,1 2"
+      timezone: "America/New_York"
   workflow_dispatch:
 
 concurrency:
