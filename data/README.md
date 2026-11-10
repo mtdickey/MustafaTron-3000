@@ -56,7 +56,8 @@ What that means for the hub:
   that use them say "player-level stats available from 2018" rather than implying 11 seasons.
 - **Trades, trade valuations and acquisition history start in 2018.** For 2015–2017 only ESPN's
   per-team counts survive (`transactionCounter` in `matchups.json`).
-- **The keeper flag works,** which makes the keeper history backfill (M5) automatic from 2024 on.
+- **The keeper flag works,** and keepers only started in 2024, so the whole keeper history
+  ([`manual/keeper_history.yml`](manual/keeper_history.yml)) can be checked against ESPN.
 
 Two traps the probe turned up: `mDraftDetail`'s `memberId` is a SWID *without* braces, which the
 SWID scrubber's pattern does not match, so committed draft files keep only the fields the hub uses
@@ -159,6 +160,7 @@ keys directly: `mustafatron.identity` resolves them to the canonical managers in
 |---|---|
 | `managers.yml` | One entry per person: canonical id, display and short names, every ESPN member ID they have used, seasons active |
 | `league_rules.yml` | Rules ESPN doesn't model: payouts, keeper eligibility, draft-review and rivalry thresholds, each season's NFL kickoff, and the league's awards (what decides each, from which season). Keyed by season where a rule changed. Anything in `mSettings` is deliberately not repeated here |
+| `keeper_history.yml` | Every player kept since keepers began in 2024: season, manager, player, the round he took, and any offseason trade of his keeper rights. From the commissioner's keeper-selection sheets; `tests/test_keepers.py` requires it to match ESPN's keeper picks exactly in every finished season |
 | `awards.yml` | Award winners recorded by hand: seasons the data can't decide (before 2018 for trades and benches) and overrides of computed winners. Empty until someone backfills the GroupMe-era winners |
 
 To refetch from ESPN: `uv run mustafatron fetch --refresh 2015-2025`. (The original import from the
