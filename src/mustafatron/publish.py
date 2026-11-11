@@ -10,10 +10,15 @@ The output is generated, never committed (``web/public/data/`` is gitignored); C
 import json
 import shutil
 import tempfile
+from collections.abc import Mapping
+from datetime import date
 from pathlib import Path
 
 from mustafatron import contract as c
 from mustafatron.espn.cache import SeasonCache
+from mustafatron.espn.client import EspnAuthError, EspnError
+from mustafatron.espn.rosters import RosterEntry, RosterFetchError, compare
+from mustafatron.keeper_engine import end_of_season_rosters
 from mustafatron.keepers import load_keeper_history
 from mustafatron.model import Game, League, Season
 from mustafatron.rules import LeagueRules, load_rules
@@ -22,7 +27,7 @@ from mustafatron.stats.awards import award_history
 from mustafatron.stats.coaching import CoachingLine, coaching_book
 from mustafatron.stats.draft import DraftClass, PickValue, draft_book
 from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags, rivalries
-from mustafatron.stats.keepers import keeper_book
+from mustafatron.stats.keepers import keeper_book, keeper_plan, plan_seasons
 from mustafatron.stats.lineup import TeamWeek
 from mustafatron.stats.narrative import Recap, headlines, recap
 from mustafatron.stats.profiles import best_and_worst_weeks, career_all_play
@@ -78,15 +83,26 @@ def _week_status(season: Season) -> tuple[int | None, int | None]:
     return (max(done) if done else None), (min(todo) if todo else None)
 
 
-def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
-    """Every published file, keyed by its path under the output directory."""
+def build(
+    league: League,
+    rules: LeagueRules,
+    keeper_rosters: Mapping[int, RosterEntry] | None = None,
+    rosters_as_of: str | None = None,
+) -> dict[str, c.ContractFile]:
+    """Every published file, keyed by its path under the output directory.
+
+    ``keeper_rosters`` are ESPN's rosters as they stand, for the keeper planner; without them it uses
+    how the season ended in the committed data."""
     seasons = sorted(league.seasons)
     current = league.seasons[seasons[-1]]
     last_done, upcoming_week = _week_status(current)
     out: dict[str, c.ContractFile] = {}
 
     out["waivers.json"] = waiver_book(league)
-    out["keepers.json"] = keeper_book(league, load_keeper_history())
+    history = load_keeper_history()
+    out["keepers.json"] = keeper_book(
+        league, history, keeper_plan(league, history, rules, keeper_rosters, rosters_as_of)
+    )
 
     out["meta.json"] = c.Meta(
         league_name=current.settings.name,
@@ -824,9 +840,50 @@ def publish(out_dir: Path = OUT_DIR, *, offline: bool = False) -> dict[str, c.Co
             int(p.name) for p in cache.raw_dir.iterdir() if p.is_dir() and cache.is_frozen(int(p.name))
         )
     league = load_league(seasons, cache=cache, player_data=True)
-    files = build(league, load_rules())
+    rosters = None if offline else _keeper_rosters(cache, league)
+    files = build(league, load_rules(), rosters, date.today().isoformat() if rosters else None)
     write(files, out_dir)
     return files
+
+
+def _keeper_rosters(cache: SeasonCache, league: League) -> dict[int, RosterEntry] | None:
+    """ESPN's rosters now, for the keeper planner, with a report for the build log. None (and a
+    warning) if they can't be fetched or fail a sanity check: the planner then uses season-end rosters."""
+    _, source = plan_seasons(league)
+    try:
+        rosters = cache.rosters(source, league.managers)
+    except EspnAuthError:
+        raise
+    except (EspnError, RosterFetchError, LookupError) as e:
+        print(f"::warning::keeper rosters: {e}. The keeper planner uses season-end rosters instead.")
+        return None
+    print(roster_report(league, source, rosters))
+    return rosters
+
+
+def roster_report(league: League, season: int, rosters: Mapping[int, RosterEntry]) -> str:
+    """One line per check, for the build log: what ESPN returned, and how it differs from how the
+    committed data says the season ended (expected: moves made since the last one on file)."""
+    teams = {e.manager_id for e in rosters.values()}
+    lines = [f"keeper rosters: ESPN {season}, {len(teams)} teams, {len(rosters)} players"]
+    s = league.seasons.get(season)
+    if s is not None and s.player_weeks:
+        end = end_of_season_rosters(s)
+        diff = compare({p: e.manager_id for p, e in rosters.items()}, end)
+
+        def name(pid: int) -> str:
+            return (
+                rosters[pid].name if pid in rosters else s.players[pid].name if pid in s.players else str(pid)
+            )
+
+        for kind, pids in diff.items():
+            shown = ", ".join(
+                f"{name(p)} ({rosters[p].manager_id if p in rosters else end[p]})" for p in pids[:25]
+            )
+            lines.append(
+                f"  {kind} since the last move on file: {len(pids)}" + (f": {shown}" if pids else "")
+            )
+    return "\n".join(lines)
 
 
 def check(*, offline: bool = True) -> list[str]:

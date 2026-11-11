@@ -1,0 +1,252 @@
+---
+// Who each manager can keep for the next draft, with a what-if picker: tick up to `slots` players and
+// see the rounds given up, collisions resolved. The options and costs come from Python
+// (mustafatron.keeper_engine); the picker only resolves collisions for the ticked set, with the same
+// rule as keeper_engine.assign_rounds (the first in the order keeps his round; each other takes the
+// latest free round before his cost).
+import type { KeeperPlanOut } from "../types/contract";
+import { managers } from "../lib/data";
+import ManagerName from "./ManagerName.astro";
+
+interface Props {
+  plan: KeeperPlanOut;
+}
+
+const { plan } = Astro.props;
+// A manager new this season has no profile page until he plays a game.
+const published = new Set(managers().map((m) => m.id));
+const asOf = plan.rosters_as_of
+  ? new Date(`${plan.rosters_as_of}T12:00:00Z`).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+  : null;
+---
+
+<section class="planner" data-slots={plan.slots}>
+  <h2 id="planner">Keeper planner: {plan.season} draft</h2>
+  <p class="small">
+    {
+      plan.from_season_finished
+        ? `Who each team can keep from its ${plan.from_season} roster, and the round it costs.`
+        : `The ${plan.from_season} season is still being played, so this is who each team could keep if it ended today.`
+    }{" "}
+    Tick up to {plan.slots} players to see the picks you'd give up.
+  </p>
+  <p class="muted small">
+    {
+      plan.rosters === "espn"
+        ? `Rosters from ESPN as of ${asOf}.`
+        : `Rosters as the ${plan.from_season} season ended in the data on file; a pickup or drop made after that isn't reflected.`
+    }{" "}
+    A keeper costs one round earlier than he went last season, must have gone in round {plan.min_round} or later, and
+    can't be kept more than {plan.max_consecutive} seasons in a row (including by a previous owner).
+  </p>
+
+  <label class="pick-team small">
+    Team
+    <select data-team-select>
+      {plan.teams.map((t) => <option value={t.manager}>{t.name}</option>)}
+    </select>
+  </label>
+
+  {
+    plan.teams.map((t) => (
+      <div class="team" data-team={t.manager}>
+        <h3>{published.has(t.manager) ? <ManagerName id={t.manager} link /> : t.name}</h3>
+        <div class="picks card" data-result aria-live="polite">
+          <p class="muted small">No keepers ticked.</p>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">
+                  <span class="visually-hidden">Keep</span>
+                </th>
+                <th class="text" scope="col">
+                  Player
+                </th>
+                <th scope="col">Cost</th>
+                <th scope="col">Last season</th>
+                <th scope="col">Kept</th>
+              </tr>
+            </thead>
+            <tbody>
+              {t.players.map((p, j) => (
+                <tr class={p.cost === null ? "ineligible" : undefined}>
+                  <td>
+                    {p.cost !== null && (
+                      <input
+                        type="checkbox"
+                        aria-label={`Keep ${p.player}`}
+                        data-id={`${t.manager}-${j}`}
+                        data-player={p.player}
+                        data-cost={p.cost}
+                        data-overall={p.last_overall}
+                      />
+                    )}
+                  </td>
+                  <th scope="row">
+                    {p.player} <span class="muted small">{p.position}</span>
+                    {p.reason && <div class="muted small">{p.reason}</div>}
+                  </th>
+                  <td>{p.cost === null ? "—" : `Rd ${p.cost}`}</td>
+                  <td>{p.last_round === null ? "Undrafted" : `Rd ${p.last_round} (#${p.last_overall})`}</td>
+                  <td>{p.kept_in_a_row ? `${p.kept_in_a_row} in a row` : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    ))
+  }
+</section>
+
+<script>
+  interface Pick {
+    id: string;
+    player: string;
+    cost: number;
+    overall: number;
+  }
+
+  // keeper_engine.assign_rounds: the first in the order keeps his round; each other takes the latest
+  // round at or before his cost that nobody earlier took.
+  function assignRounds(costs: number[]): number[] {
+    const taken = new Set<number>();
+    return costs.map((cost) => {
+      let r = cost;
+      while (taken.has(r)) r -= 1;
+      taken.add(r);
+      return r;
+    });
+  }
+
+  // keeper_engine.default_order: latest cost first; within a round, last season's later pick first.
+  const byDefault = (a: Pick, b: Pick) => b.cost - a.cost || b.overall - a.overall;
+
+  function setUp(section: HTMLElement) {
+    const slots = Number(section.dataset.slots);
+    const select = section.querySelector<HTMLSelectElement>("[data-team-select]")!;
+    const teams = [...section.querySelectorAll<HTMLElement>("[data-team]")];
+    const show = () => teams.forEach((t) => (t.hidden = t.dataset.team !== select.value));
+    select.addEventListener("change", show);
+    show();
+
+    for (const team of teams) {
+      const boxes = [...team.querySelectorAll<HTMLInputElement>("input[type=checkbox]")];
+      const result = team.querySelector<HTMLElement>("[data-result]")!;
+      let order: Pick[] = [];
+
+      const render = () => {
+        boxes.forEach((b) => (b.disabled = !b.checked && order.length >= slots));
+        if (!order.length) {
+          result.innerHTML = '<p class="muted small">No keepers ticked.</p>';
+          return;
+        }
+        const rounds = assignRounds(order.map((p) => p.cost));
+        const rows = order
+          .map((p, i) => ({ p, round: rounds[i] }))
+          .sort((a, b) => b.round - a.round)
+          .map(({ p, round }) => {
+            const moved = round !== p.cost;
+            const note = moved ? ` <span class="badge loss">moved up from Rd ${p.cost}</span>` : "";
+            const up = moved
+              ? ` <button type="button" class="link small" data-first="${p.id}">Keep him in Rd ${p.cost} instead</button>`
+              : "";
+            return `<li><span class="round num">Rd ${round}</span> ${p.player}${note}${up}</li>`;
+          })
+          .join("");
+        const collisions = rounds.some((r, i) => r !== order[i].cost);
+        result.innerHTML =
+          `<p class="small"><strong>Picks given up</strong></p><ul>${rows}</ul>` +
+          (collisions
+            ? '<p class="muted small">Two keepers can\'t share a round. You choose which one stays; the other moves to the latest free round before it.</p>'
+            : "");
+      };
+
+      result.addEventListener("click", (e) => {
+        const id = (e.target as HTMLElement).dataset?.first;
+        if (!id) return;
+        const p = order.find((q) => q.id === id)!;
+        order = [p, ...order.filter((q) => q !== p)];
+        render();
+      });
+
+      for (const box of boxes) {
+        box.addEventListener("change", () => {
+          const pick: Pick = {
+            id: box.dataset.id!,
+            player: box.dataset.player!,
+            cost: Number(box.dataset.cost),
+            overall: Number(box.dataset.overall),
+          };
+          order = box.checked ? [...order, pick].sort(byDefault) : order.filter((q) => q.id !== pick.id);
+          render();
+        });
+      }
+      render();
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>(".planner").forEach(setUp);
+</script>
+
+<style>
+  .pick-team {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-block: 0.5rem 1rem;
+  }
+  .pick-team select {
+    font: inherit;
+    padding: 0.3rem 0.5rem;
+  }
+  .team h3 {
+    margin-bottom: 0.5rem;
+  }
+  .picks {
+    margin-bottom: 1rem;
+  }
+  .picks :global(ul) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .picks :global(li) {
+    padding-block: 0.2rem;
+  }
+  .picks :global(.round) {
+    display: inline-block;
+    min-width: 3.2em;
+    color: var(--muted);
+  }
+  .picks :global(button.link) {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-left: 0.25rem;
+  }
+  .team th[scope="row"] {
+    white-space: normal;
+    min-width: 11rem;
+  }
+  .ineligible th,
+  .ineligible td {
+    color: var(--muted);
+  }
+  input[type="checkbox"] {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+</style>

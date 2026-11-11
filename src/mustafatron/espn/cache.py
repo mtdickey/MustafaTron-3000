@@ -30,7 +30,10 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
+
+if TYPE_CHECKING:
+    from mustafatron.identity import Managers
 
 from mustafatron.config import get_settings
 from mustafatron.espn import player_data
@@ -114,6 +117,14 @@ class SeasonCache:
         self._client: EspnClient | None = None
         self._live: dict[tuple[int, str], dict] = {}
         self._refreshed: set[tuple[int, str]] = set()  # refetched this run: a refresh happens once
+
+    def rosters(self, season: int, managers: "Managers") -> dict:
+        """Every team's roster as it stands now, fetched live and never written (``espn.rosters``)."""
+        from mustafatron.espn.rosters import fetch_rosters
+
+        if self._client is None:
+            self._client = self._client_factory()
+        return fetch_rosters(self._client, season, managers, self._key_factory())
 
     def path(self, season: int, dataset: Dataset = MATCHUPS) -> Path:
         return self.raw_dir / str(season) / f"{dataset.name}.json"

@@ -33,6 +33,7 @@ changing or dropping old data. Only the in-progress season is ever refetched.
 | `src/mustafatron/config.py` | Settings from env / `.env` (`pydantic-settings`); never literals |
 | `src/mustafatron/espn/client.py` | ESPN v3 API client: endpoint cutover, retries, a clear error when cookies expire |
 | `src/mustafatron/espn/cache.py` | Read-through `data/raw/` cache: finished seasons immutable, the one in progress always fresh |
+| `src/mustafatron/espn/rosters.py` | Each team's roster as it stands now (`mRoster`), fetched live for the keeper planner and never committed |
 | `src/mustafatron/espn/player_data.py` | The player-level datasets (drafts, weekly box scores, transactions, player points): fetched a week at a time, trimmed |
 | `src/mustafatron/league_settings.py` | League structure per season (lineup, season length, playoffs, scoring) from ESPN `mSettings` |
 | `src/mustafatron/rules.py` | League rules ESPN doesn't model (payouts, keeper eligibility, thresholds, week boundaries) from [`data/manual/league_rules.yml`](data/manual/league_rules.yml) |
@@ -125,7 +126,7 @@ lays out what the contract publishes.
 | `games.json` | Every final game as `[season, week, tier, home, away, home_score, away_score, winner]`, plus upcoming |
 | `h2h.json` | Every all-time series (record, win pct, average scores and margin, last five, streaks, closest/blowout, playoff record, rivalry flags) and the most competitive rivalries |
 | `standings.json` | All-time standings (regular season record and margin, playoff record, titles, best/worst finish, net payout and ROI) and the championship ledger |
-| `keepers.json` | Every keeper by season (round, pick, consecutive seasons kept, offseason trades of keeper rights) and, once a season finishes, his points and value on that draft's line; per-manager totals |
+| `keepers.json` | The keeper planner for the next draft (every rostered player's cost, or why he can't be kept), every keeper by season (round, pick, consecutive seasons kept, offseason trades of keeper rights) and, once a season finishes, his points and value on that draft's line; per-manager totals |
 | `waivers.json` | Career and per-season pickups, waiver wins and free agents from 2018, FAAB spending and largest winning bids in seasons using FAAB |
 | `records.json` | Records book top 10s: single game and matchup (one-week matchups only), league-wide NFL week, season, and win/loss streaks |
 | `profiles.json` | Per manager: best and worst single NFL weeks, career all-play record (vs the field) |

@@ -223,4 +223,4 @@ def test_ineligible_players_say_why(options):
     reasons = {o.reason for (s, _), o in options.items() if s == 2026}
     assert reasons == {None, UNDRAFTED, EARLY_ROUND}
     early = next(o for (s, _), o in options.items() if s == 2026 and o.reason == EARLY_ROUND)
-    assert "keepers must come from round 4 or later" in early.explain(RULES.keepers(2026))
+    assert "keepers must be from round 4 on" in early.explain(RULES.keepers(2026))
