@@ -4,6 +4,7 @@ import pytest
 import yaml
 
 from mustafatron.identity import load_managers
+from mustafatron.keeper_engine import carry_over, end_of_season_rosters
 from mustafatron.keepers import KeeperHistoryError, load_keeper_history, parse_keeper_history
 from mustafatron.rules import load_rules
 
@@ -62,34 +63,12 @@ def test_at_most_espns_keeper_count_per_manager(league, season):
     assert all(len(keeps) <= limit for keeps in HISTORY.by_manager(season).values())
 
 
-def _final_owners(season):
-    """Player -> manager at the end of a season: each team's last box score, then any later moves
-    (a waiver claim after week 18 still puts a player on the roster he is kept from)."""
-    last: dict[str, int] = {}  # teams out of the playoffs stop having box scores early
-    for pw in season.player_weeks:
-        last[pw.manager_id] = max(last.get(pw.manager_id, 0), pw.period)
-    owner = {pw.player_id: pw.manager_id for pw in season.player_weeks if pw.period == last[pw.manager_id]}
-    end = max(last.values())
-    for t in sorted(season.transactions, key=lambda t: t.scoring_period):
-        if t.scoring_period > end:
-            for pid in t.players_out:
-                if owner.get(pid) == t.manager_id:
-                    del owner[pid]
-            for pid in t.players_in:
-                owner[pid] = t.manager_id
-    return owner
-
-
 @pytest.mark.parametrize("season", [2024, 2025, 2026])
 def test_keepers_came_off_the_right_roster(league, season):
-    """At the end of the season before, each keeper was on the keeping manager's roster, or on the
-    roster of the manager his rights were traded from (``via``). A manager new that season took over
-    an existing team, so his keepers can come from any roster."""
-    owner = _final_owners(league.seasons[season - 1])
-    managers = load_managers()
+    """At the end of the season before, each keeper was on the keeping manager's roster (or the one
+    he took over), or on the roster of the manager his rights were traded from (``via``)."""
+    owner = carry_over(end_of_season_rosters(league.seasons[season - 1]), load_managers(), season)
     for k in HISTORY.in_season(season):
-        if not managers[k.manager_id].active_in(season - 1):
-            continue
         assert owner.get(k.player_id) == (k.via or k.manager_id), k
 
 
