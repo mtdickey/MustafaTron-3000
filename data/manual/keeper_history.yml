@@ -1,0 +1,137 @@
+# Every player kept, by season. Loaded by src/mustafatron/keepers.py.
+#
+# The league has kept players since 2024 (ESPN keeperCount 3 from then, 0 before), so this is the
+# whole history. Source: the commissioner's "Mustafa Greene's Keeper Selections {season}" Google
+# Sheets (the Selections tab), checked against ESPN:
+#
+#   2024, 2025  ESPN flags keeper picks in mDraftDetail (data/raw/{season}/draft.json), and
+#               tests/test_keepers.py requires this file to match those picks exactly: same players,
+#               same manager, same round. ESPN wins where it and the sheet disagree (notes below).
+#   2026        From the 2026 sheet. The 2026 draft is not in data/raw/ until the season finishes,
+#               and the test checks it against ESPN then.
+#
+# Each season maps a canonical manager id (data/manual/managers.yml) to the players they kept:
+#
+#   player     name as ESPN shows it (for reading this file; player_id is the key)
+#   player_id  ESPN player id; negative for a team defense
+#   round      the draft round the keeper took that season: one earlier than the round he was
+#              drafted in the season before, unless a collision moved it (see note)
+#   via        optional: the manager who traded the player's keeper rights to this one in the
+#              offseason. He was on that manager's roster when the season before ended.
+#   note       optional, free text
+#
+# Fixing a mistake is an edit here, never a code change.
+
+seasons:
+  2024:
+    # The sheet also lists Michael Pittman Jr. (round 8) for Carpenter. He was not kept: team 4
+    # (Rich Wilkins) drafted him in round 2, and ESPN has 21 keepers, not 22.
+    albert:
+      - {player: Lamar Jackson, player_id: 3916387, round: 4}
+      - {player: Rachaad White, player_id: 4697815, round: 5}
+      - {player: Isiah Pacheco, player_id: 4361529, round: 6}
+    dickey:
+      - {player: Terry McLaurin, player_id: 3121422, round: 6}
+      - {player: Raheem Mostert, player_id: 2576414, round: 12}
+      - {player: Aaron Rodgers, player_id: 8439, round: 15}
+    edwards:
+      - {player: Zay Flowers, player_id: 4429615, round: 8}
+      - player: George Pickens
+        player_id: 4426354
+        round: 7
+        note: Drafted in round 9 in 2023 like Zay Flowers, so one of them moved a round earlier.
+      - {player: Dalton Kincaid, player_id: 4385690, round: 14}
+    grudee:
+      - {player: Breece Hall, player_id: 4427366, round: 4}
+      - {player: Drake London, player_id: 4426502, round: 6}
+      - {player: Anthony Richardson, player_id: 4429084, round: 11}
+    hunter:
+      - {player: Courtland Sutton, player_id: 3128429, round: 10}
+      - {player: Cowboys D/ST, player_id: -16006, round: 14}
+    joyce:
+      - {player: Nico Collins, player_id: 4258173, round: 13}
+      - {player: Dalton Schultz, player_id: 3117256, round: 14}
+    richardson:
+      - {player: James Cook, player_id: 4379399, round: 6}
+      - {player: Mike Evans, player_id: 16737, round: 7}
+    wolfe:
+      - {player: Alvin Kamara, player_id: 3054850, round: 5}
+      - {player: Jonathan Taylor, player_id: 4242335, round: 6}
+      - {player: Brandon Aiyuk, player_id: 4360438, round: 8}
+
+  2025:
+    albert:
+      - {player: Lamar Jackson, player_id: 3916387, round: 3}
+      - {player: Rome Odunze, player_id: 4431299, round: 9}
+    carpenter:
+      - {player: Jaxon Smith-Njigba, player_id: 4430878, round: 9}
+      - {player: Brian Thomas Jr., player_id: 4432773, round: 10}
+    dickey:
+      - {player: Trey McBride, player_id: 4361307, round: 3}
+      - {player: Courtland Sutton, player_id: 3128429, round: 9}
+      - {player: Jerry Jeudy, player_id: 4241463, round: 13}
+    edwards:
+      - {player: George Pickens, player_id: 4426354, round: 6}
+      - {player: Jameson Williams, player_id: 4426388, round: 11}
+      - {player: Dalton Kincaid, player_id: 4385690, round: 13}
+    grudee:
+      - {player: Drake London, player_id: 4426502, round: 5}
+      - {player: George Kittle, player_id: 3040151, round: 6}
+      - {player: Chuba Hubbard, player_id: 4241416, round: 8}
+    hunter:
+      - {player: Zach Charbonnet, player_id: 4426385, round: 11}
+    joyce:
+      - {player: Tee Higgins, player_id: 4239993, round: 5}
+      - {player: Jayden Daniels, player_id: 4426348, round: 8}
+      - {player: Nico Collins, player_id: 4258173, round: 12}
+    richardson:
+      - {player: James Cook, player_id: 4379399, round: 5}
+      - {player: Brock Bowers, player_id: 4432665, round: 11}
+      - {player: Bucky Irving, player_id: 4596448, round: 14}
+    wilkins:
+      - {player: Xavier Worthy, player_id: 4683062, round: 8}
+      - {player: David Njoku, player_id: 3123076, round: 9}
+      - {player: Ladd McConkey, player_id: 4612826, round: 10}
+    wolfe:
+      - {player: Alvin Kamara, player_id: 3054850, round: 4}
+      - {player: Jonathan Taylor, player_id: 4242335, round: 5}
+      - {player: Chase Brown, player_id: 4362238, round: 9}
+
+  2026:
+    # The sheet's "# Keepers Forgoing" row: Albert 1 ("1?"), Carpenter 1, Hunter 2.
+    albert:
+      - {player: Rome Odunze, player_id: 4431299, round: 8}
+      - {player: Justin Herbert, player_id: 4038941, round: 11}
+    alligood:
+      - {player: Ladd McConkey, player_id: 4612826, round: 9}
+      - {player: Jameson Williams, player_id: 4426388, round: 10}
+      - {player: Tucker Kraft, player_id: 4572680, round: 12}
+    carpenter:
+      - {player: Chris Olave, player_id: 4361370, round: 6}
+      - {player: Jaxon Smith-Njigba, player_id: 4430878, round: 8}
+    dickey:
+      - {player: Zay Flowers, player_id: 4429615, round: 5}
+      - {player: Travis Etienne Jr., player_id: 4239996, round: 7}
+      - {player: Javonte Williams, player_id: 4361579, round: 9}
+    edwards:
+      - {player: Drake London, player_id: 4426502, round: 4, via: grudee}
+      - {player: George Pickens, player_id: 4426354, round: 5}
+      - {player: Bhayshul Tuten, player_id: 4882093, round: 9, via: grudee}
+    grudee:
+      - {player: Colston Loveland, player_id: 4723086, round: 10, via: edwards}
+      - {player: Quinshon Judkins, player_id: 4685702, round: 12}
+      - {player: Bucky Irving, player_id: 4596448, round: 13}
+    hunter:
+      - {player: J.K. Dobbins, player_id: 4241985, round: 7}
+    joyce:
+      - {player: Rashee Rice, player_id: 4428331, round: 6}
+      - {player: Jayden Daniels, player_id: 4426348, round: 7}
+      - {player: Nico Collins, player_id: 4258173, round: 11}
+    richardson:
+      - {player: James Cook, player_id: 4379399, round: 4}
+      - {player: Brock Bowers, player_id: 4432665, round: 10}
+      - {player: Drake Maye, player_id: 4431452, round: 12}
+    wolfe:
+      - {player: Jonathan Taylor, player_id: 4242335, round: 4}
+      - {player: Jaylen Waddle, player_id: 4372016, round: 5}
+      - {player: Chase Brown, player_id: 4362238, round: 8}

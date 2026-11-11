@@ -36,6 +36,7 @@ changing or dropping old data. Only the in-progress season is ever refetched.
 | `src/mustafatron/espn/player_data.py` | The player-level datasets (drafts, weekly box scores, transactions, player points): fetched a week at a time, trimmed |
 | `src/mustafatron/league_settings.py` | League structure per season (lineup, season length, playoffs, scoring) from ESPN `mSettings` |
 | `src/mustafatron/rules.py` | League rules ESPN doesn't model (payouts, keeper eligibility, thresholds, week boundaries) from [`data/manual/league_rules.yml`](data/manual/league_rules.yml) |
+| `src/mustafatron/keepers.py` | Who was kept, by season, from [`data/manual/keeper_history.yml`](data/manual/keeper_history.yml) |
 | `src/mustafatron/identity.py` | ESPN member IDs → canonical managers from [`data/manual/managers.yml`](data/manual/managers.yml) |
 | `src/mustafatron/model.py` | The entities stats code reads: `TeamSeason`, `Game`, `DraftPick`, `Transaction`, `Player`, `PlayerWeek`, `Season`, `League` |
 | `src/mustafatron/transform.py` | Raw ESPN JSON → model; the only layer that knows how ESPN's eras differ. `load_league()` |
