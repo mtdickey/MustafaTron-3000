@@ -858,6 +858,43 @@ class KeeperManagerOut(_Model):
     value: float = Field(description="Total value of the valued keeps")
 
 
+class KeeperOptionOut(_Model):
+    player: str
+    position: str
+    last_round: int | None = Field(description="His round in last season's draft; null if undrafted")
+    last_overall: int | None
+    kept_in_a_row: int = Field(description="Seasons in a row he has been kept, by anyone, before this draft")
+    cost: int | None = Field(
+        description="The round he would cost before collisions; null if he can't be kept"
+    )
+    reason: str | None = Field(description="Why he can't be kept; null if he can")
+
+
+class KeeperTeamOut(_Model):
+    manager: str
+    name: str = Field(description="The manager's name: he may not be in managers.json yet (no games played)")
+    players: list[KeeperOptionOut] = Field(description="Keepable players by cost, then the rest")
+
+
+class KeeperPlanOut(_Model):
+    """Who each manager can keep for the next draft, and what each would cost."""
+
+    season: int = Field(description="The draft being planned")
+    from_season: int = Field(description="The season the keepers come from")
+    from_season_finished: bool = Field(description="False: rosters can still change before the draft")
+    rosters: Literal["espn", "season_end"] = Field(
+        description="espn: each team's roster from ESPN when the site was built; season_end: rebuilt from "
+        "the committed data, which misses moves made after the last one on file"
+    )
+    rosters_as_of: str | None = Field(
+        description="When ESPN's rosters were fetched (ISO date); null for season_end"
+    )
+    slots: int
+    min_round: int = Field(description="The earliest round a keeper can have gone in last season")
+    max_consecutive: int
+    teams: list[KeeperTeamOut]
+
+
 class KeepersFile(ContractFile):
     """Who was kept, from data/manual/keeper_history.yml, and how the keepers played (ESPN)."""
 
@@ -865,6 +902,9 @@ class KeepersFile(ContractFile):
     slots: int = Field(description="Keepers allowed per team (ESPN keeperCount)")
     keepers: list[KeeperOut] = Field(description="Every keeper, by season, then manager, then round")
     managers: list[KeeperManagerOut]
+    plan: KeeperPlanOut | None = Field(
+        description="The next draft's keeper options; null without weekly rosters"
+    )
 
 
 # Published path → model. seasons/{year}.json all use SeasonFile, weeks/{year}/{week}.json WeekFile.

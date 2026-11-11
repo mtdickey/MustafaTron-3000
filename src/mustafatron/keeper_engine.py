@@ -28,8 +28,8 @@ UNDRAFTED = "undrafted"
 EARLY_ROUND = "early_round"
 MAX_SEASONS = "max_seasons"
 REASONS = {
-    UNDRAFTED: "Not drafted last season (a waiver or free agent pickup)",
-    EARLY_ROUND: "Drafted in round {round} last season; keepers must come from round {min_round} or later",
+    UNDRAFTED: "Undrafted last season (a waiver or free agent pickup)",
+    EARLY_ROUND: "Went in round {round} last season; keepers must be from round {min_round} on",
     MAX_SEASONS: "Already kept {kept} seasons in a row",
 }
 

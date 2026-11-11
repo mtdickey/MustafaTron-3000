@@ -1,4 +1,5 @@
 ---
+import KeeperPlanner from "../components/KeeperPlanner.astro";
 import ManagerName from "../components/ManagerName.astro";
 import SortableTables from "../components/SortableTables.astro";
 import Base from "../layouts/Base.astro";
@@ -35,7 +36,7 @@ const valuedSeasons = [...new Set(valued.map((k) => k.season))];
 <Base
   title="Keepers"
   section="/keepers"
-  description="Who each manager has kept since keepers began in 2024, which players keep getting kept, and how keepers paid off."
+  description="Who each team can keep for the next draft and what it costs, plus every keeper since 2024 and how they paid off."
 >
   <h1>Keepers</h1>
   <p class="lede">
@@ -43,6 +44,9 @@ const valuedSeasons = [...new Set(valued.map((k) => k.season))];
     he was drafted in the year before.
   </p>
 
+  {book.plan && <KeeperPlanner plan={book.plan} />}
+
+  <h2 id="history">History</h2>
   <div class="grid highlights">
     {
       best && (

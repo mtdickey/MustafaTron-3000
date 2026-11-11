@@ -462,6 +462,10 @@ export interface KeepersFile {
    */
   keepers: KeeperOut[];
   managers: KeeperManagerOut[];
+  /**
+   * The next draft's keeper options; null without weekly rosters
+   */
+  plan: KeeperPlanOut | null;
   schema_version: 1;
   /**
    * Seasons with keepers, oldest first
@@ -531,6 +535,81 @@ export interface KeeperManagerOut {
    * Keeps in finished seasons, which have a value
    */
   valued: number;
+}
+/**
+ * Who each manager can keep for the next draft, and what each would cost.
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "KeeperPlanOut".
+ */
+export interface KeeperPlanOut {
+  /**
+   * The season the keepers come from
+   */
+  from_season: number;
+  /**
+   * False: rosters can still change before the draft
+   */
+  from_season_finished: boolean;
+  max_consecutive: number;
+  /**
+   * The earliest round a keeper can have gone in last season
+   */
+  min_round: number;
+  /**
+   * espn: each team's roster from ESPN when the site was built; season_end: rebuilt from the committed data, which misses moves made after the last one on file
+   */
+  rosters: "espn" | "season_end";
+  /**
+   * When ESPN's rosters were fetched (ISO date); null for season_end
+   */
+  rosters_as_of: string | null;
+  /**
+   * The draft being planned
+   */
+  season: number;
+  slots: number;
+  teams: KeeperTeamOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "KeeperTeamOut".
+ */
+export interface KeeperTeamOut {
+  manager: string;
+  /**
+   * The manager's name: he may not be in managers.json yet (no games played)
+   */
+  name: string;
+  /**
+   * Keepable players by cost, then the rest
+   */
+  players: KeeperOptionOut[];
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "KeeperOptionOut".
+ */
+export interface KeeperOptionOut {
+  /**
+   * The round he would cost before collisions; null if he can't be kept
+   */
+  cost: number | null;
+  /**
+   * Seasons in a row he has been kept, by anyone, before this draft
+   */
+  kept_in_a_row: number;
+  last_overall: number | null;
+  /**
+   * His round in last season's draft; null if undrafted
+   */
+  last_round: number | null;
+  player: string;
+  position: string;
+  /**
+   * Why he can't be kept; null if he can
+   */
+  reason: string | null;
 }
 /**
  * All-play records and luck: careers, every team-season, and the luckiest and unluckiest seasons.

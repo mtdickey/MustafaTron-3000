@@ -37,6 +37,82 @@
       "title": "KeeperManagerOut",
       "type": "object"
     },
+    "KeeperOptionOut": {
+      "additionalProperties": false,
+      "properties": {
+        "cost": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The round he would cost before collisions; null if he can't be kept",
+          "title": "Cost"
+        },
+        "kept_in_a_row": {
+          "description": "Seasons in a row he has been kept, by anyone, before this draft",
+          "title": "Kept In A Row",
+          "type": "integer"
+        },
+        "last_overall": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Overall"
+        },
+        "last_round": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "His round in last season's draft; null if undrafted",
+          "title": "Last Round"
+        },
+        "player": {
+          "title": "Player",
+          "type": "string"
+        },
+        "position": {
+          "title": "Position",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Why he can't be kept; null if he can",
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "player",
+        "position",
+        "last_round",
+        "last_overall",
+        "kept_in_a_row",
+        "cost",
+        "reason"
+      ],
+      "title": "KeeperOptionOut",
+      "type": "object"
+    },
     "KeeperOut": {
       "additionalProperties": false,
       "properties": {
@@ -138,6 +214,110 @@
       ],
       "title": "KeeperOut",
       "type": "object"
+    },
+    "KeeperPlanOut": {
+      "additionalProperties": false,
+      "description": "Who each manager can keep for the next draft, and what each would cost.",
+      "properties": {
+        "from_season": {
+          "description": "The season the keepers come from",
+          "title": "From Season",
+          "type": "integer"
+        },
+        "from_season_finished": {
+          "description": "False: rosters can still change before the draft",
+          "title": "From Season Finished",
+          "type": "boolean"
+        },
+        "max_consecutive": {
+          "title": "Max Consecutive",
+          "type": "integer"
+        },
+        "min_round": {
+          "description": "The earliest round a keeper can have gone in last season",
+          "title": "Min Round",
+          "type": "integer"
+        },
+        "rosters": {
+          "description": "espn: each team's roster from ESPN when the site was built; season_end: rebuilt from the committed data, which misses moves made after the last one on file",
+          "enum": [
+            "espn",
+            "season_end"
+          ],
+          "title": "Rosters",
+          "type": "string"
+        },
+        "rosters_as_of": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "When ESPN's rosters were fetched (ISO date); null for season_end",
+          "title": "Rosters As Of"
+        },
+        "season": {
+          "description": "The draft being planned",
+          "title": "Season",
+          "type": "integer"
+        },
+        "slots": {
+          "title": "Slots",
+          "type": "integer"
+        },
+        "teams": {
+          "items": {
+            "$ref": "#/$defs/KeeperTeamOut"
+          },
+          "title": "Teams",
+          "type": "array"
+        }
+      },
+      "required": [
+        "season",
+        "from_season",
+        "from_season_finished",
+        "rosters",
+        "rosters_as_of",
+        "slots",
+        "min_round",
+        "max_consecutive",
+        "teams"
+      ],
+      "title": "KeeperPlanOut",
+      "type": "object"
+    },
+    "KeeperTeamOut": {
+      "additionalProperties": false,
+      "properties": {
+        "manager": {
+          "title": "Manager",
+          "type": "string"
+        },
+        "name": {
+          "description": "The manager's name: he may not be in managers.json yet (no games played)",
+          "title": "Name",
+          "type": "string"
+        },
+        "players": {
+          "description": "Keepable players by cost, then the rest",
+          "items": {
+            "$ref": "#/$defs/KeeperOptionOut"
+          },
+          "title": "Players",
+          "type": "array"
+        }
+      },
+      "required": [
+        "manager",
+        "name",
+        "players"
+      ],
+      "title": "KeeperTeamOut",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -157,6 +337,17 @@
       },
       "title": "Managers",
       "type": "array"
+    },
+    "plan": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KeeperPlanOut"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The next draft's keeper options; null without weekly rosters"
     },
     "schema_version": {
       "const": 1,
@@ -182,7 +373,8 @@
     "seasons",
     "slots",
     "keepers",
-    "managers"
+    "managers",
+    "plan"
   ],
   "title": "KeepersFile",
   "type": "object"
