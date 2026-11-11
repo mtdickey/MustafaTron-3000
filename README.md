@@ -150,6 +150,7 @@ with JSON Schemas in [`schema/`](schema/) for the site to generate types from.
 | Trigger | Goes to |
 |---|---|
 | push to `main`, manual dispatch | production, `https://mustafatron.pages.dev` |
+| daily at 7:43 AM America/New_York, year-round | production: picks up the day's roster moves (waivers, free agents, trades) for the keeper planner |
 | pull request | a preview at `<branch>.mustafatron.pages.dev`, linked in a PR comment |
 
 The data is published live (current season from ESPN) when the ESPN secrets are available. If the

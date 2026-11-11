@@ -6,6 +6,10 @@ name: Deploy
 #   pull request       → a preview at <branch>.mustafatron.pages.dev, linked in a PR comment
 #   workflow_dispatch  → production, by hand
 #   workflow_call      → production, from etl.yml after the weekly refresh
+#   schedule           → production, daily at 07:43 America/New_York, so the site picks up roster
+#                        moves (waivers, free agents, trades) for the keeper planner within a day.
+#                        Year-round: keepers are chosen in the offseason. It only rebuilds the site;
+#                        committing finished seasons stays etl.yml's job.
 #
 # The site data is published live (the current season from ESPN) whenever the ESPN secrets are
 # available, and from the committed finished seasons only when they are not (pull requests from
@@ -20,6 +24,9 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "43 7 * * *" # after overnight waivers; off the busy top of the hour
+      timezone: "America/New_York"
   workflow_call:
     secrets:
       ESPN_SWID:
