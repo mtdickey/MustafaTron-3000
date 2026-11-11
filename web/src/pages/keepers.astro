@@ -1,0 +1,277 @@
+---
+import ManagerName from "../components/ManagerName.astro";
+import SortableTables from "../components/SortableTables.astro";
+import Base from "../layouts/Base.astro";
+import { keepers } from "../lib/data";
+import { ordinal, points, shade, signed } from "../lib/format";
+
+const book = keepers();
+type Keeper = (typeof book.keepers)[number];
+const latest = book.seasons[book.seasons.length - 1];
+// One keeper strays far more than a drafter's per-pick average: full color at +/- 150 points.
+const valueShade = (v: number) => shade(0.5 + v / 600);
+
+// The latest season's keepers, one card per manager, in round order.
+const latestByManager = new Map<string, Keeper[]>();
+for (const k of book.keepers.filter((k) => k.season === latest)) {
+  latestByManager.set(k.manager, [...(latestByManager.get(k.manager) ?? []), k]);
+}
+
+// A player's keeps across seasons and owners: every player kept more than once, longest run first.
+const byPlayer = new Map<string, Keeper[]>();
+for (const k of book.keepers) byPlayer.set(k.player, [...(byPlayer.get(k.player) ?? []), k]);
+const repeats = [...byPlayer.values()]
+  .filter((ks) => ks.length > 1)
+  .sort((a, b) => b.length - a.length || a[0].season - b[0].season || a[0].player.localeCompare(b[0].player));
+
+const valued = book.keepers.filter((k) => k.value !== null);
+const best = [...valued].sort((a, b) => b.value! - a.value!)[0];
+const topManager = [...book.managers].filter((m) => m.valued).sort((a, b) => b.value - a.value)[0];
+const longestRun = repeats[0]?.length ?? 0;
+const longest = repeats.filter((ks) => ks.length === longestRun);
+const valuedSeasons = [...new Set(valued.map((k) => k.season))];
+---
+
+<Base
+  title="Keepers"
+  section="/keepers"
+  description="Who each manager has kept since keepers began in 2024, which players keep getting kept, and how keepers paid off."
+>
+  <h1>Keepers</h1>
+  <p class="lede">
+    Keepers started in {book.seasons[0]}: up to {book.slots} a team, each costing a pick one round earlier than the round
+    he was drafted in the year before.
+  </p>
+
+  <div class="grid highlights">
+    {
+      best && (
+        <div class="card">
+          <span class="muted small">Best keeper</span>
+          <p>
+            <strong>{best.player}</strong> · {best.season} · <ManagerName id={best.manager} link /> ·{" "}
+            <strong class="num">{signed(best.value!, 0)}</strong>
+          </p>
+        </div>
+      )
+    }
+    {
+      topManager && (
+        <div class="card">
+          <span class="muted small">Most value from keepers</span>
+          <p>
+            <ManagerName id={topManager.manager} link /> · <strong class="num">{signed(topManager.value, 0)}</strong> over{" "}
+            {topManager.valued}
+          </p>
+        </div>
+      )
+    }
+    {
+      longest.length > 0 && (
+        <div class="card">
+          <span class="muted small">Kept the most seasons</span>
+          <p>
+            {longest.length === 1 ? <strong>{longest[0][0].player}</strong> : <span>{longest.length} players</span>} ·{" "}
+            <strong class="num">{longestRun}</strong> seasons
+          </p>
+        </div>
+      )
+    }
+  </div>
+
+  <h2 id="latest">{latest} keepers</h2>
+  <div class="grid teams">
+    {
+      [...latestByManager.entries()].map(([id, ks]) => (
+        <div class="card">
+          <h3>
+            <ManagerName id={id} link />
+          </h3>
+          <ul>
+            {ks.map((k) => (
+              <li>
+                <span class="round num">Rd {k.round}</span> {k.player}
+                {k.position && <span class="muted small"> {k.position}</span>}
+                {k.run > 1 && <span class="badge">{ordinal(k.run)} year</span>}
+                {k.via && (
+                  <span class="muted small">
+                    {" "}
+                    via <ManagerName id={k.via} short />
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+  <p class="muted small">
+    "2nd year" and "3rd year" count straight seasons kept by anyone, including a previous owner. Whether a traded player's
+    years carry over toward the 3-year limit isn't settled yet.
+  </p>
+
+  <h2 id="repeat">Kept more than once</h2>
+  {
+    repeats.length ? (
+      <div class="table-scroll">
+        <table class="sticky-first">
+          <thead>
+            <tr>
+              <th class="text" scope="col">Player</th>
+              {book.seasons.map((y) => (
+                <th class="text" scope="col">
+                  {y}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {repeats.map((ks) => (
+              <tr>
+                <th scope="row">{ks[0].player}</th>
+                {book.seasons.map((y) => {
+                  const k = ks.find((x) => x.season === y);
+                  return (
+                    <td class="text">
+                      {k ? (
+                        <>
+                          <ManagerName id={k.manager} short /> <span class="muted">Rd {k.round}</span>
+                        </>
+                      ) : (
+                        <span class="muted">—</span>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ) : (
+      <p>No player has been kept twice yet.</p>
+    )
+  }
+
+  <h2 id="value">How keepers paid off</h2>
+  <details class="small method">
+    <summary>How keepers are graded</summary>
+    <p>
+      The same way the <a href="/draft">draft page</a> grades picks: a keeper's season points minus the average drafted
+      player at his position, compared with what a normal pick in his slot returned that season. The line is drawn
+      through the non-keeper picks, so a keeper is measured against what the same slot produced without one. Seasons
+      still being played are graded once they finish
+      {valuedSeasons.length ? ` (graded so far: ${valuedSeasons.join(", ")})` : ""}.
+    </p>
+  </details>
+  {
+    valued.length ? (
+      <div class="table-scroll">
+        <table class="sticky-first" data-sortable>
+          <thead>
+            <tr>
+              <th class="text" scope="col">Player</th>
+              <th scope="col">Season</th>
+              <th scope="col">Value</th>
+              <th scope="col">Points</th>
+              <th class="text" scope="col">Manager</th>
+              <th scope="col">Round</th>
+              <th scope="col">Pick</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...valued]
+              .sort((a, b) => b.value! - a.value!)
+              .map((k) => (
+                <tr>
+                  <th scope="row">
+                    {k.player} {k.position && <span class="muted small">{k.position}</span>}
+                  </th>
+                  <td>{k.season}</td>
+                  <td class="shade" style={valueShade(k.value!)} data-sort={k.value}>
+                    {signed(k.value!)}
+                  </td>
+                  <td data-sort={k.points}>{points(k.points!)}</td>
+                  <td class="text">
+                    <ManagerName id={k.manager} short link />
+                  </td>
+                  <td>{k.round}</td>
+                  <td>{k.overall_pick}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+    ) : (
+      <p>No keeper season has finished yet.</p>
+    )
+  }
+
+  <h2 id="managers">By manager</h2>
+  <div class="table-scroll">
+    <table class="sticky-first" data-sortable>
+      <thead>
+        <tr>
+          <th class="text" scope="col">Manager</th>
+          <th scope="col">Total value</th>
+          <th scope="col">Per keeper</th>
+          <th scope="col">Keepers</th>
+          <th scope="col">Graded</th>
+          <th scope="col">Slots used</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          book.managers.map((m) => {
+            const used = m.seasons ? m.keeps / (m.seasons * book.slots) : 0;
+            const per = m.valued ? m.value / m.valued : null;
+            return (
+              <tr>
+                <th scope="row">
+                  <ManagerName id={m.manager} short link />
+                </th>
+                <td data-sort={m.valued ? m.value : -Infinity}>{m.valued ? signed(m.value, 0) : "—"}</td>
+                <td data-sort={per ?? -Infinity}>{per === null ? "—" : signed(per)}</td>
+                <td>{m.keeps}</td>
+                <td>{m.valued}</td>
+                <td data-sort={used}>{Math.round(100 * used)}%</td>
+              </tr>
+            );
+          })
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="muted small">
+    Slots used is keepers taken out of {book.slots} a season, over the keeper seasons the manager was in the league.
+  </p>
+
+  <SortableTables />
+</Base>
+
+<style>
+  .highlights {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-block: 1.5rem;
+  }
+  .highlights p {
+    margin-bottom: 0;
+  }
+  .teams {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .teams ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .teams li {
+    padding-block: 0.2rem;
+  }
+  .round {
+    display: inline-block;
+    min-width: 3.2em;
+    color: var(--muted);
+  }
+</style>

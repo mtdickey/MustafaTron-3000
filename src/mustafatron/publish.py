@@ -14,6 +14,7 @@ from pathlib import Path
 
 from mustafatron import contract as c
 from mustafatron.espn.cache import SeasonCache
+from mustafatron.keepers import load_keeper_history
 from mustafatron.model import Game, League, Season
 from mustafatron.rules import LeagueRules, load_rules
 from mustafatron.stats.allplay import Luck, career_luck, luckiest_seasons, season_luck
@@ -21,6 +22,7 @@ from mustafatron.stats.awards import award_history
 from mustafatron.stats.coaching import CoachingLine, coaching_book
 from mustafatron.stats.draft import DraftClass, PickValue, draft_book
 from mustafatron.stats.h2h import Meeting, all_pairs, notable_flags, rivalries
+from mustafatron.stats.keepers import keeper_book
 from mustafatron.stats.lineup import TeamWeek
 from mustafatron.stats.narrative import Recap, headlines, recap
 from mustafatron.stats.profiles import best_and_worst_weeks, career_all_play
@@ -84,6 +86,7 @@ def build(league: League, rules: LeagueRules) -> dict[str, c.ContractFile]:
     out: dict[str, c.ContractFile] = {}
 
     out["waivers.json"] = waiver_book(league)
+    out["keepers.json"] = keeper_book(league, load_keeper_history())
 
     out["meta.json"] = c.Meta(
         league_name=current.settings.name,

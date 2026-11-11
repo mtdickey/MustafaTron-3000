@@ -832,6 +832,41 @@ class WaiversFile(ContractFile):
     expensive: list[WaiverPurchaseOut]
 
 
+class KeeperOut(_Model):
+    season: int = Field(description="The season whose draft the player was kept for")
+    manager: str
+    player: str
+    position: str | None = Field(description="null if ESPN has no record of the player")
+    round: int = Field(description="The draft round the keeper took")
+    overall_pick: int | None = Field(
+        description="The keeper's pick in that draft; null until it is published"
+    )
+    via: str | None = Field(description="The manager who traded his keeper rights in the offseason, if any")
+    run: int = Field(description="How many seasons in a row (any owner) he has been kept, this one included")
+    points: float | None = Field(description="His season in this league's scoring; null until it is finished")
+    value: float | None = Field(
+        description="Points above what a normal pick in his slot promised, on the draft page's line for "
+        "that season (DraftFile); null until the season is finished"
+    )
+
+
+class KeeperManagerOut(_Model):
+    manager: str
+    keeps: int
+    seasons: int = Field(description="Keeper seasons the manager was in the league for")
+    valued: int = Field(description="Keeps in finished seasons, which have a value")
+    value: float = Field(description="Total value of the valued keeps")
+
+
+class KeepersFile(ContractFile):
+    """Who was kept, from data/manual/keeper_history.yml, and how the keepers played (ESPN)."""
+
+    seasons: list[int] = Field(description="Seasons with keepers, oldest first")
+    slots: int = Field(description="Keepers allowed per team (ESPN keeperCount)")
+    keepers: list[KeeperOut] = Field(description="Every keeper, by season, then manager, then round")
+    managers: list[KeeperManagerOut]
+
+
 # Published path → model. seasons/{year}.json all use SeasonFile, weeks/{year}/{week}.json WeekFile.
 FILES: dict[str, type[ContractFile]] = {
     "meta.json": Meta,
@@ -846,6 +881,7 @@ FILES: dict[str, type[ContractFile]] = {
     "draft.json": DraftFile,
     "trades.json": TradesFile,
     "waivers.json": WaiversFile,
+    "keepers.json": KeepersFile,
     "awards.json": AwardsFile,
     "weeks.json": WeeksFile,
 }
