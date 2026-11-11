@@ -6,13 +6,14 @@ points minus the average drafted player at his position, against that draft's li
 line is fit on non-keeper picks only, so keepers are measured against what a normal pick at the same
 spot in the draft produced.
 
-Nothing here decides a keeper rule. ``run`` counts consecutive seasons kept by anyone. Whether that
-is the count the 3-year cap uses (for example, after a trade) is open in issue #40.
+``run`` counts consecutive seasons kept by anyone, the count the 3-year limit uses: it follows a player
+through a trade, and a season back in the draft resets it (league_rules.yml, ``keepers``).
 """
 
 from collections import defaultdict
 
 from mustafatron import contract as c
+from mustafatron.keeper_engine import kept_in_a_row
 from mustafatron.keepers import Keep, KeeperHistory
 from mustafatron.model import League
 from mustafatron.stats.draft import DraftLine, draft_line
@@ -20,11 +21,7 @@ from mustafatron.stats.draft import DraftLine, draft_line
 
 def run_length(history: KeeperHistory, keep: Keep) -> int:
     """Consecutive seasons the player has been kept, ending with this keep, whoever kept him."""
-    seasons = {k.season for k in history.of_player(keep.player_id)}
-    n = 1
-    while keep.season - n in seasons:
-        n += 1
-    return n
+    return kept_in_a_row(history, keep.player_id, keep.season) + 1
 
 
 def _position(league: League, keep: Keep) -> str | None:

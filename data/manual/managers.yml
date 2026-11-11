@@ -11,6 +11,8 @@
 #               IDs from data/raw/ (m_ + 16 hex, see mustafatron.pseudonymize), never raw SWIDs.
 #   aliases     other spellings of the name ESPN has shown (matched case-insensitively)
 #   seasons     "2015-2025" or "2016-" (still active) or "2015"
+#   took_over   optional: the manager whose team this one took over on joining. Their roster at the
+#               end of the season before is this manager's for keepers (src/mustafatron/keeper_engine.py)
 #
 # A new ESPN member ID showing up fails tests/test_identity.py until it is added here, so a
 # duplicate account can't quietly split someone's career in the record book.
@@ -27,6 +29,7 @@ managers:
     short_name: Brian
     espn_ids: [m_f7ab1cd7c6fe24b0]
     seasons: 2026-
+    took_over: wilkins  # ESPN team 4, "This Team Sucks"
 
   carpenter:
     name: Matthew Carpenter

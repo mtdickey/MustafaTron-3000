@@ -35,6 +35,8 @@ class Manager:
     first_season: int
     last_season: int | None  # None while still in the league
     aliases: tuple[str, ...] = field(default=())
+    # The manager whose team (and roster) this one took over on joining: keepers come off that roster.
+    took_over: str | None = None
 
     def active_in(self, season: int) -> bool:
         return self.first_season <= season and (self.last_season is None or season <= self.last_season)
@@ -136,9 +138,18 @@ def parse_managers(doc: dict) -> Managers:
                 first_season=first,
                 last_season=last,
                 aliases=tuple(entry.get("aliases", ())),
+                took_over=entry.get("took_over"),
             )
         )
-    return Managers(out)
+    managers = Managers(out)
+    for m in managers:
+        if m.took_over is None:
+            continue
+        if m.took_over not in managers.by_id:
+            raise ValueError(f"{m.id}: took_over {m.took_over!r} is not a manager")
+        if managers[m.took_over].last_season != m.first_season - 1:
+            raise ValueError(f"{m.id}: took over from {m.took_over}, who must have left the season before")
+    return managers
 
 
 @cache

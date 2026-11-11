@@ -3,7 +3,7 @@
 ESPN flags keeper picks only from 2024, when the league started keeping players. The file holds
 every season since then; tests/test_keepers.py checks it against ESPN's flags for every finished
 season. This module only records what happened. Eligibility and cost (how many years a player has
-been kept, what he costs next) are the keeper engine's job, issue #42, once the rules in #40 settle.
+been kept, what he costs next) are ``mustafatron.keeper_engine``'s job.
 """
 
 from collections import Counter

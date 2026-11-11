@@ -51,6 +51,18 @@ class AwardRule:
 
 
 @dataclass(frozen=True)
+class KeeperRules:
+    """The keeper rules for one season's draft (``keepers`` in league_rules.yml)."""
+
+    eligible_after_round: int  # last season's draft round must be later than this
+    rounds_earlier: int  # cost = last season's round minus this
+    max_consecutive: int  # seasons in a row a player can be kept, by anyone
+
+    def cost(self, last_round: int) -> int:
+        return last_round - self.rounds_earlier
+
+
+@dataclass(frozen=True)
 class DraftReviewRules:
     steals_after_round: int
     busts_through_round: int
@@ -80,10 +92,15 @@ class LeagueRules:
             raise KeyError(f"no payout rule for {season}")
         return Payouts({int(k): float(x) for k, x in v["by_rank"].items()}, float(v["otherwise"]))
 
+    def keepers(self, season: int) -> KeeperRules | None:
+        """The keeper rules for a season's draft; None in seasons without keepers."""
+        v = self._for_season("keepers", season)
+        return None if v is None else KeeperRules(**v)
+
     def keeper_eligible_after_round(self, season: int) -> int | None:
         """Players drafted after this round can be kept; None in seasons without keepers."""
-        v = self._for_season("keepers", season)
-        return None if v is None else v["eligible_after_round"]
+        k = self.keepers(season)
+        return None if k is None else k.eligible_after_round
 
     def week1_kickoff(self, season: int) -> datetime:
         try:

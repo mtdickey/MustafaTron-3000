@@ -24,13 +24,39 @@ payouts:
       by_rank: {1: 5.5, 2: 1.5, 3: 0.0}
       otherwise: -1.0
 
-# Keepers: only players drafted after this round can be kept (run_keepers.py: round_num > 3).
-# How many each team keeps is ESPN's keeperCount (3 from 2024). The full keeper rules, including
-# cost escalation, are M5.
+# Keepers (issue #40, settled November 2026). How many each team keeps is ESPN's keeperCount (3 from
+# 2024). Applied by src/mustafatron/keeper_engine.py; the worked examples below are its tests
+# (tests/test_keeper_engine.py), all real keepers from data/manual/keeper_history.yml.
+#
+#   eligible_after_round  A player can be kept only if the round he went in last season's draft, as a
+#                         keeper or not, was later than this. Undrafted players (waiver and free agent
+#                         pickups) can't be kept.
+#   rounds_earlier        He costs last season's round minus this. So a keeper moves up a round every
+#                         year, and can cost round 3 at the earliest, never rounds 1-2.
+#   max_consecutive       He can be kept at most this many seasons in a row, by anyone: the count
+#                         follows him through a trade. A season back in the draft resets it.
+#   Collisions            Keepers that would cost the same round can't share it. The manager chooses
+#                         which one stays; each other moves to the latest free round before it (so
+#                         two from one round take it and the one before, three take it and the two
+#                         before). The rounds a manager's keepers end up in are the picks he forfeits.
+#
+# Worked examples:
+#   Nico Collins     drafted round 14 in 2023; kept 2024 (round 13), 2025 (12), 2026 (11). That is
+#                    3 straight seasons, so he can't be kept in 2027.
+#   Lamar Jackson    drafted round 5 in 2023; kept 2024 (round 4), 2025 (round 3). His 2025 round was
+#                    3, so he couldn't be kept in 2026.
+#   Drake London     kept by Jon in 2024 and 2025, by Dylan in 2026 (keeper rights traded): 3 straight
+#                    seasons, so nobody can keep him in 2027.
+#   Zay Flowers      kept in 2024, back in the 2025 draft (round 6), kept in 2026 at round 5: year 1
+#                    again, so he can be kept in 2027 and 2028.
+#   George Pickens   in 2024 he and Zay Flowers were both from 2023's round 9, so both cost round 8.
+#                    Flowers stayed in round 8 and Pickens moved to round 7.
 keepers:
   - since: 2024
     value:
       eligible_after_round: 3
+      rounds_earlier: 1
+      max_consecutive: 3
 
 # Draft review (the weekly report and /draft): a steal is a pick after round 1, a bust a pick in rounds 1-4.
 draft_review:
