@@ -14,8 +14,8 @@ Season points are the player's whole NFL season in this league's scoring (``play
 available for every season, so the leaderboard covers 2015 on. ESPN's projections are not used:
 the player object only carries rest-of-season projections, not draft-day ones (the v0 dead end).
 
-**Keepers** (2024 on) are left out. A kept player was not a draft-day choice, and keeper value is the
-keeper module's job (M5).
+**Keepers** (2024 on) are left out. A kept player was not a draft-day choice. ``stats.keepers`` grades
+keepers against the same line (``DraftLine.value``).
 """
 
 from collections import defaultdict
@@ -60,6 +60,16 @@ class DraftLine:
     intercept: float
     slope: float
     picks: list[PickValue]
+    position_means: Mapping[str, float]  # season points of the drafted players at each position
+
+    def value(self, points: float, position: str, overall_pick: int) -> float | None:
+        """Points above the line for any pick at ``overall_pick``, a keeper's included.
+
+        None for a position no non-keeper was drafted at, which has no average to compare against.
+        """
+        if position not in self.position_means:
+            return None
+        return points - self.position_means[position] - self.expected(overall_pick)
 
     def expected(self, overall_pick: float) -> float:
         return self.intercept + self.slope * overall_pick
@@ -103,7 +113,7 @@ def draft_line(season: Season, points: Mapping[int, float] | None = None) -> Dra
                 value=round(above[p.player_id] - expected, 2),
             )
         )
-    return DraftLine(intercept, slope, out)
+    return DraftLine(intercept, slope, out, mean)
 
 
 def season_values(season: Season) -> list[PickValue]:

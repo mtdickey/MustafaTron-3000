@@ -10,6 +10,7 @@ export interface ContractFiles {
   draft: DraftFile;
   games: GamesFile;
   h2h: H2HFile;
+  keepers: KeepersFile;
   luck: LuckFile;
   managers: ManagersFile;
   meta: Meta;
@@ -448,6 +449,88 @@ export interface FlagOut {
   kind: "streak" | "lopsided" | "dead_even";
   losses: number;
   wins: number;
+}
+/**
+ * Who was kept, from data/manual/keeper_history.yml, and how the keepers played (ESPN).
+ *
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "KeepersFile".
+ */
+export interface KeepersFile {
+  /**
+   * Every keeper, by season, then manager, then round
+   */
+  keepers: KeeperOut[];
+  managers: KeeperManagerOut[];
+  schema_version: 1;
+  /**
+   * Seasons with keepers, oldest first
+   */
+  seasons: number[];
+  /**
+   * Keepers allowed per team (ESPN keeperCount)
+   */
+  slots: number;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "KeeperOut".
+ */
+export interface KeeperOut {
+  manager: string;
+  /**
+   * The keeper's pick in that draft; null until it is published
+   */
+  overall_pick: number | null;
+  player: string;
+  /**
+   * His season in this league's scoring; null until it is finished
+   */
+  points: number | null;
+  /**
+   * null if ESPN has no record of the player
+   */
+  position: string | null;
+  /**
+   * The draft round the keeper took
+   */
+  round: number;
+  /**
+   * How many seasons in a row (any owner) he has been kept, this one included
+   */
+  run: number;
+  /**
+   * The season whose draft the player was kept for
+   */
+  season: number;
+  /**
+   * Points above what a normal pick in his slot promised, on the draft page's line for that season (DraftFile); null until the season is finished
+   */
+  value: number | null;
+  /**
+   * The manager who traded his keeper rights in the offseason, if any
+   */
+  via: string | null;
+}
+/**
+ * This interface was referenced by `ContractFiles`'s JSON-Schema
+ * via the `definition` "KeeperManagerOut".
+ */
+export interface KeeperManagerOut {
+  keeps: number;
+  manager: string;
+  /**
+   * Keeper seasons the manager was in the league for
+   */
+  seasons: number;
+  /**
+   * Total value of the valued keeps
+   */
+  value: number;
+  /**
+   * Keeps in finished seasons, which have a value
+   */
+  valued: number;
 }
 /**
  * All-play records and luck: careers, every team-season, and the luckiest and unluckiest seasons.

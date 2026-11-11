@@ -40,7 +40,7 @@ changing or dropping old data. Only the in-progress season is ever refetched.
 | `src/mustafatron/identity.py` | ESPN member IDs → canonical managers from [`data/manual/managers.yml`](data/manual/managers.yml) |
 | `src/mustafatron/model.py` | The entities stats code reads: `TeamSeason`, `Game`, `DraftPick`, `Transaction`, `Player`, `PlayerWeek`, `Season`, `League` |
 | `src/mustafatron/transform.py` | Raw ESPN JSON → model; the only layer that knows how ESPN's eras differ. `load_league()` |
-| `src/mustafatron/stats/` | H2H series and rivalries (`h2h.py`, ported from `scratch_h2h.py`), all-time standings, records book, all-play and luck (`allplay.py`), the optimal-lineup engine (`lineup.py`) coaching (`coaching.py`) draft value (`draft.py`) trade valuations (`trades.py`) and the league's awards (`awards.py`) |
+| `src/mustafatron/stats/` | H2H series and rivalries (`h2h.py`, ported from `scratch_h2h.py`), all-time standings, records book, all-play and luck (`allplay.py`), the optimal-lineup engine (`lineup.py`) coaching (`coaching.py`) draft value (`draft.py`), keeper value (`keepers.py`), trade valuations (`trades.py`) and the league's awards (`awards.py`) |
 | `src/mustafatron/stats/weekly.py` | The weekly report: which weeks get one, labels, and everything "through week N" |
 | `src/mustafatron/contract.py` | The site JSON contract (pydantic); JSON Schemas generated into [`schema/`](schema/) |
 | `src/mustafatron/publish.py` | Writes `web/public/data/*.json` through the contract |
@@ -124,6 +124,7 @@ lays out what the contract publishes.
 | `games.json` | Every final game as `[season, week, tier, home, away, home_score, away_score, winner]`, plus upcoming |
 | `h2h.json` | Every all-time series (record, win pct, average scores and margin, last five, streaks, closest/blowout, playoff record, rivalry flags) and the most competitive rivalries |
 | `standings.json` | All-time standings (regular season record and margin, playoff record, titles, best/worst finish, net payout and ROI) and the championship ledger |
+| `keepers.json` | Every keeper by season (round, pick, consecutive seasons kept, offseason trades of keeper rights) and, once a season finishes, his points and value on that draft's line; per-manager totals |
 | `waivers.json` | Career and per-season pickups, waiver wins and free agents from 2018, FAAB spending and largest winning bids in seasons using FAAB |
 | `records.json` | Records book top 10s: single game and matchup (one-week matchups only), league-wide NFL week, season, and win/loss streaks |
 | `profiles.json` | Per manager: best and worst single NFL weeks, career all-play record (vs the field) |

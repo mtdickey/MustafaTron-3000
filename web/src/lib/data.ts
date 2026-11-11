@@ -14,6 +14,7 @@ import type {
   DraftFile,
   GamesFile,
   H2HFile,
+  KeepersFile,
   LuckFile,
   ManagerOut,
   ManagersFile,
@@ -59,6 +60,7 @@ export const luck = (): LuckFile => load("luck.json");
 export const coaching = (): CoachingFile => load("coaching.json");
 export const draft = (): DraftFile => load("draft.json");
 export const waivers = (): WaiversFile => load("waivers.json");
+export const keepers = (): KeepersFile => load("keepers.json");
 export const trades = (): TradesFile => load("trades.json");
 export const awards = (): AwardsFile => load("awards.json");
 export const weeksFile = (): WeeksFile => load("weeks.json");
